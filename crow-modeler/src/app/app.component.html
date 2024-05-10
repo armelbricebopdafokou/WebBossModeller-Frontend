@@ -177,7 +177,7 @@
   }
 </style>
 
-<main class="main">
+<!-- <main class="main">
   <div class="content">
     <div class="left-side">
       <svg
@@ -236,6 +236,7 @@
           { title: 'Learn with Tutorials', link: 'https://angular.dev/tutorials' },
           { title: 'CLI Docs', link: 'https://angular.dev/tools/cli' },
           { title: 'Angular Language Service', link: 'https://angular.dev/tools/language-service' },
+          { title: 'Test me', link: 'https://www.hs-bochum.de'},
           { title: 'Angular DevTools', link: 'https://angular.dev/tools/devtools' },
         ]; track item.title) {
           <a
@@ -322,7 +323,7 @@
       </div>
     </div>
   </div>
-</main>
+</main> -->
 
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
 <!-- * * * * * * * * * * * The content above * * * * * * * * * * * * -->
@@ -333,4 +334,31 @@
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
 
 
-<router-outlet />
+<h1>Crow-Modeller</h1>
+
+
+<mat-sidenav-container class="example-container">
+  <mat-sidenav #sidenav mode="side" [(opened)]="opened" (opened)="events.push('open!')"
+                (closed)="events.push('close!')" role="toolbar">
+    <nav>
+      <ul>
+        <li><a routerLink="/draw-screen" routerLinkActive="active" ariaCurrentWhenActive="page">Draw Screen</a></li>
+        <li><a routerLink="/profile" routerLinkActive="active" ariaCurrentWhenActive="page">Profile</a></li>
+      </ul>
+    </nav>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <router-outlet></router-outlet>
+    <p><mat-checkbox [(ngModel)]="opened">sidenav.opened</mat-checkbox></p>
+    <p><button mat-button (click)="sidenav.toggle()">sidenav.toggle()</button></p>
+    <p>Events:</p>
+    <div class="example-events">
+      @for (e of events; track e) {
+        <div>{{e}}</div>
+      }
+    </div>
+    <!-- The routed views render in the <router-outlet>-->
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+
