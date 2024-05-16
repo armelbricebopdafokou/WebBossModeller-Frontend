@@ -348,17 +348,8 @@
     </nav>
   </mat-sidenav>
   <mat-sidenav-content>
+    <p><button mat-button (click)="sidenav.toggle()">Sidenav</button></p>
     <router-outlet></router-outlet>
-    <p><mat-checkbox [(ngModel)]="opened">sidenav.opened</mat-checkbox></p>
-    <p><button mat-button (click)="sidenav.toggle()">sidenav.toggle()</button></p>
-    <p>Events:</p>
-    <div class="example-events">
-      @for (e of events; track e) {
-        <div>{{e}}</div>
-      }
-    </div>
     <!-- The routed views render in the <router-outlet>-->
   </mat-sidenav-content>
 </mat-sidenav-container>
-
-
