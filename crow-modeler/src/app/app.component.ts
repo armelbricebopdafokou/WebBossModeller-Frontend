@@ -7,7 +7,6 @@ import { RouterLinkActive } from '@angular/router';
 import {FormsModule} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCheckboxModule} from '@angular/material/checkbox';
-import {MatSidenavModule} from '@angular/material/sidenav';
 
 @Component({
   selector: 'app-root',
@@ -15,15 +14,11 @@ import {MatSidenavModule} from '@angular/material/sidenav';
   imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive,
     FormsModule,
     MatButtonModule,
-    MatCheckboxModule,
-    MatSidenavModule,
+    MatCheckboxModule
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 
 export class AppComponent {
-  title = 'crow-modeler';
-  events: string[] = [];
-  opened: boolean = false;
 }

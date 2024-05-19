@@ -1,8 +1,21 @@
 <p>draw-screen works!</p>
 
-<div>
-  <app-gojs-diagram></app-gojs-diagram>
-</div>
+<mat-sidenav-container class="example-container">
+  <mat-sidenav #sidenav mode="side" [(opened)]="opened" (opened)="events.push('open!')"
+                (closed)="events.push('close!')" role="toolbar">
+    <nav>
+      <ul>
+        <li><a routerLink="/draw-screen" routerLinkActive="active" ariaCurrentWhenActive="page">Draw Screen</a></li>
+        <li><a routerLink="/profile" routerLinkActive="active" ariaCurrentWhenActive="page">Profile</a></li>
+      </ul>
+    </nav>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <p><button mat-button (click)="sidenav.toggle()">Sidenav</button></p>
+    <app-gojs-diagram></app-gojs-diagram>
+    <!-- The routed views render in the <router-outlet>-->
+  </mat-sidenav-content>
+</mat-sidenav-container>
 
 <!-- <gojs-diagram
   [initDiagram]='initDiagram'
