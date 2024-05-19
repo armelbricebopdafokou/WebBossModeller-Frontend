@@ -1,0 +1,49 @@
+header {
+  box-shadow: 2px 2px 2px rgba(0,0,0,0.3);
+  background-color: #dde4e1;
+}
+
+.logoc {
+  display: block;
+  margin: 0 auto;
+  height: 30px;
+}
+/*
+.home {
+  display: block;
+  margin: 0 auto;
+  height: 30px
+
+}*/
+.container {
+  display: flex;
+  align-items: center; /* Zentrieren Sie die Elemente vertikal */
+}
+
+.logo {
+  width: 100px;
+  height: 100px;
+  background-color: #f0f0f0;
+  margin-right: 20px; /* Abstand zwischen Logo und Kästchen */
+}
+
+.box {
+  width: 50px;
+  height: 50px;
+  background-color: #ccc;
+  margin-right: 10px; /* Abstand zwischen den Kästchen */
+}
+
+  .box:first-child {
+    margin-right: 30px; /* Größerer Abstand für das erste Kästchen */
+  }
+
+.slider {
+  margin-right: 10px; /* Abstand zwischen dem Slider und der rechten Box */
+}
+
+.right-box {
+  width: 50px;
+  height: 50px;
+  background-color: #ccc;
+}
