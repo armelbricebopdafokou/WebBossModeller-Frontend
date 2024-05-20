@@ -22,7 +22,7 @@ body {
     margin-top: auto;
 }
 
-button {
+.button-default {
     margin: 5px;
     padding: 10px 20px;
     background-color: #007bff;

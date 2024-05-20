@@ -1,16 +1,3 @@
-// import { Component } from '@angular/core';
-
-// @Component({
-//   selector: 'app-gojs-diagram',
-//   standalone: true,
-//   imports: [],
-//   templateUrl: './gojs-diagram.component.html',
-//   styleUrl: './gojs-diagram.component.css'
-// })
-// export class GojsDiagramComponent {
-
-// }
-
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import * as go from 'gojs';
 
@@ -20,6 +7,7 @@ import * as go from 'gojs';
   templateUrl: './gojs-diagram.component.html',
   styleUrls: ['./gojs-diagram.component.css']
 })
+
 export class GojsDiagramComponent implements OnInit {
   @ViewChild('diagramDiv', { static: true }) diagramDiv!: ElementRef;
 
@@ -31,6 +19,12 @@ export class GojsDiagramComponent implements OnInit {
 
   initDiagram(): void {
     const $ = go.GraphObject.make;
+
+    const colors = {
+      gold: '#f3e601',
+      white: '#FFFFFF',
+      black: '#101920',
+    };
 
     const diagram = $(go.Diagram, this.diagramDiv.nativeElement, {
       initialContentAlignment: go.Spot.Center,
@@ -61,6 +55,35 @@ export class GojsDiagramComponent implements OnInit {
         new go.Binding("text", "key"))
     );
 
+    // diagram.linkTemplate =
+    // $(go.Link,
+    //   { toArrow: "Standard" }, // Set the default toArrow for all Links
+    //   $(go.Shape),
+    //   $(go.Shape, { toArrow: "Standard" }) // This shape will have the same toArrow as the Link
+    // );
+
+    // diagram.linkTemplate = new go.Link()
+    // .add(
+    //   new go.Shape(),                           // this is the link shape (the line)
+    //   new go.Shape({ toArrow: "Line Fork" }),  // this is an arrowhead
+    //   new go.TextBlock()                        // this is a Link label
+    //     .bind("text")
+    // );
+
+    // diagram.linkTemplate = new go.Link({
+    //   // // the whole link panel
+    //   // routing: go.Routing.Normal,
+    //   // // define a tooltip for each link that displays its information
+    //   // toolTip: go.GraphObject.build('ToolTip').add(new go.TextBlock({ margin: 4 }).bindObject('text', '', infoString)),
+    // })
+    //   // the link shape
+    //   // the first element in a Link is assumed to be main element
+    //   .add(new go.Shape({ stroke: colors.white, strokeWidth: 1.5, strokeDashArray: [2, 5] }))
+    //   // the "from" arrowhead
+    //   .add(new go.Shape({ scale: 2, stroke: colors.white, fill: colors.black }).bind('fromArrow'))
+    //   // the "to" arrowhead
+    //   .add(new go.Shape({ scale: 2, stroke: colors.white, fill: colors.black }).bind('toArrow'));
+
     diagram.model = new go.GraphLinksModel(
       [
         { key: 'Alpha', color: 'lightgreen' },
@@ -79,7 +102,7 @@ export class GojsDiagramComponent implements OnInit {
         { from: 'Beta', to: 'Beta' },
         { from: 'Gamma', to: 'Delta' },
         { from: 'Delta', to: 'Alpha' },
-        { from: 'Alpha', to: 'Class1'}
+        { from: 'Alpha', to: 'Class1', toArrow: "Line Fork"}
       ]
     );
   }

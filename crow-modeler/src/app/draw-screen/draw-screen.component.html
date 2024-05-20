@@ -1,5 +1,4 @@
-<p>draw-screen works!</p>
-<app-head></app-head>
+<app-header></app-header>
 
 <mat-sidenav-container class="example-container">
   <mat-sidenav #sidenav mode="side" [(opened)]="opened" (opened)="events.push('open!')"
@@ -7,29 +6,12 @@
     <nav>
       <ul>
         <li><a routerLink="/draw-screen" routerLinkActive="active" ariaCurrentWhenActive="page">Draw Screen</a></li>
-        <li><a routerLink="/profile" routerLinkActive="active" ariaCurrentWhenActive="page">Profile</a></li>
+        <li><a routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page">login</a></li>
       </ul>
     </nav>
   </mat-sidenav>
   <mat-sidenav-content>
     <p><button mat-button (click)="sidenav.toggle()">Sidenav</button></p>
     <app-gojs-diagram></app-gojs-diagram>
-    <!-- The routed views render in the <router-outlet>-->
   </mat-sidenav-content>
 </mat-sidenav-container>
-
-<!-- <gojs-diagram
-  [initDiagram]='initDiagram'
-  [nodeDataArray]='state.diagramNodeData'
-  [linkDataArray]='state.diagramLinkData'
-  [modelData]='state.diagramModelData'
-  [skipsDiagramUpdate]='state.skipsDiagramUpdate'
-  (modelChange)='diagramModelChange($event)'
-  [divClassName]='diagramDivClassName'>
-</gojs-diagram>
-
-<gojs-palette
-  [initPalette]='initPalette'
-  [nodeDataArray]='state.paletteNodeData'
-  [divClassName]='paletteDivClassName'>
-</gojs-palette> -->
