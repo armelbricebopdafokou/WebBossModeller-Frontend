@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HeadComponent } from './head.component';
+import { SideComponent } from './side.component';
 
-describe('HeadComponent', () => {
-  let component: HeadComponent;
-  let fixture: ComponentFixture<HeadComponent>;
+describe('SideComponent', () => {
+  let component: SideComponent;
+  let fixture: ComponentFixture<SideComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [HeadComponent]
+      declarations: [SideComponent]
     })
-      .compileComponents();
-
-    fixture = TestBed.createComponent(HeadComponent);
+    .compileComponents();
+    
+    fixture = TestBed.createComponent(SideComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

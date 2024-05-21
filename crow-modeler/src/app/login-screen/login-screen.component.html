@@ -2,13 +2,21 @@
     <mat-card class="primary-container main-card">
         <mat-card-content>
             <h1>Wilkommen im CROW Modeller!</h1>
-            <p class="text-block">
-                Die absolute Nummer 1 Webanwendung zum Zeichnen von Entity-Relation (ER) Diagrammen. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus ullamcorper venenatis facilisis. Nullam at congue felis, ac finibus dui. Aliquam.
-            </p>
+            <p>Bitte geben Sie ihre E-Mail und ihr Passwort ein, um sich anzumelden-</p>
+                <mat-form-field>
+                    <mat-label>E-mail</mat-label>
+                    <input matInput>
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Password</mat-label>
+                    <input matInput [type]="hide ? 'password' : 'text'">
+                    <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                    <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                    </button>
+                </mat-form-field>
         </mat-card-content>
         <div class="buttons">
-            <button mat-raised-button>Login</button>
-            <button mat-raised-button>Register</button>
+            <button class="button-default" routerLink="/draw-screen" routerLinkActive="active" ariaCurrentWhenActive="page" mat-raised-button mat-raised-button>Login</button>
         </div>
     </mat-card>
 </body>

@@ -1,25 +1,15 @@
-// import { Component } from '@angular/core';
-
-// @Component({
-//   selector: 'app-gojs-diagram',
-//   standalone: true,
-//   imports: [],
-//   templateUrl: './gojs-diagram.component.html',
-//   styleUrl: './gojs-diagram.component.css'
-// })
-// export class GojsDiagramComponent {
-
-// }
-
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import * as go from 'gojs';
 
 @Component({
   selector: 'app-gojs-diagram',
   standalone: true,
+  imports: [MatButtonModule],
   templateUrl: './gojs-diagram.component.html',
   styleUrls: ['./gojs-diagram.component.css']
 })
+
 export class GojsDiagramComponent implements OnInit {
   @ViewChild('diagramDiv', { static: true }) diagramDiv!: ElementRef;
 
@@ -29,7 +19,10 @@ export class GojsDiagramComponent implements OnInit {
     this.initDiagram();
   }
 
+  
+
   initDiagram(): void {
+  
     const $ = go.GraphObject.make;
 
     const diagram = $(go.Diagram, this.diagramDiv.nativeElement, {
@@ -79,8 +72,25 @@ export class GojsDiagramComponent implements OnInit {
         { from: 'Beta', to: 'Beta' },
         { from: 'Gamma', to: 'Delta' },
         { from: 'Delta', to: 'Alpha' },
-        { from: 'Alpha', to: 'Class1'}
+        { from: 'Alpha', to: 'Class1', toArrow: "Line Fork"}
       ]
     );
+  }
+
+  getTime(): number {
+  return new Date().getTime();
+}
+
+  createClassNode(): void{
+    alert(this.getTime());
+    // diagram.startTransaction("addNode");
+    // var node = {
+    //     key: "newNode",
+    //     text: "New Node",
+    //     color: "lightblue",
+    //     loc: "100 100"
+    // };
+    // diagram.model.addNodeData(node);
+    // diagram.commitTransaction("addNode");
   }
 }

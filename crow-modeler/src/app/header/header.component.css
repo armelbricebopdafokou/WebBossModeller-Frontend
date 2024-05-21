@@ -1,10 +1,5 @@
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-}
-
 header {
-  background-color: #DDE4E1; /* Neuer Farbton */
+  background-color: #DDE4E1;
   padding: 10px;
 }
 
@@ -52,7 +47,8 @@ header {
   .slider-toggle .slider {
     position: absolute;
     cursor: pointer;
-    top: 0;
+    top: 50%;
+    transform: translateY(-50%);
     left: 0;
     right: 0;
     bottom: 0;
@@ -95,14 +91,31 @@ header {
   border-radius: 5px;
 }
 
+.menu-button {
+  background-color: #DDE4E1;
+  color: black;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center; /* Zentriere das Icon vertikal */
+}
+
+  .menu-button img {
+    width: 24px; /* Passe die Breite des Icons an */
+    height: 24px; /* Passe die Höhe des Icons an */
+    margin-right: 5px; /* Füge einen kleinen Abstand zwischen dem Icon und dem Text hinzu */
+  }
+
 .menu-content {
   display: none;
   position: absolute;
-  right: 0; /* Make sure the menu aligns to the right edge of the parent */
+  right: 0;
   background-color: white;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
-  min-width: 160px; /* Ensures that the menu has a minimum width */
+  min-width: 160px;
 }
 
   .menu-content a {
