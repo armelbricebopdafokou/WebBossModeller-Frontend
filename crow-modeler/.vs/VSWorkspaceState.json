@@ -3,10 +3,9 @@
     "",
     "\\src",
     "\\src\\app",
-    "\\src\\app\\draw-screen",
+    "\\src\\app\\header",
     "\\src\\assets",
     "\\src\\assets\\img"
   ],
-  "SelectedNode": "\\src\\assets\\img\\logo.svg",
   "PreviewInSolutionExplorer": false
 }

@@ -1,49 +1,121 @@
-header {
-  box-shadow: 2px 2px 2px rgba(0,0,0,0.3);
-  background-color: #dde4e1;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
 }
 
-.logoc {
-  display: block;
-  margin: 0 auto;
+header {
+  background-color: #DDE4E1; /* Neuer Farbton */
+  padding: 10px;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.icons img {
+  margin: 0 5px;
+  width: 30px;
   height: 30px;
 }
-/*
-.home {
-  display: block;
-  margin: 0 auto;
-  height: 30px
 
-}*/
-.container {
-  display: flex;
-  align-items: center; /* Zentrieren Sie die Elemente vertikal */
-}
-
-.logo {
-  width: 100px;
-  height: 100px;
-  background-color: #f0f0f0;
-  margin-right: 20px; /* Abstand zwischen Logo und Kästchen */
-}
-
-.box {
+.logo img {
   width: 50px;
   height: 50px;
-  background-color: #ccc;
-  margin-right: 10px; /* Abstand zwischen den Kästchen */
 }
 
-  .box:first-child {
-    margin-right: 30px; /* Größerer Abstand für das erste Kästchen */
+.slider-toggle {
+  display: flex;
+  align-items: center;
+}
+
+  .slider-toggle .mode-text {
+    margin: 0 10px;
+    font-size: 14px;
+    color: black;
   }
 
-.slider {
-  margin-right: 10px; /* Abstand zwischen dem Slider und der rechten Box */
+  .slider-toggle .switch {
+    position: relative;
+    display: inline-block;
+    width: 34px;
+    height: 20px;
+  }
+
+    .slider-toggle .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+  .slider-toggle .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+  }
+
+    .slider-toggle .slider:before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+  .slider-toggle input:checked + .slider {
+    background-color: #2196F3;
+  }
+
+    .slider-toggle input:checked + .slider:before {
+      transform: translateX(14px);
+    }
+
+.menu {
+  position: relative;
+  display: inline-block;
 }
 
-.right-box {
-  width: 50px;
-  height: 50px;
-  background-color: #ccc;
+.menu-button {
+  background-color: #DDE4E1;
+  color: black;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.menu-content {
+  display: none;
+  position: absolute;
+  right: 0; /* Make sure the menu aligns to the right edge of the parent */
+  background-color: white;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  min-width: 160px; /* Ensures that the menu has a minimum width */
+}
+
+  .menu-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+
+    .menu-content a:hover {
+      background-color: #f1f1f1;
+    }
+
+.menu:hover .menu-content {
+  display: block;
 }
