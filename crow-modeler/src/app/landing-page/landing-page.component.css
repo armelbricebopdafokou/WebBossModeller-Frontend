@@ -1,9 +1,59 @@
+/* teal-theme.light.tokens.scss */
+
+.light {
+    --md-sys-color-primary: #006a60;
+    --md-sys-color-on-primary: #ffffff;
+    --md-sys-color-primary-container: #9ef2e4;
+    --md-sys-color-on-primary-container: #00201c;
+    --md-sys-color-secondary: #4a635f;
+    --md-sys-color-on-secondary: #ffffff;
+    --md-sys-color-secondary-container: #cce8e2;
+    --md-sys-color-on-secondary-container: #05201c;
+    --md-sys-color-tertiary: #456179;
+    --md-sys-color-on-tertiary: #ffffff;
+    --md-sys-color-tertiary-container: #cce5ff;
+    --md-sys-color-on-tertiary-container: #001e31;
+    --md-sys-color-error: #ba1a1a;
+    --md-sys-color-on-error: #ffffff;
+    --md-sys-color-error-container: #ffdad6;
+    --md-sys-color-on-error-container: #410002;
+    --md-sys-color-background: #f4fbf8;
+    --md-sys-color-on-background: #161d1c;
+    --md-sys-color-surface: #f4fbf8;
+    --md-sys-color-on-surface: #161d1c;
+    --md-sys-color-surface-variant: #dae5e1;
+    --md-sys-color-on-surface-variant: #3f4947;
+    --md-sys-color-outline: #6f7977;
+    --md-sys-color-outline-variant: #bec9c6;
+    --md-sys-color-shadow: #000000;
+    --md-sys-color-scrim: #000000;
+    --md-sys-color-inverse-surface: #2b3230;
+    --md-sys-color-inverse-on-surface: #ecf2ef;
+    --md-sys-color-inverse-primary: #82d5c8;
+    --md-sys-color-primary-fixed: #9ef2e4;
+    --md-sys-color-on-primary-fixed: #00201c;
+    --md-sys-color-primary-fixed-dim: #82d5c8;
+    --md-sys-color-on-primary-fixed-variant: #005048;
+    --md-sys-color-secondary-fixed: #cce8e2;
+    --md-sys-color-on-secondary-fixed: #05201c;
+    --md-sys-color-secondary-fixed-dim: #b1ccc6;
+    --md-sys-color-on-secondary-fixed-variant: #334b47;
+    --md-sys-color-tertiary-fixed: #cce5ff;
+    --md-sys-color-on-tertiary-fixed: #001e31;
+    --md-sys-color-surface-container-high: #e3eae7;
+    --md-sys-color-surface-container-highest: #dde4e1;
+}
+/* Above is the style from figma exported  */
 body {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
+}
+
+h1{
+    text-align: center;
 }
 
 .main-card {
@@ -13,23 +63,15 @@ body {
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    max-width: 400px;
+    width: 33%;
+    border-radius: 25px;
 }
 
 .buttons {
     display: flex;
     flex-direction: column;
     margin-top: auto;
-}
-
-button {
-    margin: 5px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    width: 100%;
 }
 
 .primary-container{
@@ -38,4 +80,27 @@ button {
 
 .text-block{
     font-size: 14;
+    text-align: justify;
+}
+
+.primary{
+    background-color: var(--md-sys-color-primary);
+}
+
+.on-primary-container{
+    color: var(--md-sys-color-on-primary-container);
+}
+
+.secondary{
+    background-color: var(--md-sys-color-secondary);
+}
+
+button {
+    margin: 5px;
+    padding: 10px 20px;
+    color: var(--md-sys-color-on-primary);
+    font-size: 14pt;
+    width: 100%;
+    border-radius: 25px;
+    cursor: pointer;
 }
