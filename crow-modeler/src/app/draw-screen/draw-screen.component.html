@@ -2,21 +2,20 @@
 
 
 <mat-sidenav-container class="example-container">
-  <mat-sidenav #sidenav mode="side" [(opened)]="opened" (opened)="events.push('open!')"
-               (closed)="events.push('close!')" role="toolbar">
+  <mat-sidenav #sidenav mode="side" [(opened)]="opened" (opened)="logEvent('open!')" (closed)="logEvent('close!')" role="toolbar">
     <nav>
       <ul>
         <li><a routerLink="/draw-screen" routerLinkActive="active" ariaCurrentWhenActive="page">Draw Screen</a></li>
-        <li><a routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page">login</a></li>
+        <li><a routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page">Login</a></li>
         <div class="side-menu-icons">
-          <img src="../assets/img/bearbeiten-alt.png" alt="Icon 1">
-          <img src="../assets/img/tisch.png" alt="Icon 2">
-          <img src="../assets/img/quadrat-plus.png" alt="Icon 3">
-          <img src="../assets/img/bleistift.png" alt="Icon 4">
-          <img src="../assets/img/kommentar.png" alt="Icon 5">
-          <img src="../assets/img/quadrat-minus.png" alt="Icon 6">
+          <img src="../assets/img/bearbeiten-alt.png" alt="Icon 1" (click)="handleIconClick('icon1')">
+          <img src="../assets/img/tisch.png" alt="Icon 2" (click)="handleIconClick('icon2')">
+          <img src="../assets/img/quadrat-plus.png" alt="Icon 3" (click)="handleIconClick('icon3')">
+          <img src="../assets/img/bleistift.png" alt="Icon 4" (click)="handleIconClick('icon4')">
+          <img src="../assets/img/kommentar.png" alt="Icon 5" (click)="handleIconClick('icon5')">
+          <img src="../assets/img/quadrat-minus.png" alt="Icon 6" (click)="handleIconClick('icon6')">
         </div>
-        <button mat-fab>alert</button>
+        <button mat-fab (click)="showAlert()">Alert</button>
       </ul>
     </nav>
   </mat-sidenav>
@@ -25,3 +24,4 @@
     <app-gojs-diagram></app-gojs-diagram>
   </mat-sidenav-content>
 </mat-sidenav-container>
+
