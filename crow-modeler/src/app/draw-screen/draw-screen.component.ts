@@ -19,4 +19,10 @@ export class DrawScreenComponent {
   title = 'crow-modeler';
   events: string[] = [];
   opened: boolean = true;
+
+  onButtonClick() {
+    console.log('Button clicked!');
+    // Hier kannst du deine spezifische Logik hinzufügen
+  }
 }
+

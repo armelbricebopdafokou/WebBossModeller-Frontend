@@ -1,27 +1,44 @@
 .myDiagramDiv {
-    background: whitesmoke;
+    background: ;
     width: 800px;
     height: 300px;
     border: 1px solid black;
   }
-
-.side-menu {
-  background-color: #DDE4E1;
-  padding: 10px;
-  width: 60px;
-  height: 100vh;
-}
-
-.side-menu-icons {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
+.example-container {
   height: 100%;
 }
 
+.custom-sidenav {
+  background-color: #DDE4E1;
+  width: 70px !important; /* Legt die Breite des Sidenavs auf 250px fest */
+}
+
+
+.side-menu-icons {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+  .side-menu-icons li {
+    width: 100%; /* Stellt sicher, dass die Buttons die gesamte Breite einnehmen */
+  }
+
+  .side-menu-icons button {
+    background: none;
+    border: none;
+    padding: 10px 10px 10px 20px; /* Fügt links Padding hinzu, um den Button einzurücken */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    width: 100%; /* Stellt sicher, dass die Buttons die gesamte Breite einnehmen */
+    text-align: left; /* Text und Inhalte im Button links ausrichten */
+  }
+
   .side-menu-icons img {
-    margin: 10px 0;
-    width: 30px;
+    width: 30px; /* Passe die Größe der Icons nach Bedarf an */
     height: 30px;
   }
