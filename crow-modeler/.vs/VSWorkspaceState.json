@@ -5,7 +5,9 @@
     "\\src\\app",
     "\\src\\app\\draw-screen",
     "\\src\\app\\header",
-    "\\src\\app\\side"
+    "\\src\\app\\landing-page",
+    "\\src\\app\\profile"
   ],
+  "SelectedNode": "\\src\\app\\draw-screen\\draw-screen.component.html",
   "PreviewInSolutionExplorer": false
 }

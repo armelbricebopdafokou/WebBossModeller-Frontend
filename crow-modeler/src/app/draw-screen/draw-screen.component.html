@@ -4,34 +4,34 @@
   <mat-sidenav #sidenav mode="side" [(opened)]="opened" (opened)="events.push('open!')"
                (closed)="events.push('close!')" role="toolbar" class="custom-sidenav">
     <nav>
-      <ul class="side-menu-icons">
+      <ul class="side-menu-icons button-list">
         <li>
-          <button (click)="onButtonClick()">
+          <button matTooltip="Tabelle erstellen" (click)="onButtonClick()" class="icon-button">
             <img src="../assets/img/bearbeiten-alt.png" alt="Icon 1">
           </button>
         </li>
         <li>
-          <button (click)="onButtonClick()">
+          <button matTooltip="Tabelle bearbeiten" (click)="onButtonClick()"  class="icon-button">
             <img src="../assets/img/tisch.png" alt="Icon 2">
           </button>
         </li>
         <li>
-          <button (click)="onButtonClick()">
+          <button matTooltip="Relationship erstellen" (click)="onButtonClick()" title="" class="icon-button">
             <img src="../assets/img/quadrat-plus.png" alt="Icon 3">
           </button>
         </li>
         <li>
-          <button (click)="onButtonClick()">
+          <button matTooltip="Relationship bearbeiten" (click)="onButtonClick()" title="Relationship bearbeiten" class="icon-button">
             <img src="../assets/img/bleistift.png" alt="Icon 4">
           </button>
         </li>
         <li>
-          <button (click)="onButtonClick()">
+          <button matTooltip="Kommentare erstellen" (click)="onButtonClick()" title="" class="icon-button">
             <img src="../assets/img/kommentar.png" alt="Icon 5">
           </button>
         </li>
         <li>
-          <button (click)="onButtonClick()">
+          <button matTooltip="Elemente entfernen" (click)="onButtonClick()" title="Elemente entfernen" class="icon-button">
             <img src="../assets/img/quadrat-minus.png" alt="Icon 6">
           </button>
         </li>
