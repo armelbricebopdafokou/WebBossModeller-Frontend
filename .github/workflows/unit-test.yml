@@ -1,6 +1,6 @@
 name: run-test-frontend
 on: 
-  workflow_dispatch: {}
+  
   push:
    branches: [main-frontend]
   pull_request: 
