@@ -4,3 +4,24 @@
     height: 300px;
     border: 1px solid black;
   }
+
+.side-menu {
+  background-color: #DDE4E1;
+  padding: 10px;
+  width: 60px;
+  height: 100vh;
+}
+
+.side-menu-icons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+}
+
+  .side-menu-icons img {
+    margin: 10px 0;
+    width: 30px;
+    height: 30px;
+  }

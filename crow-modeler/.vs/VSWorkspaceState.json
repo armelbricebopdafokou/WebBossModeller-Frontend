@@ -3,9 +3,10 @@
     "",
     "\\src",
     "\\src\\app",
-    "\\src\\assets",
-    "\\src\\assets\\img"
+    "\\src\\app\\draw-screen",
+    "\\src\\app\\header",
+    "\\src\\app\\side"
   ],
-  "SelectedNode": "\\src\\assets\\img",
+  "SelectedNode": "\\src\\app\\header\\header.component.html",
   "PreviewInSolutionExplorer": false
 }
