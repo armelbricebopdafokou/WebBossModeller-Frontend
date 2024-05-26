@@ -106,3 +106,12 @@
   }
 
 
+
+.container{
+  width: 90%;
+}
+
+.content-wrapper{
+  display: flex;
+  flex-direction: row;
+}

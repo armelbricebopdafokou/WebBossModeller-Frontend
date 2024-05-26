@@ -1,6 +1,6 @@
 <app-header></app-header>
-
-<mat-sidenav-container class="example-container">
+<div class="content-wrapper">
+<mat-sidenav-container class="container">
   <mat-sidenav #sidenav mode="side" [(opened)]="opened" (opened)="events.push('open!')"
                (closed)="events.push('close!')" role="toolbar" class="custom-sidenav">
     <nav>
@@ -39,7 +39,14 @@
     </nav>
   </mat-sidenav>
   <mat-sidenav-content>
-    <p><button mat-button (click)="sidenav.toggle()">Seitenmenü</button></p>
-    <app-gojs-diagram></app-gojs-diagram>
+    <p>
+      <button mat-button (click)="sidenav.toggle()">Seitenmenü</button>
+      <button mat-button (click)="this.createClass()">Class create test</button>
+    </p>
+    <app-gojs-diagram [model]="model"></app-gojs-diagram>
   </mat-sidenav-content>
 </mat-sidenav-container>
+<div class="inspector">inspector
+  <app-inspector></app-inspector>
+</div>
+</div>

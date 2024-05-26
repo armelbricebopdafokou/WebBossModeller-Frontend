@@ -6,7 +6,11 @@ import { GojsDiagramComponent } from '../gojs-diagram/gojs-diagram.component';
 import { HeaderComponent } from '../header/header.component';
 import { RouterLink } from '@angular/router';
 import { RouterLinkActive } from '@angular/router';
+import { SideComponent } from '../side/side.component';
+import { InspectorComponent } from '../inspector/inspector.component';
 
+
+import * as go from 'gojs';
 @Component({
   selector: 'app-draw-screen',
   standalone: true,
@@ -16,7 +20,7 @@ import { RouterLinkActive } from '@angular/router';
     MatSidenavModule,
     HeaderComponent,
     RouterLink,
-    RouterLinkActive,
+    RouterLinkActive, SideComponent, InspectorComponent,
     MatTooltipModule // Hinzufügen des MatTooltipModule
   ],
   templateUrl: './draw-screen.component.html',
@@ -28,6 +32,43 @@ export class DrawScreenComponent {
   title = 'crow-modeler';
   events: string[] = [];
   opened: boolean = true;
+
+  public selectedNode = null;
+
+  // Development Model
+  public model: go.GraphLinksModel = new go.GraphLinksModel(
+    [
+      { key: 'Class1', isGroup: true},
+      { key: 'Name', color: 'lightgreen', group: 'Class1' },
+      { key: 'Attributes1', color: 'lightgreen', isGroup: true, group: 'Class1'},
+      { key: 'Attribute 1', color: 'lightgreen', group: 'Attributes1' },
+      { key: 'Attribute 2', color: 'lightgreen', group: 'Attributes1' },
+      { key: 'Class2', isGroup: true},
+      { key: 'Name', color: 'lightgreen', group: 'Class2' },
+      { key: 'Attributes2', color: 'lightgreen', isGroup: true, group: 'Class2'},
+      { key: 'Attribute 1', color: 'lightgreen', group: 'Attributes2' },
+      { key: 'Attribute 2', color: 'lightgreen', group: 'Attributes2' },
+      { key: 'Attribute 3', color: 'lightgreen', group: 'Attributes2' },
+      { key: 'Attribute 4', color: 'lightgreen', group: 'Attributes2' }
+    ],
+    [
+      { from: 'Class1', to: 'Class1', toArrow: "Line Fork"},
+      { from: 'Class1', to: 'Class2', toArrow: "Line Fork"}
+    ]
+  );
+
+  // public setSelectedNode(node: null) {
+  //   this.selectedNode = node;
+  // }
+
+  public createClass() {
+    this.model.startTransaction("make new node");
+    this.model.addNodeData({ key: 'Class3', isGroup: true});
+    this.model.addLinkData({ from: 'Class1', to: 'Class3', toArrow: "Line Fork"})
+    this.model.commitTransaction("make new node");
+
+  }
+  
 
   onButtonClick() {
     console.log('Button clicked!');
