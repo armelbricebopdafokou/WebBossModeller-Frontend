@@ -20,6 +20,7 @@ import * as go from 'gojs';
     MatSidenavModule,
     HeaderComponent,
     RouterLink,
+    RouterLink,
     RouterLinkActive, SideComponent, InspectorComponent,
     MatTooltipModule // Hinzufügen des MatTooltipModule
   ],
