@@ -70,7 +70,6 @@ export class DrawScreenComponent {
     this.model.addNodeData({ key: 'Attribute 2', color: 'lightgreen', group: 'Attributes3' });
     this.model.addLinkData({ from: 'Class1', to: 'Class3', toArrow: "Line Fork"});
     this.model.commitTransaction("make new node");
-
   }
   
 
