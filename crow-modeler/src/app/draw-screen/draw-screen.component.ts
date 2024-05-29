@@ -65,7 +65,10 @@ export class DrawScreenComponent {
   public createClass() {
     this.model.startTransaction("make new node");
     this.model.addNodeData({ key: 'Class3', isGroup: true});
-    this.model.addLinkData({ from: 'Class1', to: 'Class3', toArrow: "Line Fork"})
+    this.model.addNodeData({ key: 'Attributes3', color: 'lightgreen', isGroup: true, group: 'Class3'});
+    this.model.addNodeData({ key: 'Attribute 1', color: 'lightgreen', group: 'Attributes3' });
+    this.model.addNodeData({ key: 'Attribute 2', color: 'lightgreen', group: 'Attributes3' });
+    this.model.addLinkData({ from: 'Class1', to: 'Class3', toArrow: "Line Fork"});
     this.model.commitTransaction("make new node");
 
   }
