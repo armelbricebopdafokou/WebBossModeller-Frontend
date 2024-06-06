@@ -58,7 +58,7 @@ export class GojsDiagramComponent implements OnInit {
 
     this.diagram.nodeTemplate =
       $(go.Node, "Auto",
-        $(go.Shape, "RoundedRectangle", { strokeWidth: 0 },
+        $(go.Shape, "Rectangle", { strokeWidth: 0 },
           new go.Binding('fill', 'color')),
         $(go.TextBlock,
           { margin: 5, editable: false },
@@ -68,7 +68,7 @@ export class GojsDiagramComponent implements OnInit {
     this.diagram.groupTemplate =
       $(go.Group, "Vertical",
         $(go.Panel, "Auto",
-          $(go.Shape, "RoundedRectangle",  // surrounds the Placeholder
+          $(go.Shape, "Rectangle",  // surrounds the Placeholder
             {
               parameter1: 14,
               fill: "rgba(128,128,128,0.33)"
@@ -82,7 +82,12 @@ export class GojsDiagramComponent implements OnInit {
       );
 
     this.diagram.linkTemplate =
-      new go.Link()
+      new go.Link({
+        routing: go.Routing.AvoidsNodes,
+        reshapable: true,
+        resegmentable: true,
+        // relinkableFrom: true, relinkableTo: true, toShortLength: 2
+      })
         .add(
           new go.Shape({ strokeWidth: 1, stroke: 'grey' }),
           new go.Shape({ toArrow: "Fork" }),
