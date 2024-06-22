@@ -17,7 +17,26 @@ describe('LoginScreenComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('form invalid when empty', ()=>{
+    expect(component.loginForm.valid).toBeFalsy();
   });
+
+  component!.loginForm.controls['emailCtrl'].setValue('test@exemple.c');
+  it('Email field has incorrect format', ()=>{
+    let errors = {} as any;
+    errors = component!.loginForm.controls['emailCtrl'].errors || {}
+    expect(errors['pattern']).toBeTruthy();
+  })
+  component!.loginForm.controls['passwordCtrl'].setValue('wa$Test95#');
+
+  it('The password length is correct', ()=>{
+    let errors = {} as any;
+    errors = component!.loginForm.controls['passwordCtrl'].errors || {}
+    expect(errors['minlength']).toBeFalsy();
+  })
+
+  component!.loginForm.controls['emailCtrl'].setValue('test@exemple.de');
+  it('Email field is valid', ()=>{
+    expect(component!.loginForm.controls['emailCtrl'].valid).toBeTruthy();
+  })
 });
