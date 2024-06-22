@@ -72,6 +72,9 @@ export class DrawScreenComponent {
     this.model.commitTransaction("make new node");
   }
   
+  toJson(){
+    console.log(this.model.toJson())
+  }
 
   onButtonClick() {
     console.log('Button clicked!');
