@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DrawScreenComponent } from './draw-screen.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterModule } from '@angular/router';
 
 describe('DrawScreenComponent', () => {
   let component: DrawScreenComponent;
@@ -8,7 +10,7 @@ describe('DrawScreenComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DrawScreenComponent]
+      imports: [DrawScreenComponent,BrowserAnimationsModule, RouterModule.forRoot([])]
     })
     .compileComponents();
     

@@ -19,9 +19,7 @@ import * as go from 'gojs';
     GojsDiagramComponent,
     MatSidenavModule,
     HeaderComponent,
-    RouterLink,
-    RouterLink,
-    RouterLinkActive, SideComponent, InspectorComponent,
+  SideComponent, InspectorComponent,
     MatTooltipModule // Hinzufügen des MatTooltipModule
   ],
   templateUrl: './draw-screen.component.html',

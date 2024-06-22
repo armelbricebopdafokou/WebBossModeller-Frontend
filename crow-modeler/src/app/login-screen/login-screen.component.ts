@@ -40,7 +40,7 @@ export class LoginScreenComponent {
   })
   hide = true;
 
-  login$!: Observable<User>;
+  //login$!: Observable<User>;
 
   constructor(service: UserService){
 
@@ -53,6 +53,6 @@ export class LoginScreenComponent {
     return this.loginForm.get('passwordCtrl')!;
   }
   submitForm(){
-
+      console.log(this.loginForm.value)
   }
 }
