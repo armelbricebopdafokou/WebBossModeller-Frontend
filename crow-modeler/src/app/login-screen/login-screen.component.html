@@ -1,23 +1,25 @@
 <body>
-    <mat-card class="primary-container main-card">
-        <mat-card-content>
-            <h1>Wilkommen im CROW Modeller!</h1>
-            <p>Bitte geben Sie ihre E-Mail und ihr Passwort ein, um sich anzumelden-</p>
-                <mat-form-field class="mat-form-field light">
-                    <mat-label>E-mail</mat-label>
-                    <input matInput>
-                </mat-form-field>
-                <mat-form-field class="mat-form-field light">
-                    <mat-label>Password</mat-label>
-                    <input matInput [type]="hide ? 'password' : 'text'">
-                    <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
-                    <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-                    </button>
-                </mat-form-field>
-        </mat-card-content>
-        <div class="buttons light">
-            <button class="primary light" routerLink="/draw-screen" routerLinkActive="active" ariaCurrentWhenActive="page" mat-raised-button mat-raised-button>Login</button>
-        </div>
-    </mat-card>
+  <mat-card class="primary-container main-card">
+    <mat-card-content>
+      <h1>Wilkommen im CROW Modeller!</h1>
+      <p>Bitte geben Sie ihre E-Mail und ihr Passwort ein, um sich anzumelden-</p>
+      <mat-form-field class="mat-form-field light">
+        <mat-label>E-mail</mat-label>
+        <input matInput>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field light">
+        <mat-label>Password</mat-label>
+        <input matInput [type]="hide ? 'password' : 'text'">
+        <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+          <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+      </mat-form-field>
+    </mat-card-content>
+    <div class="buttons light">
+      <button class="primary light" routerLink="/draw-screen" routerLinkActive="active" ariaCurrentWhenActive="page" mat-raised-button>Login</button>
+    </div>
+    <div class="buttons light">
+      <button class="primary light" routerLink="/register-page" routerLinkActive="active" ariaCurrentWhenActive="page" mat-raised-button>Registrieren </button>
+    </div>
+  </mat-card>
 </body>
-  

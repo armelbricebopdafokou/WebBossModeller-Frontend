@@ -1,53 +1,54 @@
 <app-header></app-header>
+
+
 <div class="content-wrapper">
-<mat-sidenav-container class="container">
-  <mat-sidenav #sidenav mode="side" [(opened)]="opened" (opened)="events.push('open!')"
-               (closed)="events.push('close!')" role="toolbar" class="custom-sidenav">
-    <nav>
-      <ul class="side-menu-icons button-list">
-        <li>
-          <button matTooltip="Tabelle erstellen" (click)="this.createClass()" class="icon-button">
-            <img src="../assets/img/bearbeiten-alt.png" alt="Icon 1">
-          </button>
-        </li>
-        <li>
-          <button matTooltip="Tabelle bearbeiten" (click)="onButtonClick()"  class="icon-button">
-            <img src="../assets/img/tisch.png" alt="Icon 2">
-          </button>
-        </li>
-        <li>
-          <button matTooltip="Relationship erstellen" (click)="onButtonClick()" title="" class="icon-button">
-            <img src="../assets/img/quadrat-plus.png" alt="Icon 3">
-          </button>
-        </li>
-        <li>
-          <button matTooltip="Relationship bearbeiten" (click)="onButtonClick()" title="Relationship bearbeiten" class="icon-button">
-            <img src="../assets/img/bleistift.png" alt="Icon 4">
-          </button>
-        </li>
-        <li>
-          <button matTooltip="Kommentare erstellen" (click)="onButtonClick()" title="" class="icon-button">
-            <img src="../assets/img/kommentar.png" alt="Icon 5">
-          </button>
-        </li>
-        <li>
-          <button matTooltip="Elemente entfernen" (click)="onButtonClick()" title="Elemente entfernen" class="icon-button">
-            <img src="../assets/img/quadrat-minus.png" alt="Icon 6">
-          </button>
-        </li>
-      </ul>
-    </nav>
-  </mat-sidenav>
-  <mat-sidenav-content>
-    <p>
-      <button mat-button (click)="sidenav.toggle()">Seitenmenü</button>
-    </p>
-    <app-gojs-diagram [model]="model" (nodeClicked)='setSelectedNode($event)'></app-gojs-diagram>
-  </mat-sidenav-content>
-</mat-sidenav-container>
-<div class="inspector">inspector
-  <input type="text" [(ngModel)]="text">
-  <p>{{text}}</p>
-  <app-inspector></app-inspector>
-</div>
+  <mat-sidenav-container class="container">
+    <mat-sidenav #sidenav mode="side" [(opened)]="opened" (opened)="events.push('open!')"
+                 (closed)="events.push('close!')" role="toolbar" class="custom-sidenav">
+      <nav>
+        <ul class="side-menu-icons button-list">
+          <li>
+            <button matTooltip="Tabelle erstellen" (click)="this.createClass()" class="icon-button">
+              <img src="../assets/img/bearbeiten-alt.png" alt="Icon 1">
+            </button>
+          </li>
+          <li>
+            <button matTooltip="Tabelle bearbeiten" (click)="this.toJson()" class="icon-button">
+              <img src="../assets/img/tisch.png" alt="Icon 2">
+            </button>
+          </li>
+          <li>
+            <button matTooltip="Relationship erstellen" (click)="onButtonClick()" title="" class="icon-button">
+              <img src="../assets/img/quadrat-plus.png" alt="Icon 3">
+            </button>
+          </li>
+          <li>
+            <button matTooltip="Relationship bearbeiten" (click)="onButtonClick()" title="Relationship bearbeiten" class="icon-button">
+              <img src="../assets/img/bleistift.png" alt="Icon 4">
+            </button>
+          </li>
+          <li>
+            <button matTooltip="Kommentare erstellen" (click)="onButtonClick()" title="" class="icon-button">
+              <img src="../assets/img/kommentar.png" alt="Icon 5">
+            </button>
+          </li>
+          <li>
+            <button matTooltip="Elemente entfernen" (click)="onButtonClick()" title="Elemente entfernen" class="icon-button">
+              <img src="../assets/img/quadrat-minus.png" alt="Icon 6">
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <p>
+        <button mat-button (click)="sidenav.toggle()">Seitenmenü</button>
+      </p>
+      <app-gojs-diagram [model]="model"></app-gojs-diagram>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+  <div class="inspector">
+    inspector
+    <app-inspector></app-inspector>
+  </div>
 </div>

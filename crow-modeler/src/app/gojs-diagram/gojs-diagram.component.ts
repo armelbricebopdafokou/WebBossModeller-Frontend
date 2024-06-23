@@ -23,87 +23,105 @@ export class GojsDiagramComponent implements OnInit {
   @Output()
   public nodeClicked = new EventEmitter();
 
-  constructor() {}
+  constructor() { }
 
   ngOnInit(): void {
     // this.initDiagram();
   }
 
-  ngAfterViewInit(){
-    this.diagram = $(go.Diagram, this.diagramDiv.nativeElement)
+  ngAfterViewInit() {
+    this.diagram = $(go.Diagram, this.diagramDiv.nativeElement, {
+      initialContentAlignment: go.Spot.Center,
+      'undoManager.isEnabled': true
+    });
 
-     // model aus dem Input decorator
+    // model aus dem Input decorator
     this.diagram.model = this.model;
 
     this.diagram.addDiagramListener('ChangedSelection', (e) => {
       const node = this.diagram.selection.first();
       this.nodeClicked.emit(node);
     });
+    this.initDiagram();
   }
 
-  
 
-//   initDiagram(): void {
-  
-//     const $ = go.GraphObject.make;
 
-//     const diagram = $(go.Diagram, this.diagramDiv.nativeElement, {
-//       initialContentAlignment: go.Spot.Center,
-//       'undoManager.isEnabled': true
-//     });
+  initDiagram(): void {
 
-//     diagram.nodeTemplate = $(
-//       go.Node,
-//       'Auto',
-//       $(go.Shape, 'RoundedRectangle', { strokeWidth: 0 },
-//         new go.Binding('fill', 'color')),
-//       $(go.TextBlock,
-//         { margin: 8, editable: true },
-//         new go.Binding('text', 'key'))
-//     );
+    const $ = go.GraphObject.make;
 
-//     diagram.groupTemplate =
-//     $(go.Group, "Vertical",
-//       $(go.Panel, "Auto",
-//         $(go.Shape, "RoundedRectangle",  // surrounds the Placeholder
-//           { parameter1: 14,
-//             fill: "rgba(128,128,128,0.33)" }),
-//         $(go.Placeholder,    // represents the area of all member parts,
-//           { padding: 5})  // with some extra padding around them
-//       ),
-//       $(go.TextBlock,         // group title
-//         { alignment: go.Spot.Right, font: "Bold 12pt Sans-Serif" },
-//         new go.Binding("text", "key"))
-//     );
+    // const diagram = $(go.Diagram, this.diagramDiv.nativeElement, {
+    //   initialContentAlignment: go.Spot.Center,
+    //   'undoManager.isEnabled': true
+    // });
 
-//     diagram.model = new go.GraphLinksModel(
-//       [
-//         { key: 'Alpha', color: 'lightgreen' },
-//         { key: 'Beta', color: 'lightgreen' },
-//         { key: 'Gamma', color: 'lightgreen' },
-//         { key: 'Delta', color: 'lightgreen' },
-//         { key: 'Class1', isGroup: true},
-//         { key: 'Name', color: 'lightgreen', group: 'Class1' },
-//         { key: 'Attributes', color: 'lightgreen', isGroup: true, group: 'Class1'},
-//         { key: 'Attribute 1', color: 'lightgreen', group: 'Attributes' },
-//         { key: 'Attribute 2', color: 'lightgreen', group: 'Attributes' }
-//       ],
-//       [
-//         { from: 'Alpha', to: 'Beta' },
-//         { from: 'Alpha', to: 'Gamma' },
-//         { from: 'Beta', to: 'Beta' },
-//         { from: 'Gamma', to: 'Delta' },
-//         { from: 'Delta', to: 'Alpha' },
-//         { from: 'Alpha', to: 'Class1', toArrow: "Line Fork"}
-//       ]
-//     );
-//   }
+    this.diagram.nodeTemplate =
+      $(go.Node, "Auto",
+        $(go.Shape, "Rectangle", { strokeWidth: 0 },
+          new go.Binding('fill', 'color')),
+        $(go.TextBlock,
+          { margin: 5, editable: false },
+          new go.Binding('text', 'key'))
+      );
+
+    this.diagram.groupTemplate =
+      $(go.Group, "Vertical",
+        $(go.Panel, "Auto",
+          $(go.Shape, "Rectangle",  // surrounds the Placeholder
+            {
+              parameter1: 14,
+              fill: "rgba(128,128,128,0.33)"
+            }),
+          $(go.Placeholder,    // represents the area of all member parts,
+            { padding: 5 })  // with some extra padding around them
+        ),
+        $(go.TextBlock,         // group title
+          { alignment: go.Spot.Right, font: "Bold 12pt Sans-Serif" },
+          new go.Binding("text", "key"))
+      );
+
+    this.diagram.linkTemplate =
+      new go.Link({
+        routing: go.Routing.AvoidsNodes,
+        reshapable: true,
+        resegmentable: true,
+        // relinkableFrom: true, relinkableTo: true, toShortLength: 2
+      })
+        .add(
+          new go.Shape({ strokeWidth: 1, stroke: 'grey' }),
+          new go.Shape({ toArrow: "Fork" }),
+          new go.Shape({ fromArrow: "BackwardFork" })
+        );
+
+    //     diagram.model = new go.GraphLinksModel(
+    //       [
+    //         { key: 'Alpha', color: 'lightgreen' },
+    //         { key: 'Beta', color: 'lightgreen' },
+    //         { key: 'Gamma', color: 'lightgreen' },
+    //         { key: 'Delta', color: 'lightgreen' },
+    //         { key: 'Class1', isGroup: true},
+    //         { key: 'Name', color: 'lightgreen', group: 'Class1' },
+    //         { key: 'Attributes', color: 'lightgreen', isGroup: true, group: 'Class1'},
+    //         { key: 'Attribute 1', color: 'lightgreen', group: 'Attributes' },
+    //         { key: 'Attribute 2', color: 'lightgreen', group: 'Attributes' }
+    //       ],
+    //       [
+    //         { from: 'Alpha', to: 'Beta' },
+    //         { from: 'Alpha', to: 'Gamma' },
+    //         { from: 'Beta', to: 'Beta' },
+    //         { from: 'Gamma', to: 'Delta' },
+    //         { from: 'Delta', to: 'Alpha' },
+    //         { from: 'Alpha', to: 'Class1', toArrow: "Line Fork"}
+    //       ]
+    // );
+  }
 
   getTime(): number {
-  return new Date().getTime();
-}
+    return new Date().getTime();
+  }
 
-  createClassNode(): void{
+  createClassNode(): void {
     alert(this.getTime());
     // diagram.startTransaction("addNode");
     // var node = {
