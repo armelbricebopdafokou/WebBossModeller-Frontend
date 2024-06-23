@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input,  OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import * as go from 'gojs';
 
 @Component({
   selector: 'app-inspector',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './inspector.component.html',
   styleUrl: './inspector.component.css'
 })

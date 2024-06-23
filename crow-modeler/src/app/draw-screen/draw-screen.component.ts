@@ -11,6 +11,7 @@ import { InspectorComponent } from '../inspector/inspector.component';
 
 
 import * as go from 'gojs';
+import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-draw-screen',
   standalone: true,
@@ -21,6 +22,7 @@ import * as go from 'gojs';
     HeaderComponent,
     RouterLink,
     RouterLinkActive, SideComponent, InspectorComponent,
+    FormsModule,
     MatTooltipModule // Hinzufügen des MatTooltipModule
   ],
   templateUrl: './draw-screen.component.html',
@@ -35,16 +37,18 @@ export class DrawScreenComponent {
 
   public selectedNode = null;
 
+  text: string = 'color here';
+
   // Development Model
   public model: go.GraphLinksModel = new go.GraphLinksModel(
     [
-      { key: 'Class1', isGroup: true},
+      { key: 'Class1', color: 'red', isGroup: true},
       { key: 'Name', color: 'lightgreen', group: 'Class1' },
       { key: 'Attributes1', color: 'lightgreen', isGroup: true, group: 'Class1'},
       { key: 'Attribute 1', color: 'lightgreen', group: 'Attributes1' },
       { key: 'Attribute 2', color: 'lightgreen', group: 'Attributes1' },
-      { key: 'Class2', isGroup: true},
-      { key: 'Name', color: 'lightgreen', group: 'Class2' },
+      { key: 'Class2', color: 'blue', isGroup: true},
+      { key: 'Name', color: 'lime', group: 'Class2' },
       { key: 'Attributes2', color: 'lightgreen', isGroup: true, group: 'Class2'},
       { key: 'Attribute 1', color: 'lightgreen', group: 'Attributes2' },
       { key: 'Attribute 2', color: 'lightgreen', group: 'Attributes2' },
@@ -57,9 +61,9 @@ export class DrawScreenComponent {
     ]
   );
 
-  // public setSelectedNode(node: null) {
-  //   this.selectedNode = node;
-  // }
+  public setSelectedNode(node: any) {
+    this.selectedNode = node;
+  }
 
   public createClass() {
     this.model.startTransaction("make new node");

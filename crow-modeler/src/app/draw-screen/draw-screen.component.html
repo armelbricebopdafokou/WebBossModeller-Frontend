@@ -6,7 +6,7 @@
     <nav>
       <ul class="side-menu-icons button-list">
         <li>
-          <button matTooltip="Tabelle erstellen" (click)="onButtonClick()" class="icon-button">
+          <button matTooltip="Tabelle erstellen" (click)="this.createClass()" class="icon-button">
             <img src="../assets/img/bearbeiten-alt.png" alt="Icon 1">
           </button>
         </li>
@@ -41,12 +41,13 @@
   <mat-sidenav-content>
     <p>
       <button mat-button (click)="sidenav.toggle()">Seitenmenü</button>
-      <button mat-button (click)="this.createClass()">Class create test</button>
     </p>
-    <app-gojs-diagram [model]="model"></app-gojs-diagram>
+    <app-gojs-diagram [model]="model" (nodeClicked)='setSelectedNode($event)'></app-gojs-diagram>
   </mat-sidenav-content>
 </mat-sidenav-container>
 <div class="inspector">inspector
+  <input type="text" [(ngModel)]="text">
+  <p>{{text}}</p>
   <app-inspector></app-inspector>
 </div>
 </div>
