@@ -16,6 +16,8 @@ export class GojsDiagramComponent implements OnInit {
   @ViewChild('diagramDiv', { static: true }) diagramDiv!: ElementRef;
 
   public diagram!: go.Diagram;
+  public myPalette!: go.Palette;
+  //public myInspector!: Inspector;
 
   @Input()
   public model!: go.Model;
@@ -35,7 +37,7 @@ export class GojsDiagramComponent implements OnInit {
       layout: $(go.ForceDirectedLayout),
       'draggingTool.dragsLink': true,
       'linkingTool.isUnconnectedLinkValid': true,
-      'draggingTool.gridSnapCellSize': new go.Size(10,1),
+      'draggingTool.gridSnapCellSize': new go.Size(10, 1),
       'draggingTool.isGridSnapEnabled': true,
       'undoManager.isEnabled': true,
     });
@@ -46,120 +48,160 @@ export class GojsDiagramComponent implements OnInit {
     // Template für einzelne Attribute
     const itemTempl = $(go.Panel,
       'Horizontal',
-      { margin: new go.Margin(2,0) },
+      { margin: new go.Margin(2, 0) },
       $(go.TextBlock,
         { font: '14px sans-serif', stroke: 'black', editable: true },
         new go.Binding('text', 'name'),
         new go.Binding('font', 'iskey', (k) => (k ? 'italic 14px sans-serif' : '14px sans-serif'))
       ),
-      $('CheckBox', 'choice1',
-        {
-          alignment: go.Spot.Right
-        }
-      ) //for unique
+      // $('CheckBox', 'choice1',
+      //   {
+      //     alignment: go.Spot.Right
+      //   }
+      // ) //for unique
     )
 
-    this.diagram.nodeTemplate = 
-    $(go.Node, 'Auto',
-      {
-        selectionAdorned: true,
-        layoutConditions: go.LayoutConditions.Standard & ~go.LayoutConditions.NodeSized,
-        fromSpot: go.Spot.AllSides,
-        toSpot: go.Spot.AllSides
-      },
-      new go.Binding('location','location').makeTwoWay(),
-      new go.Binding('desiredSize', 'visible', (v) => new go.Size(NaN,NaN)).ofObject('LIST'),
-      $(go.Shape, 'Rectangle',
+    this.diagram.nodeTemplate =
+      $(go.Node, 'Auto',
         {
-          fill: 'lightgreen',
-          portId: '',
-          cursor: 'pointer', // the Shape is the port, not the whole Node
-          // allow all kinds of links from and to this port
-          fromLinkable: true,
-          fromLinkableSelfNode: true,
-          fromLinkableDuplicates: true,
-          toLinkable: true,
-          toLinkableSelfNode: true,
-          toLinkableDuplicates: true,
-        }
-      ),
-      $(go.Panel, 'Table',
-        {
-          margin: 8
+          selectionAdorned: true,
+          layoutConditions: go.LayoutConditions.Standard & ~go.LayoutConditions.NodeSized,
+          fromSpot: go.Spot.AllSides,
+          toSpot: go.Spot.AllSides
         },
-        $(go.RowColumnDefinition, { row: 0, sizing: go.Sizing.None}),
-        $(go.TextBlock,
+        new go.Binding('location', 'location').makeTwoWay(),
+        new go.Binding('desiredSize', 'visible', (v) => new go.Size(NaN, NaN)).ofObject('LIST'),
+        $(go.Shape, 'Rectangle',
           {
-            stroke: 'black',
-            row: 0,
-            alignment: go.Spot.Center,
-            margin: new go.Margin(0, 24, 0, 2),
-            font: 'bold 18px sans-serif',
-            editable: true
-          },
-          new go.Binding('text', 'className')
-        ),
-        $('PanelExpanderButton', 'LIST', 
-          {
-            row:0, alignment: go.Spot.TopRight
+            fill: 'lightgreen',
+            portId: '',
+            cursor: 'pointer', // the Shape is the port, not the whole Node
+            // allow all kinds of links from and to this port
+            fromLinkable: true,
+            fromLinkableSelfNode: true,
+            fromLinkableDuplicates: true,
+            toLinkable: true,
+            toLinkableSelfNode: true,
+            toLinkableDuplicates: true,
           }
         ),
         $(go.Panel, 'Table',
           {
-            name: 'LIST',
-            row: 1
+            margin: 8
           },
-          $(go.TextBlock, 'Attributes',
+          $(go.RowColumnDefinition, { row: 0, sizing: go.Sizing.None }),
+          $(go.TextBlock,
             {
+              stroke: 'black',
               row: 0,
-              margin: new go.Margin(3, 24, 3, 2)
+              alignment: go.Spot.Center,
+              margin: new go.Margin(0, 24, 0, 2),
+              font: 'bold 18px sans-serif',
+              editable: true
             },
+            new go.Binding('text', 'className')
           ),
-          $('PanelExpanderButton', 'NonInherited', {row: 0, alignment: go.Spot.Right}),
-          $(go.Panel, 'Vertical',
+          $('PanelExpanderButton', 'LIST',
             {
-              row: 1, //Anordnung im Panel 'Label'
-              name: 'NonInherited',
-              alignment: go.Spot.TopLeft,
-              defaultAlignment: go.Spot.TopLeft,
-              itemTemplate: itemTempl
+              row: 0, alignment: go.Spot.TopRight
+            }
+          ),
+          $(go.Panel, 'Table',
+            {
+              name: 'LIST',
+              row: 1
             },
-            new go.Binding('itemArray', 'items')
+            $(go.TextBlock, 'Attributes',
+              {
+                row: 0,
+                margin: new go.Margin(3, 24, 3, 2)
+              },
+            ),
+            $('PanelExpanderButton', 'NonInherited', { row: 0, alignment: go.Spot.Right }),
+            $(go.Panel, 'Vertical',
+              {
+                row: 1, //Anordnung im Panel 'Label'
+                name: 'NonInherited',
+                alignment: go.Spot.TopLeft,
+                defaultAlignment: go.Spot.TopLeft,
+                itemTemplate: itemTempl
+              },
+              new go.Binding('itemArray', 'items')
+            )
           )
         )
-      )
       );
 
-      this.diagram.linkTemplate = $(go.Link,
+    this.myPalette = new go.Palette('myPaletteDiv', {
+      nodeTemplate: this.diagram.nodeTemplate,
+      contentAlignment: go.Spot.Center,
+      layout: $(go.GridLayout, { wrappingColumn: 1, cellSize: new go.Size(2, 2) }),
+      // ModelChanged: (e) => {
+      //   // just for demonstration purposes,
+      //   if (e.isTransactionFinished) {
+      //     // show the model data in the page's TextArea
+      //     document.getElementById('mySavedPaletteModel').textContent = e.model.toJson();
+      //   }
+      // },
+    });
+
+    this.myPalette.model.nodeDataArray = [
+      {
+        key: 'ClassKey',
+        className: 'Name',
+        location: new go.Point(0, 0),
+        items: [
+          { name: 'NameID', iskey: true, figure: 'Decision  ', color: 'purple' },
+          { name: 'Attribut', iskey: false, figure: 'Hexagon', color: 'blue' }
+        ],
+        inheritedItems: []
+      }
+    ];
+
+    // Muss extended werden
+    // var myInspector = new Inspector('myInspectorDiv', myDiagram, {
+    //   // uncomment this line to only inspect the named properties below instead of all properties on each object:
+    //   // includesOwnProperties: false,
+    //   properties: {
+    //     text: {},
+    //     // key would be automatically added for nodes, but we want to declare it read-only also:
+    //     key: { readOnly: true, show: Inspector.showIfPresent },
+    //     // color would be automatically added for nodes, but we want to declare it a color also:
+    //     color: { type: 'color' },
+    //     figure: {},
+    //   },
+    // });
+
+    this.diagram.linkTemplate = $(go.Link,
+      {
+        selectionAdorned: true,
+        reshapable: true,
+        routing: go.Routing.AvoidsNodes,
+        fromSpot: go.Spot.AllSides,
+        toSpot: go.Spot.AllSides,
+        relinkableFrom: true,
+        relinkableTo: true,
+      },
+      $(go.Shape, { strokeDashOffset: 1, strokeWidth: 2, stroke: 'grey' }),
+      $(go.Shape,
         {
-          selectionAdorned:true,
-          reshapable: true,
-          routing: go.Routing.AvoidsNodes,
-          fromSpot: go.Spot.AllSides,
-          toSpot: go.Spot.AllSides,
-          relinkableFrom: true,
-          relinkableTo: true,
+          strokeWidth: 1.2,
+          scale: 2,
+          fill: 'white',
+          toArrow: 'CircleFork'
         },
-        $(go.Shape,{ strokeDashOffset: 1, strokeWidth: 2, stroke: 'grey' }),
-        $(go.Shape, 
-          {
-            strokeWidth: 1.2,
-            scale: 2,
-            fill: 'white',
-            toArrow: 'CircleFork'
-          },
-          new go.Binding('toArrow', 'toArrow')
-        ),
-        $(go.Shape, 
-          {
-            strokeWidth: 1.2,
-            scale: 2,
-            fill: 'white',
-            fromArrow: 'BackwardCircleFork'
-          },
-          new go.Binding('fromArrow', 'fromArrow')
-        )
+        new go.Binding('toArrow', 'toArrow')
+      ),
+      $(go.Shape,
+        {
+          strokeWidth: 1.2,
+          scale: 2,
+          fill: 'white',
+          fromArrow: 'BackwardCircleFork'
+        },
+        new go.Binding('fromArrow', 'fromArrow')
       )
+    );
 
     this.diagram.addDiagramListener('ChangedSelection', (e) => {
       const node = this.diagram.selection.first();
