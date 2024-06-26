@@ -37,6 +37,9 @@
               <img src="../assets/img/quadrat-minus.png" alt="Icon 6">
             </button>
           </li>
+          <li>
+            <button mat-raised-button (click)="openDialog()">Create Node Group</button>
+          </li>
         </ul>
       </nav>
     </mat-sidenav>
@@ -44,11 +47,20 @@
       <p>
         <button mat-button (click)="sidenav.toggle()">Seitenmenü</button>
       </p>
-      <app-gojs-diagram [model]="model"></app-gojs-diagram>
+      <app-gojs-diagram [model]="model" (nodeClicked)='setSelectedNode($event)'></app-gojs-diagram>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+  <!-- <div class="inspector">inspector
+    <input type="text" [(ngModel)]="text">
+    <p>{{text}}</p>
+    <app-inspector></app-inspector>
+  </div> -->
+  
+      <!-- <app-gojs-diagram [model]="model"></app-gojs-diagram>
     </mat-sidenav-content>
   </mat-sidenav-container>
   <div class="inspector">
     inspector
     <app-inspector></app-inspector>
-  </div>
+  </div> -->
 </div>
