@@ -82,7 +82,7 @@ header {
   display: inline-block;
   
 }
-
+/*
 .menu-button {
   background-color: #DDE4E1;
   color: black;
@@ -101,13 +101,13 @@ header {
   border-radius: 5px;
   display: flex;
   align-items: center; /* Zentriere das Icon vertikal */
-}
+/*}
 
   .menu-button img {
     width: 24px; /* Passe die Breite des Icons an */
-    height: 24px; /* Passe die Höhe des Icons an */
-    margin-right: 5px; /* Füge einen kleinen Abstand zwischen dem Icon und dem Text hinzu */
-  }
+   /* height: 24px; /* Passe die Höhe des Icons an */
+   /* margin-right: 5px; /* Füge einen kleinen Abstand zwischen dem Icon und dem Text hinzu */
+  /*}
 
 .menu-content {
   display: none;
@@ -133,3 +133,4 @@ header {
 .menu:hover .menu-content {
   display: block;
 }
+*/

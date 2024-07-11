@@ -44,34 +44,21 @@
 
 
 
-
-.myDiagramDiv {
-    width: 800px;
-    height: 300px;
-    border: 1px solid black;
-  }
-.example-container {
-  height: 100%;
+mat-drawer-container{
+  height: 90vh;
+}
+.btn-link{
+  border-radius: 0;
+  border: 1px solid gray;
+  width: 100%;
 }
 
 .custom-sidenav {
   background-color: #DDE4E1;
-  width: 80px !important; /* Legt die Breite des Sidenavs auf fest */
+  width: 12%; /* Legt die Breite des Sidenavs auf fest */
 }
 
 
-.side-menu-icons {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-  .side-menu-icons li {
-    width: 100%; /* Stellt sicher, dass die Buttons die gesamte Breite einnehmen */
-  }
 
   .side-menu-icons button {
     background: none;
@@ -84,33 +71,14 @@
     text-align: left; /* Text und Inhalte im Button links ausrichten */
   }
 
-  .side-menu-icons img {
+  .btn-link img {
     width: 30px; /* Passe die Größe der Icons nach Bedarf an */
     height: 30px;
   }
 
-.button-list {
-  list-style-type: none;
-}
 
-  .button-list li {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-bottom: 5px;
+@media screen and (max-width:500px) {
+  .custom-sidenav {
+    width: 50%; /* Legt die Breite des Sidenavs auf fest */
   }
-
-  .button-list button {
-    border: none;
-    background: none;
-  }
-
-
-
-.container{
-  width: 90%;
-}
-
-.content-wrapper{
-  display: flex;
-  flex-direction: row;
 }
