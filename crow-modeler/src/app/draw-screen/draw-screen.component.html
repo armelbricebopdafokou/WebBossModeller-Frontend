@@ -2,7 +2,7 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col" style="padding: 0;">
-      <app-header></app-header>
+      <app-header ></app-header>
     </div>
   </div>
   <div class="row">
@@ -10,7 +10,7 @@
         <mat-drawer-container autosize>
           <mat-drawer #drawer  [mode]="(screenWidth > 840) ? 'side' : 'over'" [(opened)]="opened" (opened)="events.push('open!')"
                        (closed)="events.push('close!')" role="toolbar" class="custom-sidenav">
-            <mat-list style="font-size: 5px;">
+            <mat-list >
               <mat-list-item>
                 <mat-icon matListItemIcon>note</mat-icon>
                 <div matListItemTitle>Project1</div>
@@ -24,66 +24,72 @@
             </mat-list>
           </mat-drawer>
           <mat-drawer-content>
-            <div class="container">
+            <div class="container-fluid">
               <div class="row">
-                <div class="col-1">
-                  <button mat-icon-button (click)="drawer.toggle()">
-                    <mat-icon>menu</mat-icon>
-                  </button>
-                </div>
-                <div class="col-9">
-                  <div class="row">
-                    <div class="col">
-                      <ul class="nav justify-content-center">
-                        <li class="nav-item">
-                          <button class="btn btn-link" matTooltip="Tabelle erstellen" (click)="this.createClass()">
-                            <img src="../assets/img/bearbeiten-alt.png" alt="Icon 1">
-                          </button>
-                        </li>
-                        <li class="nav-item">
-                          <button matTooltip="Tabelle bearbeiten" (click)="this.toJson()" class="btn btn-link">
-                            <img src="../assets/img/tisch.png" alt="Icon 2">
-                          </button>
-                        </li>
-                        <li class="nav-item">
-                          <button matTooltip="Relationship erstellen" (click)="onButtonClick()" title="" class="btn btn-link">
-                            <img src="../assets/img/quadrat-plus.png" alt="Icon 3">
-                          </button>
-                        </li>
-                        <li class="nav-item">
-                          <button matTooltip="Relationship bearbeiten" (click)="onButtonClick()" title="Relationship bearbeiten" class="btn btn-link">
-                            <img src="../assets/img/bleistift.png" alt="Icon 4">
-                          </button>
-                        </li>
-                        <li class="nav-item">
-                          <button matTooltip="Kommentare erstellen" (click)="onButtonClick()" title="" class="btn btn-link">
-                            <img src="../assets/img/kommentar.png" alt="Icon 5">
-                          </button>
-                        </li>
-                        <li class="nav-item">
-                          <button matTooltip="Elemente entfernen" (click)="onButtonClick()" title="Elemente entfernen" class="btn btn-link">
-                            <img src="../assets/img/quadrat-minus.png" alt="Icon 6">
-                          </button>
-                        </li>
-                        <li class="nav-item">
-                          <button mat-raised-button (click)="openDialog()" class="btn btn-link">Create Node Group</button>
-                        </li>
-                      </ul>
+                <div class="col-10">
+                    <div class="row">
+                      <div class="col" style="padding: 0;">
+                        <nav class="navbar navbar-expand-lg sticky-top " id="navbarNav">
+                          <div class="container-fluid">
+                            <button mat-icon-button (click)="toggleDrawer(drawer)">
+                              <mat-icon>{{toggleIcon}}</mat-icon>
+                            </button>
+                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                              <span class="navbar-toggler-icon"></span>
+                            </button>
+                            <div class="collapse navbar-collapse" >
+                              <ul class="navbar-nav  me-auto mb-2 mb-lg-0 justify-content-center">
+                                <li class="nav-item">
+                                  <button class="btn btn-link" matTooltip="Tabelle erstellen" (click)="this.createClass()">
+                                    <img src="../assets/img/bearbeiten-alt.png" alt="Icon 1">
+                                  </button>
+                                </li>
+                                <li class="nav-item">
+                                  <button matTooltip="Tabelle bearbeiten" (click)="this.toJson()" class="btn btn-link">
+                                    <img src="../assets/img/tisch.png" alt="Icon 2">
+                                  </button>
+                                </li>
+                                <li class="nav-item">
+                                  <button matTooltip="Relationship erstellen" (click)="onButtonClick()" title="" class="btn btn-link">
+                                    <img src="../assets/img/quadrat-plus.png" alt="Icon 3">
+                                  </button>
+                                </li>
+                                <li class="nav-item">
+                                  <button matTooltip="Relationship bearbeiten" (click)="onButtonClick()" title="Relationship bearbeiten" class="btn btn-link">
+                                    <img src="../assets/img/bleistift.png" alt="Icon 4">
+                                  </button>
+                                </li>
+                                <li class="nav-item">
+                                  <button matTooltip="Kommentare erstellen" (click)="onButtonClick()" title="" class="btn btn-link">
+                                    <img src="../assets/img/kommentar.png" alt="Icon 5">
+                                  </button>
+                                </li>
+                                <li class="nav-item">
+                                  <button matTooltip="Elemente entfernen" (click)="onButtonClick()" title="Elemente entfernen" class="btn btn-link">
+                                    <img src="../assets/img/quadrat-minus.png" alt="Icon 6">
+                                  </button>
+                                </li>
+                                <li class="nav-item">
+                                  <button mat-button (click)="openDialog()" class="btn btn-link">Create Node Group</button>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </nav>
+                      </div>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="col">
-                      <app-gojs-diagram [model]="model" (nodeClicked)='setSelectedNode($event)'></app-gojs-diagram>
+                    <div class="row">
+                        <div class="col">
+                          <app-gojs-diagram [model]="model" (nodeClicked)='setSelectedNode($event)'></app-gojs-diagram>
+                        </div>
                     </div>
-                  </div>
-                  
                 </div>
                 <div class="col-2">
                   <app-inspector></app-inspector>
                 </div>
               </div>
             </div>
-           
+
           </mat-drawer-content>
         </mat-drawer-container>
         <!-- <div class="inspector">inspector

@@ -42,16 +42,18 @@
   --md-sys-color-surface-container-highest: #dde4e1;
 }
 
-
+#navbarNav{
+  border-bottom: .7px solid gray;
+  border-left: .7px solid gray;
+  border-right: .7px solid gray;
+  box-shadow: 0px 1px 1px gray;
+  background-color: var(--md-sys-color-primary) !important;
+}
 
 mat-drawer-container{
   height: 90vh;
 }
-.btn-link{
-  border-radius: 0;
-  border: 1px solid gray;
-  width: 100%;
-}
+
 
 .custom-sidenav {
   background-color: #DDE4E1;
@@ -80,5 +82,11 @@ mat-drawer-container{
 @media screen and (max-width:500px) {
   .custom-sidenav {
     width: 50%; /* Legt die Breite des Sidenavs auf fest */
+  }
+}
+
+@media screen and (max-width:840px) {
+  .custom-sidenav {
+    width: 30%; /* Legt die Breite des Sidenavs auf fest */
   }
 }

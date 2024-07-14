@@ -3,6 +3,7 @@ import { CreateClassDialogComponent } from '../create-class-dialog/create-class-
 import { GojsAngularModule } from 'gojs-angular';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import {MatListModule} from '@angular/material/list';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -30,6 +31,7 @@ import { FormsModule } from '@angular/forms';
     HeaderComponent,
  InspectorComponent,
     RouterLink,
+    MatButtonModule,
     MatListModule,
     MatFormFieldModule,
     MatIconModule,
@@ -50,7 +52,8 @@ export class DrawScreenComponent {
   opened: boolean = true;
   screenWidth: number =840;
   public selectedNode = null;
-
+  isHide=false;
+  toggleIcon='arrow_back'
   text: string = 'color here';
 
   // WIP not working dialog
@@ -60,6 +63,13 @@ export class DrawScreenComponent {
       // set screenWidth on screen size change
       this.screenWidth = window.innerWidth;
     };
+  }
+
+  toggleDrawer(drawer:any)
+  {
+    this.isHide=!this.isHide
+    drawer.toggle();
+    this.isHide==false? this.toggleIcon='arrow_back': this.toggleIcon='arrow_forward';
   }
 
   openDialog(): void {
