@@ -50,9 +50,10 @@ export class GojsDiagramComponent implements OnInit {
       'Horizontal',
       { margin: new go.Margin(2, 0) },
       $(go.TextBlock,
-        { font: '14px sans-serif', stroke: 'black', editable: true },
+        { font: '14px sans-serif', stroke: 'black', editable: true, isUnderline: false },
         new go.Binding('text', 'name'),
-        new go.Binding('font', 'iskey', (k) => (k ? 'italic 14px sans-serif' : '14px sans-serif'))
+        new go.Binding('font', 'iskey', (k) => (k ? 'italic 14px sans-serif' : '14px sans-serif')),
+        new go.Binding('isUnderline', 'iskey', (k) => (k ? true : false))
       ),
       // $('CheckBox', 'choice1',
       //   {
@@ -87,7 +88,7 @@ export class GojsDiagramComponent implements OnInit {
         ),
         $(go.Panel, 'Table',
           {
-            margin: 8
+            margin: 16
           },
           $(go.RowColumnDefinition, { row: 0, sizing: go.Sizing.None }),
           $(go.TextBlock,
@@ -106,10 +107,17 @@ export class GojsDiagramComponent implements OnInit {
               row: 0, alignment: go.Spot.TopRight
             }
           ),
+          new go.Shape('LineH',{
+            row: 1,
+            stroke: 'rgba(0, 0, 0, .60)',
+            strokeWidth: 2,
+            height: 1,
+            stretch: go.Stretch.Horizontal
+          }),
           $(go.Panel, 'Table',
             {
               name: 'LIST',
-              row: 1
+              row: 2
             },
             $(go.TextBlock, 'Attributes',
               {
@@ -120,7 +128,7 @@ export class GojsDiagramComponent implements OnInit {
             $('PanelExpanderButton', 'NonInherited', { row: 0, alignment: go.Spot.Right }),
             $(go.Panel, 'Vertical',
               {
-                row: 1, //Anordnung im Panel 'Label'
+                row: 2, //Anordnung im Panel 'Label'
                 name: 'NonInherited',
                 alignment: go.Spot.TopLeft,
                 defaultAlignment: go.Spot.TopLeft,
