@@ -106,7 +106,7 @@ export class GojsDiagramComponent implements OnInit {
             maxSize: new go.Size(20,20),
             visible: false
           },
-          new go.Binding('visible', 'isWeak', k => (k ? true : false))
+          new go.Binding('visible', 'isWeak', k => (k ? true : false)) //geometry to signal weak class
         ),
         $(go.Panel, 'Table',
           {
@@ -164,7 +164,7 @@ export class GojsDiagramComponent implements OnInit {
                 name: 'NonInherited',
                 alignment: go.Spot.TopLeft,
                 defaultAlignment: go.Spot.TopLeft,
-                itemTemplate: itemTempl,
+                itemTemplate: itemTempl
               },
               new go.Binding('itemArray', 'items')
             )
