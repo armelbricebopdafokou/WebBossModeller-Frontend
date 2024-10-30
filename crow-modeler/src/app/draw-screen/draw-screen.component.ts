@@ -45,9 +45,10 @@ export class DrawScreenComponent {
   // WIP not working dialog
   constructor(public dialog: MatDialog) {}
 
+  // Dialog window - to be deprecated if palette is accepted
   openDialog(): void {
     const dialogRef = this.dialog.open(CreateClassDialogComponent, {
-      width: '250px',
+      width: '850px',
       data: {value1: '', value2: '', checkboxValue: false}
     });
 

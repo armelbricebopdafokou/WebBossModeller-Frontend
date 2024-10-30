@@ -48,24 +48,38 @@ export class GojsDiagramComponent implements OnInit {
     // Template für einzelne Attribute
     const itemTempl = $(go.Panel,
       'Horizontal',
-      { margin: new go.Margin(2, 0) },
+      { 
+        margin: new go.Margin(2, 0)
+       },
       $(go.TextBlock,
         { font: '14px sans-serif', stroke: 'black', editable: true, isUnderline: false },
         new go.Binding('text', 'name'),
-        new go.Binding('font', 'iskey', (k) => (k ? 'italic 14px sans-serif' : '14px sans-serif')),
-        new go.Binding('isUnderline', 'iskey', (k) => (k ? true : false))
+        new go.Binding('font', 'choice1', (k) => (k ? 'italic 14px sans-serif' : '14px sans-serif')),
+        new go.Binding('isUnderline', 'choice1', (k) => (k ? true : false)),
+        new go.Binding('iskey', 'choice1', (k) => (k ? true : false))
       ),
-      // $('CheckBox', 'choice1',
-      //   {
-      //     alignment: go.Spot.Right
-      //   }
-      // ) //for unique
+      $('CheckBox', 'choice1',
+        {
+          alignment: go.Spot.Right
+        }
+      ), // primary key
+      $('CheckBox', 'choice2',
+        {
+          alignment: go.Spot.Right
+        }
+      ), // unique
+      $('CheckBox', 'choice3',
+        {
+          alignment: go.Spot.Right
+        }
+      ) // not null
     )
 
     this.diagram.nodeTemplate =
       $(go.Node, 'Auto',
         {
           selectionAdorned: true,
+          resizable: true,
           layoutConditions: go.LayoutConditions.Standard & ~go.LayoutConditions.NodeSized,
           fromSpot: go.Spot.AllSides,
           toSpot: go.Spot.AllSides
@@ -85,6 +99,14 @@ export class GojsDiagramComponent implements OnInit {
             toLinkableSelfNode: true,
             toLinkableDuplicates: true,
           }
+        ),
+        $(go.Shape, 'XLine',
+          {
+            alignment: go.Spot.TopLeft,
+            maxSize: new go.Size(20,20),
+            visible: false
+          },
+          new go.Binding('visible', 'isWeak', k => (k ? true : false))
         ),
         $(go.Panel, 'Table',
           {
@@ -119,20 +141,30 @@ export class GojsDiagramComponent implements OnInit {
               name: 'LIST',
               row: 2
             },
-            $(go.TextBlock, 'Attributes',
+            $(go.Panel, 'Horizontal',
               {
                 row: 0,
-                margin: new go.Margin(3, 24, 3, 2)
+                name: 'AttributeHeader'
               },
+              $(go.TextBlock, 'Attributes',
+                {
+                  row: 0,
+                  margin: new go.Margin(3, 24, 3, 2)
+                },
+              ), 
+              $(go.TextBlock, 'PK'), 
+              $(go.TextBlock, '| U |'), 
+              $(go.TextBlock, 'NN'),
+              $('PanelExpanderButton', 'NonInherited', { row: 0, alignment: go.Spot.Right }),
+
             ),
-            $('PanelExpanderButton', 'NonInherited', { row: 0, alignment: go.Spot.Right }),
             $(go.Panel, 'Vertical',
               {
                 row: 2, //Anordnung im Panel 'Label'
                 name: 'NonInherited',
                 alignment: go.Spot.TopLeft,
                 defaultAlignment: go.Spot.TopLeft,
-                itemTemplate: itemTempl
+                itemTemplate: itemTempl,
               },
               new go.Binding('itemArray', 'items')
             )
@@ -140,6 +172,35 @@ export class GojsDiagramComponent implements OnInit {
         )
       );
 
+    // define a custom resize adornment that has two resize handles if the group is expanded
+    // this.diagram.groupTemplateMap.get('Lane').resizeAdornmentTemplate = new go.Adornment('Spot')
+    //   .add(
+    //     new go.Placeholder(),
+    //     new go.Shape({
+    //       // for changing the length of a lane
+    //       alignment: go.Spot.Right,
+    //       desiredSize: new go.Size(7, 50),
+    //       fill: 'lightblue',
+    //       stroke: 'dodgerblue',
+    //       cursor: 'col-resize'
+    //     }).bindObject('visible', '', (ad) => {
+    //       if (ad.adornedPart === null) return false;
+    //       return ad.adornedPart.isSubGraphExpanded;
+    //     }),
+    //     new go.Shape({
+    //       // for changing the breadth of a lane
+    //       alignment: go.Spot.Bottom,
+    //       desiredSize: new go.Size(50, 7),
+    //       fill: 'lightblue',
+    //       stroke: 'dodgerblue',
+    //       cursor: 'row-resize'
+    //     }).bindObject('visible', '', (ad) => {
+    //       if (ad.adornedPart === null) return false;
+    //       return ad.adornedPart.isSubGraphExpanded;
+    //     })
+    //   );
+
+    // palette to drag and drop classes
     this.myPalette = new go.Palette('myPaletteDiv', {
       nodeTemplate: this.diagram.nodeTemplate,
       contentAlignment: go.Spot.Center,
@@ -163,6 +224,17 @@ export class GojsDiagramComponent implements OnInit {
           { name: 'Attribut', iskey: false, figure: 'Hexagon', color: 'blue' }
         ],
         inheritedItems: []
+      },
+      {
+        key: 'ClassKey',
+        className: 'Weak Name',
+        location: new go.Point(0, 0),
+        items: [
+          { name: 'NameID', iskey: true, figure: 'Decision  ', color: 'purple' },
+          { name: 'Attribut', iskey: false, figure: 'Hexagon', color: 'blue' }
+        ],
+        inheritedItems: [],
+        isWeak: true // signals the class is weak and toggles the weak geometry visual
       }
     ];
 
