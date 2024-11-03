@@ -11,87 +11,128 @@ const $ = go.GraphObject.make;
   templateUrl: './gojs-diagram.component.html',
   styleUrls: ['./gojs-diagram.component.css']
 })
-
 export class GojsDiagramComponent implements OnInit {
   @ViewChild('diagramDiv', { static: true }) diagramDiv!: ElementRef;
 
+  // Diagram-Objekt für GoJS-Diagramme
   public diagram!: go.Diagram;
+
+  // Palette zum Drag & Drop von Knoten
   public myPalette!: go.Palette;
-  //public myInspector!: Inspector;
 
-  @Input()
-  public model!: go.Model;
+  // Input-Binding für das Modell des Diagramms
+  @Input() public model!: go.Model;
 
-  @Output()
-  public nodeClicked = new EventEmitter();
+  // Output-EventEmitter für Node-Klick-Ereignisse
+  @Output() public nodeClicked = new EventEmitter();
 
   constructor() { }
 
   ngOnInit(): void {
-    // this.initDiagram();
+    // Nothing to initialize here for now
   }
 
   ngAfterViewInit() {
+    // Diagramm initialisieren
     this.diagram = $(go.Diagram, this.diagramDiv.nativeElement, {
-      //initialContentAlignment: go.Spot.Center,
-      layout: $(go.ForceDirectedLayout),
+      layout: $(go.ForceDirectedLayout), // Verwende ein force-directed Layout
       'draggingTool.dragsLink': true,
       'linkingTool.isUnconnectedLinkValid': true,
       'draggingTool.gridSnapCellSize': new go.Size(10, 1),
       'draggingTool.isGridSnapEnabled': true,
-      'undoManager.isEnabled': true,
+      'undoManager.isEnabled': true, // Ermöglicht Rückgängig- und Wiederherstellen-Funktionalität
     });
 
-    // model aus dem Input decorator
+    // Modell vom Input-Dekorator setzen
     this.diagram.model = this.model;
 
     // Template für einzelne Attribute
-    const itemTempl = $(go.Panel,
-      'Horizontal',
-      { 
-        margin: new go.Margin(2, 0)
-       },
+    const itemTempl = $(go.Panel, 'Horizontal',
+      {
+        margin: new go.Margin(2, 0),
+        // Diese Eigenschaft wird verwendet, um den Rahmen bei Auswahl des Elements anzuzeigen
+        background: "transparent", // Standardhintergrund
+        click: (e, obj) => {
+          e.diagram.select(obj.part); // Das ausgewählte Attribut aktivieren
+        }
+      },
       $(go.TextBlock,
-        { font: '14px sans-serif', stroke: 'black', editable: true, isUnderline: false },
-        new go.Binding('text', 'name'),
+        {
+          font: '14px sans-serif',
+          stroke: 'black',
+          editable: true,
+          isUnderline: false
+        },
+        new go.Binding('text', 'name'), // Datenbindung für den Text
         new go.Binding('font', 'choice1', (k) => (k ? 'italic 14px sans-serif' : '14px sans-serif')),
         new go.Binding('isUnderline', 'choice1', (k) => (k ? true : false)),
-        new go.Binding('iskey', 'choice1', (k) => (k ? true : false))
       ),
-      $('CheckBox', 'choice1',
-        {
-          alignment: go.Spot.Right
-        }
-      ), // primary key
-      $('CheckBox', 'choice2',
-        {
-          alignment: go.Spot.Right
-        }
-      ), // unique
-      $('CheckBox', 'choice3',
-        {
-          alignment: go.Spot.Right
-        }
-      ) // not null
-    )
+      {
+        // Definiere das Kontextmenü für jedes Attribut-Element
+        contextMenu: $(go.Adornment, 'Vertical',
+          $('ContextMenuButton',
+            $(go.TextBlock, 'Make Primary Key'),
+            {
+              click: (e, obj) => {
+                const contextItem = obj.part;
+                if (contextItem && contextItem.data) {
+                  const itemData = contextItem.data;
+                  itemData.isKey = !itemData.isKey;
+                  e.diagram.model.updateTargetBindings(itemData);
+                }
+              }
+            }
+          ),
+          $('ContextMenuButton',
+            $(go.TextBlock, 'Set Unique'),
+            {
+              click: (e, obj) => {
+                const contextItem = obj.part;
+                if (contextItem && contextItem.data) {
+                  const itemData = contextItem.data;
+                  itemData.isUnique = !itemData.isUnique;
+                  e.diagram.model.updateTargetBindings(itemData);
+                }
+              }
+            }
+          ),
+          $('ContextMenuButton',
+            $(go.TextBlock, 'Set Not Null'),
+            {
+              click: (e, obj) => {
+                const contextItem = obj.part;
+                if (contextItem && contextItem.data) {
+                  const itemData = contextItem.data;
+                  itemData.isNotNull = !itemData.isNotNull;
+                  e.diagram.model.updateTargetBindings(itemData);
+                }
+              }
+            }
+          )
+        )
+      },
+      // Rahmenfarbe oder Hintergrundfarbe ändern, wenn das Element ausgewählt ist
+      new go.Binding("background", "isSelected", (sel) => sel ? "yellow" : "transparent").ofObject()
+    );
 
+
+    // Definition der Knoten-Vorlage
     this.diagram.nodeTemplate =
       $(go.Node, 'Auto',
         {
-          selectionAdorned: true,
-          resizable: true,
+          selectionAdorned: true, // Umrandung bei Auswahl anzeigen
+          resizable: true, // Ermöglicht das Ändern der Knotengröße
           layoutConditions: go.LayoutConditions.Standard & ~go.LayoutConditions.NodeSized,
           fromSpot: go.Spot.AllSides,
           toSpot: go.Spot.AllSides
         },
-        new go.Binding('location', 'location').makeTwoWay(),
+        new go.Binding('location', 'location').makeTwoWay(), // Bindung für die Position des Knotens
         new go.Binding('desiredSize', 'visible', (v) => new go.Size(NaN, NaN)).ofObject('LIST'),
         $(go.Shape, 'Rectangle',
           {
             fill: 'lightgreen',
             portId: '',
-            cursor: 'pointer', // the Shape is the port, not the whole Node
-            // allow all kinds of links from and to this port
+            cursor: 'pointer',
             fromLinkable: true,
             fromLinkableSelfNode: true,
             fromLinkableDuplicates: true,
@@ -103,15 +144,13 @@ export class GojsDiagramComponent implements OnInit {
         $(go.Shape, 'XLine',
           {
             alignment: go.Spot.TopLeft,
-            maxSize: new go.Size(20,20),
+            maxSize: new go.Size(20, 20),
             visible: false
           },
-          new go.Binding('visible', 'isWeak', k => (k ? true : false)) //geometry to signal weak class
+          new go.Binding('visible', 'isWeak', k => (k ? true : false)) // Geometrie für schwache Klassen
         ),
         $(go.Panel, 'Table',
-          {
-            margin: 16
-          },
+          { margin: 16 },
           $(go.RowColumnDefinition, { row: 0, sizing: go.Sizing.None }),
           $(go.TextBlock,
             {
@@ -125,17 +164,16 @@ export class GojsDiagramComponent implements OnInit {
             new go.Binding('text', 'className')
           ),
           $('PanelExpanderButton', 'LIST',
-            {
-              row: 0, alignment: go.Spot.TopRight
-            }
+            { row: 0, alignment: go.Spot.TopRight }
           ),
-          new go.Shape('LineH',{
-            row: 1,
-            stroke: 'rgba(0, 0, 0, .60)',
-            strokeWidth: 2,
-            height: 1,
-            stretch: go.Stretch.Horizontal
-          }),
+          new go.Shape('LineH',
+            {
+              row: 1,
+              stroke: 'rgba(0, 0, 0, .60)',
+              strokeWidth: 2,
+              height: 1,
+              stretch: go.Stretch.Horizontal
+            }),
           $(go.Panel, 'Table',
             {
               name: 'LIST',
@@ -145,22 +183,11 @@ export class GojsDiagramComponent implements OnInit {
               {
                 row: 0,
                 name: 'AttributeHeader'
-              },
-              $(go.TextBlock, 'Attributes',
-                {
-                  row: 0,
-                  margin: new go.Margin(3, 24, 3, 2)
-                },
-              ), 
-              $(go.TextBlock, 'PK'), 
-              $(go.TextBlock, '| U |'), 
-              $(go.TextBlock, 'NN'),
-              $('PanelExpanderButton', 'NonInherited', { row: 0, alignment: go.Spot.Right }),
-
+              }
             ),
             $(go.Panel, 'Vertical',
               {
-                row: 2, //Anordnung im Panel 'Label'
+                row: 2,
                 name: 'NonInherited',
                 alignment: go.Spot.TopLeft,
                 defaultAlignment: go.Spot.TopLeft,
@@ -172,56 +199,22 @@ export class GojsDiagramComponent implements OnInit {
         )
       );
 
-    // define a custom resize adornment that has two resize handles if the group is expanded
-    // this.diagram.groupTemplateMap.get('Lane').resizeAdornmentTemplate = new go.Adornment('Spot')
-    //   .add(
-    //     new go.Placeholder(),
-    //     new go.Shape({
-    //       // for changing the length of a lane
-    //       alignment: go.Spot.Right,
-    //       desiredSize: new go.Size(7, 50),
-    //       fill: 'lightblue',
-    //       stroke: 'dodgerblue',
-    //       cursor: 'col-resize'
-    //     }).bindObject('visible', '', (ad) => {
-    //       if (ad.adornedPart === null) return false;
-    //       return ad.adornedPart.isSubGraphExpanded;
-    //     }),
-    //     new go.Shape({
-    //       // for changing the breadth of a lane
-    //       alignment: go.Spot.Bottom,
-    //       desiredSize: new go.Size(50, 7),
-    //       fill: 'lightblue',
-    //       stroke: 'dodgerblue',
-    //       cursor: 'row-resize'
-    //     }).bindObject('visible', '', (ad) => {
-    //       if (ad.adornedPart === null) return false;
-    //       return ad.adornedPart.isSubGraphExpanded;
-    //     })
-    //   );
-
-    // palette to drag and drop classes
+    // Palette initialisieren für Drag & Drop von Klassen
     this.myPalette = new go.Palette('myPaletteDiv', {
       nodeTemplate: this.diagram.nodeTemplate,
       contentAlignment: go.Spot.Center,
       layout: $(go.GridLayout, { wrappingColumn: 1, cellSize: new go.Size(2, 2) }),
-      // ModelChanged: (e) => {
-      //   // just for demonstration purposes,
-      //   if (e.isTransactionFinished) {
-      //     // show the model data in the page's TextArea
-      //     document.getElementById('mySavedPaletteModel').textContent = e.model.toJson();
-      //   }
-      // },
     });
 
+    // Palette-Datenmodell definieren
     this.myPalette.model.nodeDataArray = [
       {
         key: 'ClassKey',
         className: 'Name',
         location: new go.Point(0, 0),
         items: [
-          { name: 'NameID', iskey: true, figure: 'Decision  ', color: 'purple' },
-          { name: 'Attribut', iskey: false, figure: 'Hexagon', color: 'blue' }
+          { name: 'NameID', iskey: true, figure: 'Decision', color: 'purple' },
+          { name: '', iskey: false, figure: 'Hexagon', color: 'blue' }
         ],
         inheritedItems: []
       },
@@ -230,28 +223,15 @@ export class GojsDiagramComponent implements OnInit {
         className: 'Weak Name',
         location: new go.Point(0, 0),
         items: [
-          { name: 'NameID', iskey: true, figure: 'Decision  ', color: 'purple' },
-          { name: 'Attribut', iskey: false, figure: 'Hexagon', color: 'blue' }
+          { name: 'NameID', iskey: true, figure: 'Decision', color: 'purple' },
+          { name: '', iskey: false, figure: 'Hexagon', color: 'blue' }
         ],
         inheritedItems: [],
-        isWeak: true // signals the class is weak and toggles the weak geometry visual
+        isWeak: true
       }
     ];
 
-    // Muss extended werden
-    // var myInspector = new Inspector('myInspectorDiv', myDiagram, {
-    //   // uncomment this line to only inspect the named properties below instead of all properties on each object:
-    //   // includesOwnProperties: false,
-    //   properties: {
-    //     text: {},
-    //     // key would be automatically added for nodes, but we want to declare it read-only also:
-    //     key: { readOnly: true, show: Inspector.showIfPresent },
-    //     // color would be automatically added for nodes, but we want to declare it a color also:
-    //     color: { type: 'color' },
-    //     figure: {},
-    //   },
-    // });
-
+    // Definition der Verbindungs-Vorlage
     this.diagram.linkTemplate = $(go.Link,
       {
         selectionAdorned: true,
@@ -283,116 +263,20 @@ export class GojsDiagramComponent implements OnInit {
       )
     );
 
+    // Listener für die Auswahländerung hinzufügen
     this.diagram.addDiagramListener('ChangedSelection', (e) => {
       const node = this.diagram.selection.first();
       this.nodeClicked.emit(node);
     });
-
-    //this.initDiagram();
   }
 
-
-
-  initDiagram(): void {
-
-    // const diagram = $(go.Diagram, this.diagramDiv.nativeElement, {
-    //   initialContentAlignment: go.Spot.Center,
-    //   'undoManager.isEnabled': true
-    // });
-
-    // this.diagram.nodeTemplate =
-    //   $(go.Node, "Auto",
-    //     $(go.Panel, 'Auto',
-    //       $(go.Shape, "Rectangle", { strokeWidth: 0 },
-    //         new go.Binding('fill', 'color')),
-    //       $(go.TextBlock,
-    //         { 
-    //           margin: 5, 
-    //           editable: true 
-    //         },
-    //         new go.Binding('text', 'key'))
-    //       )
-    //   );
-
-    // this.diagram.groupTemplate =
-    //   $(go.Group, "Vertical", 
-    //     {
-    //       fromSpot: go.Spot.AllSides,
-    //       toSpot: go.Spot.AllSides
-    //     },
-    //     $(go.TextBlock,         // group title
-    //       {
-    //         alignment: go.Spot.Left,
-    //         font: "Bold 12pt Sans-Serif"
-    //       },
-    //       new go.Binding("text", "key")),
-    //     $(go.Panel, "Auto",
-    //       $(go.Shape, "Rectangle",  // surrounds the Placeholder
-    //         {
-    //           parameter1: 14,
-    //           fill: "rgba(128,128,128,0.33)",
-    //           fromLinkable: true,
-    //           toLinkable: true
-    //         }),
-    //       $(go.Placeholder,    // represents the area of all member parts,
-    //         { padding: 5 })  // with some extra padding around them
-    //     )
-    //   );
-
-    // this.diagram.linkTemplate =
-    //   new go.Link({
-    //     routing: go.Routing.AvoidsNodes,
-    //     reshapable: true,
-    //     resegmentable: true,
-    //     relinkableFrom: true,
-    //     relinkableTo: true,
-    //     fromSpot: go.Spot.AllSides,
-    //     toSpot: go.Spot.AllSides
-    //   })
-    //     .add(
-    //       new go.Shape({ strokeDashOffset: 1, strokeWidth: 1, stroke: 'grey' }),
-    //       new go.Shape({ toArrow: "Fork" }),
-    //       new go.Shape({ fromArrow: "BackwardFork" })
-    //     ).bindTwoWay('points')
-    //     ;
-
-    //     diagram.model = new go.GraphLinksModel(
-    //       [
-    //         { key: 'Alpha', color: 'lightgreen' },
-    //         { key: 'Beta', color: 'lightgreen' },
-    //         { key: 'Gamma', color: 'lightgreen' },
-    //         { key: 'Delta', color: 'lightgreen' },
-    //         { key: 'Class1', isGroup: true},
-    //         { key: 'Name', color: 'lightgreen', group: 'Class1' },
-    //         { key: 'Attributes', color: 'lightgreen', isGroup: true, group: 'Class1'},
-    //         { key: 'Attribute 1', color: 'lightgreen', group: 'Attributes' },
-    //         { key: 'Attribute 2', color: 'lightgreen', group: 'Attributes' }
-    //       ],
-    //       [
-    //         { from: 'Alpha', to: 'Beta' },
-    //         { from: 'Alpha', to: 'Gamma' },
-    //         { from: 'Beta', to: 'Beta' },
-    //         { from: 'Gamma', to: 'Delta' },
-    //         { from: 'Delta', to: 'Alpha' },
-    //         { from: 'Alpha', to: 'Class1', toArrow: "Line Fork"}
-    //       ]
-    // );
-  }
-
+  // Funktion, um die aktuelle Zeit zu erhalten
   getTime(): number {
     return new Date().getTime();
   }
 
+  // Funktion zum Erstellen eines neuen Knoten
   createClassNode(): void {
     alert(this.getTime());
-    // diagram.startTransaction("addNode");
-    // var node = {
-    //     key: "newNode",
-    //     text: "New Node",
-    //     color: "lightblue",
-    //     loc: "100 100"
-    // };
-    // diagram.model.addNodeData(node);
-    // diagram.commitTransaction("addNode");
   }
 }
