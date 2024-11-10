@@ -50,8 +50,8 @@ export class GojsDiagramComponent implements OnInit {
     const itemTempl = $(go.Panel, 'Horizontal',
       {
         margin: new go.Margin(2, 0),
-        // Diese Eigenschaft wird verwendet, um den Rahmen bei Auswahl des Elements anzuzeigen
-        background: "transparent", // Standardhintergrund
+        // Standardfarbe für den Hintergrund und Click-Event für die Auswahl
+        background: "transparent",
         click: (e, obj) => {
           e.diagram.select(obj.part); // Das ausgewählte Attribut aktivieren
         }
@@ -111,9 +111,10 @@ export class GojsDiagramComponent implements OnInit {
           )
         )
       },
-      // Rahmenfarbe oder Hintergrundfarbe ändern, wenn das Element ausgewählt ist
-      new go.Binding("background", "isSelected", (sel) => sel ? "yellow" : "transparent").ofObject()
+      // Setze die Hintergrundfarbe für ausgewählte Elemente
+      new go.Binding("background", "isSelected", (sel) => sel ? "lightblue" : "transparent").ofObject()
     );
+
 
 
     // Definition der Knoten-Vorlage
@@ -141,6 +142,8 @@ export class GojsDiagramComponent implements OnInit {
             toLinkableDuplicates: true,
           }
         ),
+
+
         $(go.Shape, 'XLine',
           {
             alignment: go.Spot.TopLeft,
@@ -149,6 +152,13 @@ export class GojsDiagramComponent implements OnInit {
           },
           new go.Binding('visible', 'isWeak', k => (k ? true : false)) // Geometrie für schwache Klassen
         ),
+
+
+
+
+
+
+
         $(go.Panel, 'Table',
           { margin: 16 },
           $(go.RowColumnDefinition, { row: 0, sizing: go.Sizing.None }),
