@@ -1,19 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CreateClassDialogComponent } from '../create-class-dialog/create-class-dialog.component';
 import { GojsAngularModule } from 'gojs-angular';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatTooltipModule } from '@angular/material/tooltip'; // Hinzufügen des Tooltip-Moduls
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { GojsDiagramComponent } from '../gojs-diagram/gojs-diagram.component';
 import { HeaderComponent } from '../header/header.component';
-import { RouterLink } from '@angular/router';
-import { RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { SideComponent } from '../side/side.component';
 import { InspectorComponent } from '../inspector/inspector.component';
-
-
 import * as go from 'gojs';
 import { FormsModule } from '@angular/forms';
+
 @Component({
   selector: 'app-draw-screen',
   standalone: true,
@@ -23,45 +21,41 @@ import { FormsModule } from '@angular/forms';
     MatSidenavModule,
     HeaderComponent,
     RouterLink,
-    RouterLink,
-    RouterLinkActive, SideComponent, InspectorComponent,
+    RouterLinkActive,
+    SideComponent,
+    InspectorComponent,
     FormsModule,
-    MatTooltipModule // Hinzufügen des MatTooltipModule
+    MatTooltipModule
   ],
   templateUrl: './draw-screen.component.html',
-  styleUrl: './draw-screen.component.css'
-  // encapsulation: ViewEncapsulation.None
+  styleUrls: ['./draw-screen.component.css']
 })
-
 export class DrawScreenComponent {
   title = 'crow-modeler';
   events: string[] = [];
   opened: boolean = true;
 
-  public selectedNode = null;
+  @ViewChild('drawScreen', { static: false }) drawScreen!: ElementRef;
+  @ViewChild(GojsDiagramComponent, { static: false }) diagramComponent!: GojsDiagramComponent;
 
+  public selectedNode: any = null;
   text: string = 'color here';
 
-  // WIP not working dialog
-  constructor(public dialog: MatDialog) {}
+  constructor(public dialog: MatDialog) { }
 
-  // Dialog window - to be deprecated if palette is accepted
   openDialog(): void {
     const dialogRef = this.dialog.open(CreateClassDialogComponent, {
       width: '850px',
-      data: {value1: '', value2: '', checkboxValue: false}
+      data: { value1: '', value2: '', checkboxValue: false }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // Create GoJS diagram node group here
         console.log(result);
       }
     });
-  } // WIP not working dialog END
+  }
 
-
-  // Development Model
   nodeDataArray = [
     {
       key: 'Produkt',
@@ -72,11 +66,11 @@ export class DrawScreenComponent {
         { name: 'ProductName', iskey: false, figure: 'Hexagon', color: 'blue' },
         { name: 'ItemDescription', iskey: false, figure: 'Hexagon', color: 'blue' },
         { name: 'WholesalePrice', iskey: false, figure: 'Circle', color: 'green' },
-        { name: 'ProductPhoto', iskey: false, figure: 'TriangleUp', color: 'red' },
+        { name: 'ProductPhoto', iskey: false, figure: 'TriangleUp', color: 'red' }
       ],
       inheritedItems: [
         { name: 'SupplierID', iskey: false, figure: 'Decision', color: 'purple' },
-        { name: 'CategoryID', iskey: false, figure: 'Decision', color: 'purple' },
+        { name: 'CategoryID', iskey: false, figure: 'Decision', color: 'purple' }
       ]
     },
     {
@@ -90,53 +84,30 @@ export class DrawScreenComponent {
       ],
       inheritedItems: [
         { name: 'SupplierID', iskey: false, figure: 'Decision', color: 'purple' },
-        { name: 'CategoryID', iskey: false, figure: 'Decision', color: 'purple' },
+        { name: 'CategoryID', iskey: false, figure: 'Decision', color: 'purple' }
       ]
     }
-  ]
+  ];
 
   linkDataArray = [
-    { from: 'Produkt', to: 'Kategorie', fromArrow: "BackwardFork", toArrow: "Fork"}
-  ]
+    { from: 'Produkt', to: 'Kategorie', fromArrow: 'BackwardFork', toArrow: 'Fork' }
+  ];
 
-  
-  // nodeDataArray = [
-  //   { key: 'Class1', color: 'red', isGroup: true},
-  //   { key: 'Name', color: 'lightgreen', group: 'Class1' },
-  //   { key: 'Attributes1', color: 'lightgreen', isGroup: true, group: 'Class1'},
-  //   { key: 'Attribute 1', color: 'lightgreen', group: 'Attributes1' },
-  //   { key: 'Attribute 2', color: 'lightgreen', group: 'Attributes1' },
-  //   { key: 'Class2', color: 'blue', isGroup: true},
-  //   { key: 'Name', color: 'lime', group: 'Class2' },
-  //   { key: 'Attributes2', color: 'lightgreen', isGroup: true, group: 'Class2'},
-  //   { key: 'Attribute 1', color: 'lightgreen', group: 'Attributes2' },
-  //   { key: 'Attribute 2', color: 'lightgreen', group: 'Attributes2' },
-  //   { key: 'Attribute 3', color: 'lightgreen', group: 'Attributes2' },
-  //   { key: 'Attribute 4', color: 'lightgreen', group: 'Attributes2' }
-  // ]
-
-  // linkDataArray = [
-  //   { from: 'Class1', to: 'Class1', toArrow: "Line Fork"},
-  //   { from: 'Class1', to: 'Class2', toArrow: "Line Fork"}
-  // ]
-
-  public model: go.GraphLinksModel = new go.GraphLinksModel(
-    {
-      copiesArrays: true,
-      copiesArrayObjects: true,
-      nodeDataArray: this.nodeDataArray,
-      linkDataArray: this.linkDataArray
-    }
-    
-  );
+  public model: go.GraphLinksModel = new go.GraphLinksModel({
+    copiesArrays: true,
+    copiesArrayObjects: true,
+    nodeDataArray: this.nodeDataArray,
+    linkDataArray: this.linkDataArray
+  });
 
   public setSelectedNode(node: any) {
     this.selectedNode = node;
   }
 
   public createClass() {
-    this.model.startTransaction("make new node");
-    this.model.addNodeData({ key: 'Zulieferer',
+    this.model.startTransaction('make new node');
+    this.model.addNodeData({
+      key: 'Zulieferer',
       className: 'Zulieferer',
       location: new go.Point(0, 15),
       items: [
@@ -146,28 +117,55 @@ export class DrawScreenComponent {
       ],
       inheritedItems: [
         { name: 'SupplierID', iskey: false, figure: 'Decision', color: 'purple' },
-        { name: 'CategoryID', iskey: false, figure: 'Decision', color: 'purple' },
-      ]});
-    //this.model.addLinkData({ from: 'Kategorie', to: 'Zulieferer', fromArrow: "BackwardCircleFork", toArrow: "CircleFork"});
-    this.model.commitTransaction("make new node");
+        { name: 'CategoryID', iskey: false, figure: 'Decision', color: 'purple' }
+      ]
+    });
+    this.model.commitTransaction('make new node');
   }
 
-  // public createClass() {
-  //   this.model.startTransaction("make new node");
-  //   this.model.addNodeData({ key: 'Class3', isGroup: true});
-  //   this.model.addNodeData({ key: 'Attributes3', color: 'lightgreen', isGroup: true, group: 'Class3'});
-  //   this.model.addNodeData({ key: 'Attribute 1', color: 'lightgreen', group: 'Attributes3' });
-  //   this.model.addNodeData({ key: 'Attribute 2', color: 'lightgreen', group: 'Attributes3' });
-  //   this.model.addLinkData({ from: 'Class1', to: 'Class3', toArrow: "Line Fork"});
-  //   this.model.commitTransaction("make new node");
-  // }
-  
-  toJson(){
-    console.log(this.model.toJson())
+  exportImage() {
+    console.log('Exporting diagram as SVG');
+    if (this.diagramComponent) {
+      const diagram = this.diagramComponent.diagram;
+      if (diagram) {
+        const svg = diagram.makeSvg({ scale: 1 }) as SVGElement;
+        const serializer = new XMLSerializer();
+        const svgBlob = new Blob([serializer.serializeToString(svg)], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(svgBlob);
+
+        const downloadLink = document.createElement('a');
+        downloadLink.href = url;
+        downloadLink.download = 'diagram_export.svg';
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+
+        console.log('SVG export successful');
+      } else {
+        console.error('No GoJS diagram found');
+      }
+    }
+  }
+
+  zoomIn() {
+    console.log('Zooming in');
+    if (this.diagramComponent) {
+      this.diagramComponent.diagram.scale += 0.1;
+    }
+  }
+
+  zoomOut() {
+    console.log('Zooming out');
+    if (this.diagramComponent && this.diagramComponent.diagram.scale > 0.1) {
+      this.diagramComponent.diagram.scale -= 0.1;
+    }
+  }
+
+  toJson() {
+    console.log(this.model.toJson());
   }
 
   onButtonClick() {
     console.log('Button clicked!');
-    // Hier kannst du deine spezifische Logik hinzufügen
   }
 }
