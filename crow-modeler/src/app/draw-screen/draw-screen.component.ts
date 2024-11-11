@@ -20,12 +20,13 @@ import { FormsModule } from '@angular/forms';
     GojsDiagramComponent,
     MatSidenavModule,
     HeaderComponent,
+    SideComponent, 
+    InspectorComponent,
+    MatTooltipModule // Hinzufügen des MatTooltipModule
     RouterLink,
     RouterLinkActive,
     SideComponent,
-    InspectorComponent,
-    FormsModule,
-    MatTooltipModule
+    FormsModule
   ],
   templateUrl: './draw-screen.component.html',
   styleUrls: ['./draw-screen.component.css']

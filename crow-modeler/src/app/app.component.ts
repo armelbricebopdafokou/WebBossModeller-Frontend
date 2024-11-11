@@ -21,4 +21,5 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 })
 
 export class AppComponent {
+  title = "crow-modeler"
 }
