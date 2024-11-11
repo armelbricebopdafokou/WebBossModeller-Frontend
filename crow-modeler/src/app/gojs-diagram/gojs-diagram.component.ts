@@ -11,121 +11,262 @@ const $ = go.GraphObject.make;
   templateUrl: './gojs-diagram.component.html',
   styleUrls: ['./gojs-diagram.component.css']
 })
-
 export class GojsDiagramComponent implements OnInit {
   @ViewChild('diagramDiv', { static: true }) diagramDiv!: ElementRef;
 
   public diagram!: go.Diagram;
+  public myPalette!: go.Palette;
 
-  @Input()
-  public model!: go.Model;
-
-  @Output()
-  public nodeClicked = new EventEmitter();
+  @Input() public model!: go.Model;
+  @Output() public nodeClicked = new EventEmitter();
 
   constructor() { }
 
-  ngOnInit(): void {
-    // this.initDiagram();
-  }
+  ngOnInit(): void { }
 
   ngAfterViewInit() {
     this.diagram = $(go.Diagram, this.diagramDiv.nativeElement, {
-      initialContentAlignment: go.Spot.Center,
-      'undoManager.isEnabled': true
+      layout: $(go.ForceDirectedLayout),
+      'draggingTool.dragsLink': true,
+      'linkingTool.isUnconnectedLinkValid': true,
+      'draggingTool.gridSnapCellSize': new go.Size(10, 1),
+      'draggingTool.isGridSnapEnabled': true,
+      'undoManager.isEnabled': true,
     });
 
-    // model aus dem Input decorator
     this.diagram.model = this.model;
 
-    this.diagram.addDiagramListener('ChangedSelection', (e) => {
+    const itemTempl = $(go.Panel, 'Horizontal',
+      {
+        margin: new go.Margin(2, 0),
+        background: "transparent",
+        click: (e, obj) => {
+          e.diagram.select(obj.part);
+        }
+      },
+      $(go.TextBlock,
+        {
+          font: '14px sans-serif',
+          stroke: 'black',
+          editable: true,
+          isUnderline: false
+        },
+        new go.Binding('text', 'name'),
+        new go.Binding('font', 'choice1', k => (k ? 'italic 14px sans-serif' : '14px sans-serif')),
+        new go.Binding('isUnderline', 'choice1', k => !!k),
+      ),
+      {
+        contextMenu: $(go.Adornment, 'Vertical',
+          $('ContextMenuButton',
+            $(go.TextBlock, 'Make Primary Key'),
+            {
+              click: (e, obj) => {
+                const contextItem = obj.part;
+                if (contextItem?.data) {
+                  const itemData = contextItem.data;
+                  itemData.isKey = !itemData.isKey;
+                  e.diagram.model.updateTargetBindings(itemData);
+                }
+              }
+            }
+          ),
+          $('ContextMenuButton',
+            $(go.TextBlock, 'Set Unique'),
+            {
+              click: (e, obj) => {
+                const contextItem = obj.part;
+                if (contextItem?.data) {
+                  const itemData = contextItem.data;
+                  itemData.isUnique = !itemData.isUnique;
+                  e.diagram.model.updateTargetBindings(itemData);
+                }
+              }
+            }
+          ),
+          $('ContextMenuButton',
+            $(go.TextBlock, 'Set Not Null'),
+            {
+              click: (e, obj) => {
+                const contextItem = obj.part;
+                if (contextItem?.data) {
+                  const itemData = contextItem.data;
+                  itemData.isNotNull = !itemData.isNotNull;
+                  e.diagram.model.updateTargetBindings(itemData);
+                }
+              }
+            }
+          )
+        )
+      },
+      new go.Binding('background', 'isSelected', sel => sel ? 'lightblue' : 'transparent').ofObject()
+    );
+
+    this.diagram.nodeTemplate =
+      $(go.Node, 'Auto',
+        {
+          selectionAdorned: true,
+          resizable: true,
+          layoutConditions: go.LayoutConditions.Standard & ~go.LayoutConditions.NodeSized,
+          fromSpot: go.Spot.AllSides,
+          toSpot: go.Spot.AllSides
+        },
+        new go.Binding('location', 'location').makeTwoWay(),
+
+        // Outer frame of the table
+        $(go.Shape, 'Rectangle',
+          {
+            fill: 'lightgreen',
+            stroke: "black",
+            strokeWidth: 2,
+            portId: '',
+            cursor: 'pointer',
+            fromLinkable: true,
+            toLinkable: true,
+            alignment: go.Spot.Center,
+            stretch: go.GraphObject.Fill
+          }
+        ),
+
+        // Slanted shape for weak tables
+        $(go.Shape,
+          {
+            fill: null,
+            stroke: "black",
+            strokeWidth: 1.5,
+            alignment: go.Spot.Center,
+            stretch: go.GraphObject.Fill
+          },
+          new go.Binding("geometryString", "isWeak", weak =>
+            weak ? "F M0 10 L10 0 H90 L100 10 V90 L90 100 H10 L0 90z" : null
+          )
+        ),
+
+        // Panel for attributes and header
+        $(go.Panel, 'Table',
+          { padding: 4 },
+
+          // Header
+          $(go.TextBlock,
+            {
+              row: 0,
+              column: 0,
+              columnSpan: 2,
+              stroke: 'black',
+              alignment: go.Spot.Center,
+              editable: true,
+              font: 'bold 16px sans-serif',
+              margin: new go.Margin(2, 2, 2, 2)
+            },
+            new go.Binding('text', 'className')
+          ),
+
+          // Divider line under the header
+          $(go.Shape, 'LineH',
+            {
+              row: 1,
+              column: 0,
+              columnSpan: 2,
+              stroke: 'black',
+              strokeWidth: 1,
+              stretch: go.GraphObject.Horizontal,
+              margin: new go.Margin(2, 2, 2, 2)
+            }
+          ),
+
+          // List of attributes
+          $(go.Panel, 'Vertical',
+            {
+              name: 'LIST',
+              row: 2,
+              column: 0,
+              columnSpan: 2,
+              alignment: go.Spot.TopLeft,
+              itemTemplate: itemTempl
+            },
+            new go.Binding('itemArray', 'items')
+          )
+        )
+      );
+
+    // Initialize palette
+    this.myPalette = new go.Palette('myPaletteDiv', {
+      nodeTemplate: this.diagram.nodeTemplate,
+      contentAlignment: go.Spot.Center,
+      layout: $(go.GridLayout, { wrappingColumn: 1, cellSize: new go.Size(2, 2) }),
+    });
+
+    this.myPalette.model.nodeDataArray = [
+      {
+        key: 'ClassKey',
+        className: 'Name',
+        location: new go.Point(0, 0),
+        items: [
+          { name: 'NameID', iskey: true },
+          { name: 'AnotherAttribute', iskey: false }
+        ],
+        inheritedItems: []
+      },
+      {
+        key: 'WeakClassKey',
+        className: 'Weak Name',
+        location: new go.Point(0, 0),
+        items: [
+          { name: 'NameID', iskey: true },
+          { name: 'AnotherAttribute', iskey: false }
+        ],
+        inheritedItems: [],
+        isWeak: true
+      }
+    ];
+
+    // Link template
+    this.diagram.linkTemplate = $(go.Link,
+      {
+        selectionAdorned: true,
+        reshapable: true,
+        routing: go.Routing.AvoidsNodes,
+        fromSpot: go.Spot.AllSides,
+        toSpot: go.Spot.AllSides,
+        relinkableFrom: true,
+        relinkableTo: true,
+      },
+      $(go.Shape, { strokeDashOffset: 1, strokeWidth: 2, stroke: 'grey' }),
+      $(go.Shape,
+        {
+          strokeWidth: 1.2,
+          scale: 2,
+          fill: 'white',
+          toArrow: 'CircleFork'
+        },
+        new go.Binding('toArrow', 'toArrow')
+      ),
+      $(go.Shape,
+        {
+          strokeWidth: 1.2,
+          scale: 2,
+          fill: 'white',
+          fromArrow: 'BackwardCircleFork'
+        },
+        new go.Binding('fromArrow', 'fromArrow')
+      )
+    );
+
+    // Listener for selection changes
+    this.diagram.addDiagramListener('ChangedSelection', e => {
       const node = this.diagram.selection.first();
       this.nodeClicked.emit(node);
     });
-    this.initDiagram();
   }
 
-
-
-  initDiagram(): void {
-
-    const $ = go.GraphObject.make;
-
-    // const diagram = $(go.Diagram, this.diagramDiv.nativeElement, {
-    //   initialContentAlignment: go.Spot.Center,
-    //   'undoManager.isEnabled': true
-    // });
-
-    this.diagram.nodeTemplate =
-      $(go.Node, "Auto",
-        $(go.Shape, "RoundedRectangle", { strokeWidth: 0 },
-          new go.Binding('fill', 'color')),
-        $(go.TextBlock,
-          { margin: 5, editable: false },
-          new go.Binding('text', 'key'))
-      );
-
-    this.diagram.groupTemplate =
-      $(go.Group, "Vertical",
-        $(go.Panel, "Auto",
-          $(go.Shape, "RoundedRectangle",  // surrounds the Placeholder
-            {
-              parameter1: 14,
-              fill: "rgba(128,128,128,0.33)"
-            }),
-          $(go.Placeholder,    // represents the area of all member parts,
-            { padding: 5 })  // with some extra padding around them
-        ),
-        $(go.TextBlock,         // group title
-          { alignment: go.Spot.Right, font: "Bold 12pt Sans-Serif" },
-          new go.Binding("text", "key"))
-      );
-
-    this.diagram.linkTemplate =
-      new go.Link()
-        .add(
-          new go.Shape({ strokeWidth: 1, stroke: 'grey' }),
-          new go.Shape({ toArrow: "Fork" }),
-          new go.Shape({ fromArrow: "BackwardFork" })
-        );
-
-    //     diagram.model = new go.GraphLinksModel(
-    //       [
-    //         { key: 'Alpha', color: 'lightgreen' },
-    //         { key: 'Beta', color: 'lightgreen' },
-    //         { key: 'Gamma', color: 'lightgreen' },
-    //         { key: 'Delta', color: 'lightgreen' },
-    //         { key: 'Class1', isGroup: true},
-    //         { key: 'Name', color: 'lightgreen', group: 'Class1' },
-    //         { key: 'Attributes', color: 'lightgreen', isGroup: true, group: 'Class1'},
-    //         { key: 'Attribute 1', color: 'lightgreen', group: 'Attributes' },
-    //         { key: 'Attribute 2', color: 'lightgreen', group: 'Attributes' }
-    //       ],
-    //       [
-    //         { from: 'Alpha', to: 'Beta' },
-    //         { from: 'Alpha', to: 'Gamma' },
-    //         { from: 'Beta', to: 'Beta' },
-    //         { from: 'Gamma', to: 'Delta' },
-    //         { from: 'Delta', to: 'Alpha' },
-    //         { from: 'Alpha', to: 'Class1', toArrow: "Line Fork"}
-    //       ]
-    // );
+  zoomIn() {
+    if (this.diagram) {
+      this.diagram.commandHandler.increaseZoom();
+    }
   }
 
-  getTime(): number {
-    return new Date().getTime();
-  }
-
-  createClassNode(): void {
-    alert(this.getTime());
-    // diagram.startTransaction("addNode");
-    // var node = {
-    //     key: "newNode",
-    //     text: "New Node",
-    //     color: "lightblue",
-    //     loc: "100 100"
-    // };
-    // diagram.model.addNodeData(node);
-    // diagram.commitTransaction("addNode");
+  zoomOut() {
+    if (this.diagram) {
+      this.diagram.commandHandler.decreaseZoom();
+    }
   }
 }

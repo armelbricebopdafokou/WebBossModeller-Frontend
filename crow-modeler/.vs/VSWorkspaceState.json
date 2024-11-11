@@ -4,9 +4,7 @@
     "\\src",
     "\\src\\app",
     "\\src\\app\\draw-screen",
-    "\\src\\app\\login-screen",
-    "\\src\\app\\register-page"
+    "\\src\\app\\gojs-diagram"
   ],
-  "SelectedNode": "\\src\\app\\draw-screen\\draw-screen.component.css",
   "PreviewInSolutionExplorer": false
 }
