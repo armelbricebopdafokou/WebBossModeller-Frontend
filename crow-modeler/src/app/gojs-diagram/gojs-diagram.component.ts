@@ -222,15 +222,35 @@ export class GojsDiagramComponent implements OnInit {
     // Link template
     this.diagram.linkTemplate = $(go.Link,
       {
-        selectionAdorned: true,
+        selectionAdorned: false,
         reshapable: true,
         routing: go.Routing.AvoidsNodes,
         fromSpot: go.Spot.AllSides,
         toSpot: go.Spot.AllSides,
         relinkableFrom: true,
         relinkableTo: true,
+        contextMenu: $(go.Adornment, 'Vertical',
+          $('ContextMenuButton',
+            $(go.TextBlock, "Toggle Link Weak"),
+            {
+              click: (e, obj) => {
+                // Get the data of the link that was clicked
+                const linkData = obj.part?.data;
+                // Toggle the link data
+                this.diagram.model.startTransaction('Toggle link weakness')
+                this.diagram.model.setDataProperty(linkData, 'weak', !linkData.weak)
+                this.diagram.model.commitTransaction('Toggle link weakness')
+                console.log("Weak property of link toggled!")
+              }
+            }
+          )
+          
+        )
       },
-      $(go.Shape, { strokeDashOffset: 1, strokeWidth: 2, stroke: 'grey' }),
+      $(go.Shape, { strokeDashOffset: 1, strokeWidth: 2, stroke: 'grey', strokeDashArray: [1, 0], },
+        // binds the link being dashed to the weak property
+        new go.Binding('strokeDashArray', 'weak', (k) => (k ? [8, 2] : [8, 0]))
+      ),
       $(go.Shape,
         {
           strokeWidth: 1.2,
