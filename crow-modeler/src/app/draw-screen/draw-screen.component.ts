@@ -20,12 +20,13 @@ import { FormsModule } from '@angular/forms';
     GojsDiagramComponent,
     MatSidenavModule,
     HeaderComponent,
+    SideComponent, 
+    InspectorComponent,
+    MatTooltipModule, // Hinzufügen des MatTooltipModule
     RouterLink,
     RouterLinkActive,
     SideComponent,
-    InspectorComponent,
-    FormsModule,
-    MatTooltipModule
+    FormsModule
   ],
   templateUrl: './draw-screen.component.html',
   styleUrls: ['./draw-screen.component.css']
@@ -90,7 +91,7 @@ export class DrawScreenComponent {
   ];
 
   linkDataArray = [
-    { from: 'Produkt', to: 'Kategorie', fromArrow: 'BackwardFork', toArrow: 'Fork' }
+    { from: 'Produkt', to: 'Kategorie', weak: true, fromArrow: 'BackwardFork', toArrow: 'Fork' }
   ];
 
   public model: go.GraphLinksModel = new go.GraphLinksModel({
