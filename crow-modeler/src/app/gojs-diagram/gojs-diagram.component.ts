@@ -17,7 +17,7 @@ export class GojsDiagramComponent implements OnInit {
   public diagram!: go.Diagram;
   public myPalette!: go.Palette;
 
-  @Input() public model!: go.Model;
+  @Input() public model!: go.GraphLinksModel;
   @Output() public nodeClicked = new EventEmitter();
 
   constructor() { }
@@ -25,8 +25,9 @@ export class GojsDiagramComponent implements OnInit {
   ngOnInit(): void { }
 
   ngAfterViewInit() {
+    // Initialize the diagram with GridLayout for better initial positioning
     this.diagram = $(go.Diagram, this.diagramDiv.nativeElement, {
-      layout: $(go.ForceDirectedLayout),
+      layout: $(go.GridLayout, { wrappingColumn: 3, spacing: new go.Size(20, 20) }),
       'draggingTool.dragsLink': true,
       'linkingTool.isUnconnectedLinkValid': true,
       'draggingTool.gridSnapCellSize': new go.Size(10, 1),
@@ -34,8 +35,13 @@ export class GojsDiagramComponent implements OnInit {
       'undoManager.isEnabled': true,
     });
 
+    // Set auto scale to fit all nodes in view
+    this.diagram.autoScale = go.Diagram.Uniform;
+
+    // Assign the model to the diagram
     this.diagram.model = this.model;
 
+    // Define a template for individual items in a node
     const itemTempl = $(go.Panel, 'Horizontal',
       {
         margin: new go.Margin(2, 0),
@@ -101,6 +107,7 @@ export class GojsDiagramComponent implements OnInit {
       new go.Binding('background', 'isSelected', sel => sel ? 'lightblue' : 'transparent').ofObject()
     );
 
+    // Define the template for nodes in the diagram
     this.diagram.nodeTemplate =
       $(go.Node, 'Auto',
         {
@@ -222,21 +229,23 @@ export class GojsDiagramComponent implements OnInit {
     // Link template
     this.diagram.linkTemplate = $(go.Link,
       {
-        selectionAdorned: true,
-        reshapable: true,
-        routing: go.Routing.AvoidsNodes,
-        fromSpot: go.Spot.AllSides,
-        toSpot: go.Spot.AllSides,
+        routing: go.Link.Orthogonal,
+        corner: 5,
         relinkableFrom: true,
         relinkableTo: true,
+        selectable: true,
+        reshapable: true,
+        fromSpot: go.Spot.AllSides,
+        toSpot: go.Spot.AllSides
       },
-      $(go.Shape, { strokeDashOffset: 1, strokeWidth: 2, stroke: 'grey' }),
+      new go.Binding("points").makeTwoWay(),
+      $(go.Shape, { strokeDashOffset: 1, strokeWidth: 2, stroke: 'black' }),
       $(go.Shape,
         {
           strokeWidth: 1.2,
           scale: 2,
           fill: 'white',
-          toArrow: 'CircleFork'
+          toArrow: 'Standard'
         },
         new go.Binding('toArrow', 'toArrow')
       ),
@@ -245,7 +254,7 @@ export class GojsDiagramComponent implements OnInit {
           strokeWidth: 1.2,
           scale: 2,
           fill: 'white',
-          fromArrow: 'BackwardCircleFork'
+          fromArrow: 'BackwardFork'
         },
         new go.Binding('fromArrow', 'fromArrow')
       )
@@ -256,6 +265,9 @@ export class GojsDiagramComponent implements OnInit {
       const node = this.diagram.selection.first();
       this.nodeClicked.emit(node);
     });
+
+    // Force update layout to ensure nodes are positioned correctly
+    this.diagram.layoutDiagram(true);
   }
 
   zoomIn() {

@@ -2,11 +2,13 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgIf } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [MatTooltipModule, NgIf, RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [MatTooltipModule, NgIf, RouterOutlet, RouterLink, RouterLinkActive, MatMenuModule, MatButtonModule],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
@@ -84,5 +86,10 @@ export class HeaderComponent {
       this.drawScreen.nativeElement.style.transform = `scale(${this.zoomLevel})`;
       this.drawScreen.nativeElement.style.transformOrigin = '0 0';
     }
+  }
+
+  logout() {
+    console.log('Logging out');
+    // Hier wird die Auslog-Funktion ausgeführt
   }
 }

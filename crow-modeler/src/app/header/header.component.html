@@ -29,5 +29,13 @@
         <img src="../assets/img/rauszoomen.png" alt="Icon 9">
       </button>
     </div>
+    <div class="menu-container" style="float: right;">
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <img src="../assets/img/menu-burger.png" alt="Menu Icon">
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="navigateHome()"routerLink="/home" routerLinkActive="active" ariaCurrentWhenActive="page" class="icon-button" matTooltip="Home" (click)="navigateHome()">Logout</button>
+      </mat-menu>
+    </div>
   </div>
 </header>
