@@ -229,19 +229,6 @@ export class GojsDiagramComponent implements OnInit {
     // Link template
     this.diagram.linkTemplate = $(go.Link,
       {
-<<<<<<< HEAD
-        routing: go.Link.Orthogonal,
-        corner: 5,
-        relinkableFrom: true,
-        relinkableTo: true,
-        selectable: true,
-        reshapable: true,
-        fromSpot: go.Spot.AllSides,
-        toSpot: go.Spot.AllSides
-      },
-      new go.Binding("points").makeTwoWay(),
-      $(go.Shape, { strokeDashOffset: 1, strokeWidth: 2, stroke: 'black' }),
-=======
         selectionAdorned: false,
         reshapable: true,
         routing: go.Routing.AvoidsNodes,
@@ -263,15 +250,118 @@ export class GojsDiagramComponent implements OnInit {
                 console.log("Weak property of link toggled!")
               }
             }
+          ),
+          $('ContextMenuButton',
+            $(go.TextBlock, "Toggle FromNode Anzahl"),
+            {
+              click: (e, obj) => {
+                // Get the data of the link that was clicked
+                const linkData = obj.part?.data;
+                
+                // Define a type for the possible arrow states
+                type ArrowState = 'BackwardLineFork' | 'BackwardCircleFork' | 'DoubleLine' | 'LineCircle';
+
+                // Define the mapping of current states to toggled states
+                const arrowToggleMap: Record<ArrowState, ArrowState> = {
+                  'BackwardLineFork': 'DoubleLine',
+                  'BackwardCircleFork': 'LineCircle',
+                  'DoubleLine': 'BackwardLineFork',
+                  'LineCircle': 'BackwardCircleFork'
+                };
+
+                // Start a transaction to update the link
+                this.diagram.model.startTransaction('Toggle FromArrow');
+
+                // Get the current fromArrow state and assert its type
+                const currentArrow = linkData.fromArrow as ArrowState;
+
+                console.log("Current Arrow = ", currentArrow)
+
+                // Determine the new state based on the current state
+                const newArrow = arrowToggleMap[currentArrow]; // This will be safe now
+
+                // Set the new fromArrow state
+                this.diagram.model.setDataProperty(linkData, 'fromArrow', newArrow);
+
+                // Commit the transaction
+                this.diagram.model.commitTransaction('Toggle FromArrow');
+                console.log("FromArrow property of link toggled to:", newArrow);
+              }
+            }
+          ),
+          $('ContextMenuButton',
+            $(go.TextBlock, "Toggle FromNode Kann/Muss"),
+            {
+              click: (e, obj) => {
+                // Get the data of the link that was clicked
+                const linkData = obj.part?.data;
+                // Toggle the link data
+                this.diagram.model.startTransaction('Toggle link weakness')
+                this.diagram.model.setDataProperty(linkData, 'weak', !linkData.weak)
+                this.diagram.model.commitTransaction('Toggle link weakness')
+                console.log("Weak property of link toggled!")
+              }
+            }
+          ),
+          $('ContextMenuButton',
+            $(go.TextBlock, "Toggle ToNode Anzahl"),
+            {
+              click: (e, obj) => {
+                // Get the data of the link that was clicked
+                const linkData = obj.part?.data;
+                
+                // Define a type for the possible arrow states
+                type ArrowState = 'DoubleLine' | 'LineCircle' | 'LineFork' |'CircleFork';
+
+                // Define the mapping of current states to toggled states
+                const arrowToggleMap: Record<ArrowState, ArrowState> = {
+                  'LineFork': 'DoubleLine',
+                  'CircleFork': 'LineCircle',
+                  'DoubleLine': 'LineFork',
+                  'LineCircle': 'CircleFork'
+                };
+
+                // Start a transaction to update the link
+                this.diagram.model.startTransaction('Toggle toArrow');
+
+                // Get the current fromArrow state and assert its type
+                const currentArrow = linkData.toArrow as ArrowState;
+
+                console.log("Current Arrow = ", currentArrow)
+
+                // Determine the new state based on the current state
+                const newArrow = arrowToggleMap[currentArrow]; // This will be safe now
+
+                // Set the new fromArrow state
+                this.diagram.model.setDataProperty(linkData, 'toArrow', newArrow);
+
+                // Commit the transaction
+                this.diagram.model.commitTransaction('Toggle toArrow');
+                console.log("ToArrow property of link toggled to:", newArrow);
+              }
+            }
+          ),
+          $('ContextMenuButton',
+            $(go.TextBlock, "Toggle FromNode Kann/Muss"),
+            {
+              click: (e, obj) => {
+                // Get the data of the link that was clicked
+                const linkData = obj.part?.data;
+                // Toggle the link data
+                this.diagram.model.startTransaction('Toggle link weakness')
+                this.diagram.model.setDataProperty(linkData, 'weak', !linkData.weak)
+                this.diagram.model.commitTransaction('Toggle link weakness')
+                console.log("Weak property of link toggled!")
+              }
+            }
           )
-          
+
         )
       },
       $(go.Shape, { strokeDashOffset: 1, strokeWidth: 2, stroke: 'grey', strokeDashArray: [1, 0], },
         // binds the link being dashed to the weak property
         new go.Binding('strokeDashArray', 'weak', (k) => (k ? [8, 2] : [8, 0]))
       ),
->>>>>>> f50d89056cfd72a587530fe08a55021a71184e29
       $(go.Shape,
         {
           strokeWidth: 1.2,
