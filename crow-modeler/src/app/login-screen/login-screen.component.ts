@@ -42,7 +42,7 @@ export class LoginScreenComponent {
 
   //login$!: Observable<User>;
 
-  constructor(service: UserService){
+  constructor(private service: UserService){
 
   }
   
@@ -53,6 +53,15 @@ export class LoginScreenComponent {
     return this.loginForm.get('passwordCtrl')!;
   }
   submitForm(){
-      console.log(this.loginForm.value)
+    let requestObject = {
+      "email": this.email.value,
+      "password": this.password.value
+    }
+    this.service.login(requestObject).subscribe(
+      (user:any)=>{
+        console.log(user);
+      }
+    )
+      console.log(requestObject)
   }
 }

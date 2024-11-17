@@ -11,6 +11,7 @@ import { SideComponent } from '../side/side.component';
 import { InspectorComponent } from '../inspector/inspector.component';
 import * as go from 'gojs';
 import { FormsModule } from '@angular/forms';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-draw-screen',
@@ -22,9 +23,7 @@ import { FormsModule } from '@angular/forms';
     HeaderComponent,
     SideComponent, 
     InspectorComponent,
-    MatTooltipModule // Hinzufügen des MatTooltipModule
-    RouterLink,
-    RouterLinkActive,
+    MatTooltipModule, // Hinzufügen des MatTooltipModule
     SideComponent,
     FormsModule
   ],
@@ -42,7 +41,7 @@ export class DrawScreenComponent {
   public selectedNode: any = null;
   text: string = 'color here';
 
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog, private userService: UserService) { }
 
   openDialog(): void {
     const dialogRef = this.dialog.open(CreateClassDialogComponent, {
@@ -163,6 +162,18 @@ export class DrawScreenComponent {
   }
 
   toJson() {
+    let obj = {
+      "email":"john.doe@test.com",
+      "graphics":this.model.toJson()
+    }
+    this.userService.saveGraphic(obj).subscribe({
+      next:(user:any)=>{
+        console.log(user);
+      },
+      error:  (err:any)=>{
+        console.log(err)
+      }
+    })
     console.log(this.model.toJson());
   }
 
