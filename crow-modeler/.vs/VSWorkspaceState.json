@@ -4,10 +4,8 @@
     "\\src",
     "\\src\\app",
     "\\src\\app\\draw-screen",
-    "\\src\\app\\gojs-diagram",
-    "\\src\\app\\header",
-    "\\src\\app\\inspector"
+    "\\src\\app\\gojs-diagram"
   ],
-  "SelectedNode": "\\src\\app\\gojs-diagram\\gojs-diagram.component.html",
+  "SelectedNode": "\\src\\app\\gojs-diagram\\gojs-diagram.component.ts",
   "PreviewInSolutionExplorer": false
 }
