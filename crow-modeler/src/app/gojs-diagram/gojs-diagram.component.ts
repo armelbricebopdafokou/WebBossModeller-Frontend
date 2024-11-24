@@ -130,7 +130,7 @@ export class GojsDiagramComponent implements OnInit {
             fromLinkable: true,
             toLinkable: true,
             alignment: go.Spot.Center,
-            stretch: go.GraphObject.Fill
+            stretch: go.Stretch.Fill
           }
         ),
 
@@ -141,7 +141,7 @@ export class GojsDiagramComponent implements OnInit {
             stroke: "black",
             strokeWidth: 1.5,
             alignment: go.Spot.Center,
-            stretch: go.GraphObject.Fill
+            stretch: go.Stretch.Fill
           },
           new go.Binding("geometryString", "isWeak", weak =>
             weak ? "F M0 10 L10 0 H90 L100 10 V90 L90 100 H10 L0 90z" : null
@@ -225,6 +225,7 @@ export class GojsDiagramComponent implements OnInit {
         isWeak: true
       }
     ];
+    
 
     // Link template
     this.diagram.linkTemplate = $(go.Link,
@@ -236,6 +237,8 @@ export class GojsDiagramComponent implements OnInit {
         toSpot: go.Spot.AllSides,
         relinkableFrom: true,
         relinkableTo: true,
+        fromShortLength:100,
+        toShortLength:100,
         contextMenu: $(go.Adornment, 'Vertical',
           $('ContextMenuButton',
             $(go.TextBlock, "Toggle Link Weak"),
@@ -248,6 +251,9 @@ export class GojsDiagramComponent implements OnInit {
                 this.diagram.model.setDataProperty(linkData, 'weak', !linkData.weak)
                 this.diagram.model.commitTransaction('Toggle link weakness')
                 console.log("Weak property of link toggled!")
+                console.log("Link Data:", linkData); 
+                console.log("fromShortLength:", linkData.fromShortLength);
+                console.log("toShortLength:", linkData.toShortLength);
               }
             }
           ),
@@ -402,8 +408,7 @@ export class GojsDiagramComponent implements OnInit {
                 console.log("ToArrow kann/muss toggled to:", newArrow);
               }
             }
-          )
-
+          ),
         )
       },
       $(go.Shape, { strokeDashOffset: 1, strokeWidth: 2, stroke: 'grey', strokeDashArray: [1, 0], },
@@ -424,7 +429,7 @@ export class GojsDiagramComponent implements OnInit {
           strokeWidth: 1.2,
           scale: 2,
           fill: 'white',
-          fromArrow: 'BackwardFork'
+          fromArrow: 'Standard',
         },
         new go.Binding('fromArrow', 'fromArrow')
       )
