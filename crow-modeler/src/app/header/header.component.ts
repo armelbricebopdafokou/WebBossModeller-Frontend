@@ -4,6 +4,7 @@ import { NgIf } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
+import { DrawingModeService } from '../drawing-mode.service';
 
 @Component({
   selector: 'app-header',
@@ -86,6 +87,18 @@ export class HeaderComponent {
       this.drawScreen.nativeElement.style.transform = `scale(${this.zoomLevel})`;
       this.drawScreen.nativeElement.style.transformOrigin = '0 0';
     }
+  }
+
+  isAdvancedMode: boolean = false;
+
+  constructor(private drawingModeService: DrawingModeService) {
+    this.drawingModeService.currentMode.subscribe(mode => {
+      this.isAdvancedMode = mode;
+    });
+  }
+
+  toggleMode(event: Event) {
+    this.drawingModeService.toggleMode();
   }
 
   logout() {

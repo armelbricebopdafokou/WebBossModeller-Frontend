@@ -35,7 +35,7 @@
     <div class="slider-toggle">
       <span class="mode-text">Easy Mode</span>
       <label class="switch">
-        <input type="checkbox">
+        <input type="checkbox" (change)="toggleMode($event)" [checked]="isAdvancedMode">
         <span class="slider round"></span>
       </label>
       <span class="mode-text">Advanced Mode</span>
