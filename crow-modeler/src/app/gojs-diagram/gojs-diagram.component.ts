@@ -24,7 +24,6 @@ export class GojsDiagramComponent implements OnInit {
   ngOnInit(): void { }
 
   ngAfterViewInit() {
-    // Diagram-Initialisierung mit GridLayout
     this.diagram = $(go.Diagram, this.diagramDiv.nativeElement, {
       layout: $(go.GridLayout, { wrappingColumn: 3, spacing: new go.Size(20, 20) }),
       'draggingTool.dragsLink': true,
@@ -48,17 +47,8 @@ export class GojsDiagramComponent implements OnInit {
       ),
       {
         contextMenu: $(go.Adornment, 'Vertical',
-          $('ContextMenuButton', $(go.TextBlock, 'Bearbeiten'), {
-            click: (e, obj) => {
-              this.openEditDialog(obj);
-            }
           }),
-          $('ContextMenuButton', $(go.TextBlock, 'Löschen'), {
-            click: (e, obj) => {
-              this.deleteNode(obj);
-            }
           }),
-          $('ContextMenuButton', $(go.TextBlock, 'Set No'), {
             click: (e, obj) => this.toggleProperty(obj, 'isNotNull')
           })
         )
@@ -154,7 +144,7 @@ export class GojsDiagramComponent implements OnInit {
         )
       );
 
-    // Link Template
+    // Diagram-Link-Template
     this.diagram.linkTemplate = $(go.Link,
       {
         selectionAdorned: false,
@@ -165,7 +155,7 @@ export class GojsDiagramComponent implements OnInit {
         relinkableFrom: true,
         relinkableTo: true,
         contextMenu: $(go.Adornment, 'Vertical',
-          $('ContextMenuButton', $(go.TextBlock, 'Toggle Link Weak'), {
+          $('ContextMenuButton', $(go.TextBlock, "Toggle Link Weak"), {
             click: (e, obj) => this.toggleLinkWeakness(obj)
           })
         )
@@ -208,13 +198,17 @@ export class GojsDiagramComponent implements OnInit {
     // Link template
     this.diagram.linkTemplate = $(go.Link,
       {
-        selectionAdorned: false,
-        reshapable: true,
         routing: go.Routing.AvoidsNodes,
-        fromSpot: go.Spot.AllSides,
-        toSpot: go.Spot.AllSides,
+        corner: 5,
         relinkableFrom: true,
         relinkableTo: true,
+        selectable: true,
+        reshapable: true,
+      // },
+      // new go.Binding("points").makeTwoWay(),
+        selectionAdorned: false,
+        fromSpot: go.Spot.AllSides,
+        toSpot: go.Spot.AllSides,
         fromShortLength:100,
         toShortLength:100,
         contextMenu: $(go.Adornment, 'Vertical',
@@ -493,7 +487,6 @@ export class GojsDiagramComponent implements OnInit {
       }
     }
   }
-
   deleteNode(obj: go.GraphObject) {
     const contextItem = obj.part;
     if (contextItem instanceof go.Node && contextItem.diagram) {
@@ -502,7 +495,6 @@ export class GojsDiagramComponent implements OnInit {
       this.diagram.commitTransaction('delete node');
     }
   }
-
   toggleLinkWeakness(obj: go.GraphObject) {
     const linkData = obj.part?.data;
     if (linkData) {
