@@ -24,6 +24,7 @@ export class GojsDiagramComponent implements OnInit {
   ngOnInit(): void { }
 
   ngAfterViewInit() {
+    // Diagram-Initialisierung
     this.diagram = $(go.Diagram, this.diagramDiv.nativeElement, {
       layout: $(go.GridLayout, { wrappingColumn: 3, spacing: new go.Size(20, 20) }),
       'draggingTool.dragsLink': true,
@@ -47,8 +48,17 @@ export class GojsDiagramComponent implements OnInit {
       ),
       {
         contextMenu: $(go.Adornment, 'Vertical',
+          $('ContextMenuButton', $(go.TextBlock, 'Bearbeiten'), {
+            click: (e, obj) => {
+              this.openEditDialog(obj);
+            }
           }),
+          $('ContextMenuButton', $(go.TextBlock, 'Löschen'), {
+            click: (e, obj) => {
+              this.deleteNode(obj);
+            }
           }),
+          $('ContextMenuButton', $(go.TextBlock, 'Set No'), {
             click: (e, obj) => this.toggleProperty(obj, 'isNotNull')
           })
         )
@@ -193,7 +203,7 @@ export class GojsDiagramComponent implements OnInit {
         isWeak: true
       }
     ];
-    
+
 
     // Link template
     this.diagram.linkTemplate = $(go.Link,
@@ -204,13 +214,13 @@ export class GojsDiagramComponent implements OnInit {
         relinkableTo: true,
         selectable: true,
         reshapable: true,
-      // },
-      // new go.Binding("points").makeTwoWay(),
+        // },
+        // new go.Binding("points").makeTwoWay(),
         selectionAdorned: false,
         fromSpot: go.Spot.AllSides,
         toSpot: go.Spot.AllSides,
-        fromShortLength:100,
-        toShortLength:100,
+        fromShortLength: 100,
+        toShortLength: 100,
         contextMenu: $(go.Adornment, 'Vertical',
           $('ContextMenuButton',
             $(go.TextBlock, "Toggle Link Weak"),
@@ -223,7 +233,7 @@ export class GojsDiagramComponent implements OnInit {
                 this.diagram.model.setDataProperty(linkData, 'weak', !linkData.weak)
                 this.diagram.model.commitTransaction('Toggle link weakness')
                 console.log("Weak property of link toggled!")
-                console.log("Link Data:", linkData); 
+                console.log("Link Data:", linkData);
                 console.log("fromShortLength:", linkData.fromShortLength);
                 console.log("toShortLength:", linkData.toShortLength);
               }
@@ -235,7 +245,7 @@ export class GojsDiagramComponent implements OnInit {
               click: (e, obj) => {
                 // Get the data of the link that was clicked
                 const linkData = obj.part?.data;
-                
+
                 // Define a type for the possible arrow states
                 type ArrowState = 'BackwardLineFork' | 'BackwardCircleFork' | 'DoubleLine' | 'LineCircle';
 
@@ -273,7 +283,7 @@ export class GojsDiagramComponent implements OnInit {
               click: (e, obj) => {
                 // Get the data of the link that was clicked
                 const linkData = obj.part?.data;
-                
+
                 // Define a type for the possible arrow states
                 type ArrowState = 'BackwardLineFork' | 'BackwardCircleFork' | 'DoubleLine' | 'LineCircle';
 
@@ -311,9 +321,9 @@ export class GojsDiagramComponent implements OnInit {
               click: (e, obj) => {
                 // Get the data of the link that was clicked
                 const linkData = obj.part?.data;
-                
+
                 // Define a type for the possible arrow states
-                type ArrowState = 'DoubleLine' | 'LineCircle' | 'LineFork' |'CircleFork';
+                type ArrowState = 'DoubleLine' | 'LineCircle' | 'LineFork' | 'CircleFork';
 
                 // Define the mapping of current states to toggled states
                 const arrowToggleMap: Record<ArrowState, ArrowState> = {
@@ -349,7 +359,7 @@ export class GojsDiagramComponent implements OnInit {
               click: (e, obj) => {
                 // Get the data of the link that was clicked
                 const linkData = obj.part?.data;
-                
+
                 // Define a type for the possible arrow states
                 type ArrowState = 'LineFork' | 'CircleFork' | 'DoubleLine' | 'LineCircle';
 
