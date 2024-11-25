@@ -208,19 +208,6 @@ export class GojsDiagramComponent implements OnInit {
     // Link template
     this.diagram.linkTemplate = $(go.Link,
       {
-<<<<<<< HEAD
-        routing: go.Link.Orthogonal,
-        corner: 5,
-        relinkableFrom: true,
-        relinkableTo: true,
-        selectable: true,
-        reshapable: true,
-        fromSpot: go.Spot.AllSides,
-        toSpot: go.Spot.AllSides
-      },
-      new go.Binding("points").makeTwoWay(),
-      $(go.Shape, { strokeDashOffset: 1, strokeWidth: 2, stroke: 'black' }),
-=======
         selectionAdorned: false,
         reshapable: true,
         routing: go.Routing.AvoidsNodes,
@@ -406,7 +393,6 @@ export class GojsDiagramComponent implements OnInit {
         // binds the link being dashed to the weak property
         new go.Binding('strokeDashArray', 'weak', (k) => (k ? [8, 2] : [8, 0]))
       ),
->>>>>>> f50d89056cfd72a587530fe08a55021a71184e29
       $(go.Shape,
         {
           strokeWidth: 1.2,
