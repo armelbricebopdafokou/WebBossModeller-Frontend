@@ -26,18 +26,18 @@ export class GojsDiagramComponent implements OnInit {
   ngAfterViewInit() {
     // Diagram-Initialisierung
     this.diagram = $(go.Diagram, this.diagramDiv.nativeElement, {
-      layout: $(go.GridLayout, { wrappingColumn: 3, spacing: new go.Size(20, 20) }),
+      //layout: $(go.GridLayout, { wrappingColumn: 3, spacing: new go.Size(20, 20) }),
       'draggingTool.dragsLink': true,
       'linkingTool.isUnconnectedLinkValid': true,
       'draggingTool.gridSnapCellSize': new go.Size(10, 1),
       'draggingTool.isGridSnapEnabled': true,
       'undoManager.isEnabled': true,
-      autoScale: go.Diagram.Uniform
+      // autoScale: go.Diagram.Uniform //This disables the zoom feature
     });
 
     this.diagram.model = this.model;
 
-    // Node Template
+    // Attribute Item Template
     const itemTempl = $(go.Panel, 'Horizontal',
       { margin: new go.Margin(2, 0), background: "transparent", click: (e, obj) => e.diagram.select(obj.part) },
       $(go.TextBlock,
@@ -46,23 +46,6 @@ export class GojsDiagramComponent implements OnInit {
         new go.Binding('font', 'choice1', k => (k ? 'italic 14px sans-serif' : '14px sans-serif')),
         new go.Binding('isUnderline', 'choice1', k => !!k)
       ),
-      {
-        contextMenu: $(go.Adornment, 'Vertical',
-          $('ContextMenuButton', $(go.TextBlock, 'Bearbeiten'), {
-            click: (e, obj) => {
-              this.openEditDialog(obj);
-            }
-          }),
-          $('ContextMenuButton', $(go.TextBlock, 'Löschen'), {
-            click: (e, obj) => {
-              this.deleteNode(obj);
-            }
-          }),
-          $('ContextMenuButton', $(go.TextBlock, 'Set No'), {
-            click: (e, obj) => this.toggleProperty(obj, 'isNotNull')
-          })
-        )
-      },
       new go.Binding('background', 'isSelected', sel => sel ? 'lightblue' : 'transparent').ofObject()
     );
 
@@ -75,6 +58,23 @@ export class GojsDiagramComponent implements OnInit {
           layoutConditions: go.LayoutConditions.Standard & ~go.LayoutConditions.NodeSized,
           fromSpot: go.Spot.AllSides,
           toSpot: go.Spot.AllSides
+        },
+        {
+          contextMenu: $(go.Adornment, 'Vertical',
+            $('ContextMenuButton', $(go.TextBlock, 'Bearbeiten'), {
+              click: (e, obj) => {
+                this.openEditDialog(obj);
+              }
+            }),
+            $('ContextMenuButton', $(go.TextBlock, 'Löschen'), {
+              click: (e, obj) => {
+                this.deleteNode(obj);
+              }
+            }),
+            $('ContextMenuButton', $(go.TextBlock, 'Set No'), {
+              click: (e, obj) => this.toggleProperty(obj, 'isNotNull')
+            })
+          )
         },
         new go.Binding('location', 'location').makeTwoWay(),
 
@@ -90,7 +90,8 @@ export class GojsDiagramComponent implements OnInit {
             toLinkable: true,
             alignment: go.Spot.Center,
             stretch: go.Stretch.Fill
-          }
+          },
+          new go.Binding('fill', 'color')
         ),
 
         // Slanted shape for weak tables
@@ -154,32 +155,32 @@ export class GojsDiagramComponent implements OnInit {
         )
       );
 
-    // Diagram-Link-Template
-    this.diagram.linkTemplate = $(go.Link,
-      {
-        selectionAdorned: false,
-        reshapable: true,
-        routing: go.Routing.AvoidsNodes,
-        fromSpot: go.Spot.AllSides,
-        toSpot: go.Spot.AllSides,
-        relinkableFrom: true,
-        relinkableTo: true,
-        contextMenu: $(go.Adornment, 'Vertical',
-          $('ContextMenuButton', $(go.TextBlock, "Toggle Link Weak"), {
-            click: (e, obj) => this.toggleLinkWeakness(obj)
-          })
-        )
-      },
-      $(go.Shape, { strokeWidth: 2, strokeDashArray: [8, 0], stroke: 'grey' },
-        new go.Binding('strokeDashArray', 'weak', k => (k ? [8, 2] : [8, 0]))
-      ),
-      $(go.Shape, { strokeWidth: 1.2, scale: 2, fill: 'white', toArrow: 'Standard' },
-        new go.Binding('toArrow', 'toArrow')
-      ),
-      $(go.Shape, { strokeWidth: 1.2, scale: 2, fill: 'white', fromArrow: 'BackwardFork' },
-        new go.Binding('fromArrow', 'fromArrow')
-      )
-    );
+    // Diagram-Link-Template (redundant)
+    // this.diagram.linkTemplate = $(go.Link,
+    //   {
+    //     selectionAdorned: false,
+    //     reshapable: true,
+    //     routing: go.Routing.AvoidsNodes,
+    //     fromSpot: go.Spot.AllSides,
+    //     toSpot: go.Spot.AllSides,
+    //     relinkableFrom: true,
+    //     relinkableTo: true,
+    //     contextMenu: $(go.Adornment, 'Vertical',
+    //       $('ContextMenuButton', $(go.TextBlock, "Toggle Link Weak"), {
+    //         click: (e, obj) => this.toggleLinkWeakness(obj)
+    //       })
+    //     )
+    //   },
+    //   $(go.Shape, { strokeWidth: 2, strokeDashArray: [8, 0], stroke: 'grey' },
+    //     new go.Binding('strokeDashArray', 'weak', k => (k ? [8, 2] : [8, 0]))
+    //   ),
+    //   $(go.Shape, { strokeWidth: 1.2, scale: 2, fill: 'white', toArrow: 'Standard' },
+    //     new go.Binding('toArrow', 'toArrow')
+    //   ),
+    //   $(go.Shape, { strokeWidth: 1.2, scale: 2, fill: 'white', fromArrow: 'BackwardFork' },
+    //     new go.Binding('fromArrow', 'fromArrow')
+    //   )
+    // );
 
     // Palette-Initialisierung
     this.myPalette = new go.Palette('myPaletteDiv', {
@@ -201,11 +202,18 @@ export class GojsDiagramComponent implements OnInit {
         location: new go.Point(0, 0),
         items: [{ name: 'NameID', iskey: true }, { name: 'AnotherAttribute', iskey: false }],
         isWeak: true
+      },
+      {
+        key: 'Commentary',
+        className: 'Kommentar',
+        items: [{ name: 'NameID', iskey: true }, { name: 'AnotherAttribute', iskey: false }],
+        isWeak: false,
+        color: 'yellow'
       }
     ];
 
 
-    // Link template
+    // Link template (the real one)
     this.diagram.linkTemplate = $(go.Link,
       {
         routing: go.Routing.AvoidsNodes,
@@ -422,6 +430,35 @@ export class GojsDiagramComponent implements OnInit {
       const node = this.diagram.selection.first();
       if (node instanceof go.Node) this.nodeClicked.emit(node);
     });
+
+    // Listener for Link changes (Work in Progress)
+    this.diagram.addDiagramListener('LinkDrawn', function(e){
+      const link = e.subject; // The link that was changed
+      const fromArrow = link.fromArrow; // Get the from arrowhead
+      const toArrow = link.toArrow; // Get the to arrowhead
+  
+      // Check if both arrowheads are 'LineCircle'
+      // if (fromArrow === "LineCircle" && toArrow === "LineCircle") {
+      //     // Show a confirmation dialog
+      //     if (confirm("Both arrowheads are 'LineCircle'. Do you want to create a new node?")) {
+      //         // Create a new node
+      //         const newNodeData = { /* your new node data */ };
+      //         this.diagram.model.addNodeData(newNodeData);
+      //         const newNode = this.diagram.findNodeForData(newNodeData);
+  
+      //         // Get the original fromNode and toNode
+      //         const fromNode = link.fromNode;
+      //         const toNode = link.toNode;
+  
+      //         // Remove the original link
+      //         this.diagram.model.removeLinkData(link.data);
+  
+      //         // Create new links from the original nodes to the new node
+      //         this.diagram.model.addLinkData({ from: fromNode.data.key, to: newNodeData.key });
+      //         this.diagram.model.addLinkData({ from: newNodeData.key, to: toNode.data.key });
+      //     }
+      // }
+  })
 
     // Layout erzwingen
     this.diagram.layoutDiagram(true);

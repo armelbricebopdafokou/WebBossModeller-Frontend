@@ -1,6 +1,12 @@
 <app-header></app-header>
 
-<div class="content-wrapper">
+
+<div #drawScreen>
+  <app-gojs-diagram [model]="model" (nodeClicked)='setSelectedNode($event)'></app-gojs-diagram>
+</div>
+
+<!--Sidenav no longer needed-->
+<!-- <div class="content-wrapper">
   <mat-sidenav-container class="container">
     <mat-sidenav #sidenav mode="side" [(opened)]="opened" (opened)="events.push('open!')"
                  (closed)="events.push('close!')" role="toolbar" class="custom-sidenav">
@@ -48,4 +54,4 @@
       </div>
     </mat-sidenav-content>
   </mat-sidenav-container>
-</div>
+</div> -->
