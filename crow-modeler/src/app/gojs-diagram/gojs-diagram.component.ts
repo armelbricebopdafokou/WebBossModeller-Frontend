@@ -434,8 +434,11 @@ export class GojsDiagramComponent implements OnInit {
     // Listener for Link changes (Work in Progress)
     this.diagram.addDiagramListener('LinkDrawn', function(e){
       const link = e.subject; // The link that was changed
-      const fromArrow = link.fromArrow; // Get the from arrowhead
-      const toArrow = link.toArrow; // Get the to arrowhead
+      const toNode = link.toNode; // Get the toNode
+      // stops Links from being drawn into the empty space
+      if (toNode == null) {
+        e.diagram.remove(link);
+      }
   
       // Check if both arrowheads are 'LineCircle'
       // if (fromArrow === "LineCircle" && toArrow === "LineCircle") {
