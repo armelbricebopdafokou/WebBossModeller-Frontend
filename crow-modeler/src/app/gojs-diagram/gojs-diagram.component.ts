@@ -1,5 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { EditNodeDialogComponent } from '../edit-node-dialog/edit-node-dialog.component';
 import * as go from 'gojs';
 
 const $ = go.GraphObject.make;
@@ -7,7 +9,7 @@ const $ = go.GraphObject.make;
 @Component({
   selector: 'app-gojs-diagram',
   standalone: true,
-  imports: [MatButtonModule],
+  imports: [MatButtonModule, MatDialogModule, EditNodeDialogComponent],
   templateUrl: './gojs-diagram.component.html',
   styleUrls: ['./gojs-diagram.component.css']
 })
@@ -19,7 +21,7 @@ export class GojsDiagramComponent implements OnInit {
   @Input() public model!: go.GraphLinksModel;
   @Output() public nodeClicked = new EventEmitter();
 
-  constructor() { }
+  constructor(public dialog: MatDialog) { }
 
   ngOnInit(): void { }
 
@@ -51,7 +53,7 @@ export class GojsDiagramComponent implements OnInit {
 
     // Define the template for nodes in the diagram
     this.diagram.nodeTemplate =
-      $(go.Node, 'Spot',  
+      $(go.Node, 'Spot',
         {
           selectionAdorned: true,
           resizable: true,
@@ -71,7 +73,6 @@ export class GojsDiagramComponent implements OnInit {
                 this.deleteNode(obj);
               }
             }),
-           
           )
         },
         new go.Binding('location', 'location').makeTwoWay(),
@@ -108,7 +109,7 @@ export class GojsDiagramComponent implements OnInit {
 
         // Panel for attributes and header
         $(go.Panel, 'Table',
-          { padding: 4 },
+          { padding: 6 },
 
           // Header
           $(go.TextBlock,
@@ -135,7 +136,7 @@ export class GojsDiagramComponent implements OnInit {
               strokeWidth: 1,
               stretch: go.GraphObject.Horizontal, // Streckt die Linie horizontal basierend auf dem Container
               margin: new go.Margin(2, 2, 2, 2),
-              //alignment: go.Spot.Top // Optional: Positioniere die Linie innerhalb der Zelle
+              alignment: go.Spot.Top // Optional: Positioniere die Linie innerhalb der Zelle
             }
           ),
 
@@ -431,14 +432,14 @@ export class GojsDiagramComponent implements OnInit {
     });
 
     // Listener for Link changes (Work in Progress)
-    this.diagram.addDiagramListener('LinkDrawn', function(e){
+    this.diagram.addDiagramListener('LinkDrawn', function (e) {
       const link = e.subject; // The link that was changed
       const toNode = link.toNode; // Get the toNode
       // stops Links from being drawn into the empty space
       if (toNode == null) {
         e.diagram.remove(link);
       }
-  
+
       // Check if both arrowheads are 'LineCircle'
       // if (fromArrow === "LineCircle" && toArrow === "LineCircle") {
       //     // Show a confirmation dialog
@@ -447,20 +448,20 @@ export class GojsDiagramComponent implements OnInit {
       //         const newNodeData = { /* your new node data */ };
       //         this.diagram.model.addNodeData(newNodeData);
       //         const newNode = this.diagram.findNodeForData(newNodeData);
-  
+
       //         // Get the original fromNode and toNode
       //         const fromNode = link.fromNode;
       //         const toNode = link.toNode;
-  
+
       //         // Remove the original link
       //         this.diagram.model.removeLinkData(link.data);
-  
+
       //         // Create new links from the original nodes to the new node
       //         this.diagram.model.addLinkData({ from: fromNode.data.key, to: newNodeData.key });
       //         this.diagram.model.addLinkData({ from: newNodeData.key, to: toNode.data.key });
       //     }
       // }
-  })
+    })
 
     // Layout erzwingen
     this.diagram.layoutDiagram(true);
@@ -475,67 +476,25 @@ export class GojsDiagramComponent implements OnInit {
     }
   }
 
+
   openEditDialog(obj: go.GraphObject) {
     const contextItem = obj.part;
     if (contextItem?.data) {
-      // Öffnet ein Fenster zum Bearbeiten des Elements (angepasst für detaillierte Bearbeitung)
-      const newWindow = window.open('', '_blank', 'width=800,height=400');
-      if (newWindow) {
-        newWindow.document.write(`
-          <html>
-            <head>
-              <title>Tabelle "${contextItem.data.className}" bearbeiten</title>
-              <style>
-                table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-                th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
-                button { margin-top: 20px; padding: 10px; }
-              </style>
-            </head>
-            <body>
-              <h2>Tabelle "${contextItem.data.className}" bearbeiten</h2>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Auswahl</th>
-                    <th>Name</th>
-                    <th>Datentyp</th>
-                    <th>PK</th>
-                    <th>NN</th>
-                    <th>Unique</th>
-                    <th>Check</th>
-                    <th>Default</th>
-                    <th>FK TableName</th>
-                    <th>FK ColumnName</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><input type="checkbox"></td>
-                    <td><input type="text" value="${contextItem.data.name || ''}"></td>
-                    <td>
-                      <select>
-                        <option value="integer" ${contextItem.data.datatype === 'integer' ? 'selected' : ''}>integer</option>
-                        <option value="string" ${contextItem.data.datatype === 'string' ? 'selected' : ''}>string</option>
-                        <option value="boolean" ${contextItem.data.datatype === 'boolean' ? 'selected' : ''}>boolean</option>
-                      </select>
-                    </td>
-                    <td><input type="checkbox" ${contextItem.data.pk ? 'checked' : ''}></td>
-                    <td><input type="checkbox" ${contextItem.data.nn ? 'checked' : ''}></td>
-                    <td><input type="checkbox" ${contextItem.data.unique ? 'checked' : ''}></td>
-                    <td><input type="text" value="${contextItem.data.check || ''}"></td>
-                    <td><input type="text" value="${contextItem.data.default || ''}"></td>
-                    <td><input type="text" value="${contextItem.data.fkTableName || ''}"></td>
-                    <td><input type="text" value="${contextItem.data.fkColumnName || ''}"></td>
-                  </tr>
-                </tbody>
-              </table>
-              <button onclick="window.close()">OK</button>
-            </body>
-          </html>
-        `);
-      }
+      const dialogRef = this.dialog.open(EditNodeDialogComponent, {
+        width: '1000px',
+        data: { ...contextItem.data }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.diagram.startTransaction('update node data');
+          this.diagram.model.assignAllDataProperties(contextItem.data, result);
+          this.diagram.commitTransaction('update node data');
+        }
+      });
     }
   }
+  
   deleteNode(obj: go.GraphObject) {
     const contextItem = obj.part;
     if (contextItem instanceof go.Node && contextItem.diagram) {
