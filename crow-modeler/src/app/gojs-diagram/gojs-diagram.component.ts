@@ -287,7 +287,8 @@ export class GojsDiagramComponent implements OnInit {
                     (currentArrow == 'DoubleLine' && otherArrow == 'CircleFork') ||
                     (currentArrow == 'LineCircle' && otherArrow == 'CircleFork'))
                   ) { // stops links from being changed into M:M relation in Advanced mode.
-                    console.log('Error message should appear');    
+                    console.log('Error message should appear');
+                    window.alert('M:M relationship is not allowed in Advanced mode!')
                     confirmed = false              
                 }
                 else {
@@ -371,11 +372,30 @@ export class GojsDiagramComponent implements OnInit {
                   'LineCircle': 'CircleFork'
                 };
 
-                // Start a transaction to update the link
-                this.diagram.model.startTransaction('Toggle toArrow');
-
                 // Get the current toArrow state and assert its type
                 const currentArrow = linkData.toArrow as ArrowState;
+                const otherArrow = linkData.fromArrow
+
+                let confirmed = true;
+
+                if (this.isAdvancedMode && 
+                  (
+                    (currentArrow == 'DoubleLine' && otherArrow == 'BackwardLineFork') ||
+                    (currentArrow == 'LineCircle' && otherArrow == 'BackwardLineFork') ||
+                    (currentArrow == 'DoubleLine' && otherArrow == 'BackwardCircleFork') ||
+                    (currentArrow == 'LineCircle' && otherArrow == 'BackwardCircleFork'))
+                  ) { // stops links from being changed into M:M relation in Advanced mode.
+                    console.log('Error message should appear');
+                    window.alert('M:M relationship is not allowed in Advanced mode!')
+                    confirmed = false              
+                }
+                else {
+                  confirmed = true;
+                }
+
+                if (confirmed){
+                  // Start a transaction to update the link
+                this.diagram.model.startTransaction('Toggle toArrow');
 
                 console.log("Current Arrow = ", currentArrow)
 
@@ -388,6 +408,7 @@ export class GojsDiagramComponent implements OnInit {
                 // Commit the transaction
                 this.diagram.model.commitTransaction('Toggle toArrow');
                 console.log("ToArrow property of link toggled to:", newArrow);
+                }                
               }
             }
           ),
