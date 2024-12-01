@@ -96,7 +96,7 @@ export class HeaderComponent {
       this.isAdvancedMode = mode;
     });
   }
-
+  // Method for toggle button. Toggles between easy and advanced mode
   toggleMode(event: Event) {
     this.drawingModeService.toggleMode();
   }

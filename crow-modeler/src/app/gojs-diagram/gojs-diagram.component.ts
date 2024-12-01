@@ -2,6 +2,8 @@ import { Component, ElementRef, OnInit, ViewChild, Input, Output, EventEmitter }
 import { MatButtonModule } from '@angular/material/button';
 import * as go from 'gojs';
 
+import { DrawingModeService } from '../drawing-mode.service';
+
 const $ = go.GraphObject.make;
 
 @Component({
@@ -28,7 +30,7 @@ export class GojsDiagramComponent implements OnInit {
     this.diagram = $(go.Diagram, this.diagramDiv.nativeElement, {
       //layout: $(go.GridLayout, { wrappingColumn: 3, spacing: new go.Size(20, 20) }),
       'draggingTool.dragsLink': true,
-      'linkingTool.isUnconnectedLinkValid': true,
+      'linkingTool.isUnconnectedLinkValid': false, // Links must be connected to two nodes
       'draggingTool.gridSnapCellSize': new go.Size(10, 1),
       'draggingTool.isGridSnapEnabled': true,
       'undoManager.isEnabled': true,
@@ -85,13 +87,16 @@ export class GojsDiagramComponent implements OnInit {
             stroke: "black",
             strokeWidth: 2,
             portId: '',
-            cursor: 'pointer',
+            cursor: 'grab',
             fromLinkable: true,
             toLinkable: true,
             alignment: go.Spot.Center,
             stretch: go.Stretch.Fill
           },
-          new go.Binding('fill', 'color')
+          new go.Binding('fill', 'color'),
+          new go.Binding("geometryString", "isWeak", weak =>
+            weak ? "F M0 10 L10 0 H90 L100 10 V90 L90 100 H10 L0 90z" : null
+          )
         ),
 
         // Slanted shape for weak tables
@@ -100,7 +105,7 @@ export class GojsDiagramComponent implements OnInit {
             fill: null,
             stroke: "black",
             strokeWidth: 1.5,
-            alignment: go.Spot.Center,
+            //alignment: go.Spot.Center,
             stretch: go.Stretch.Fill
           },
           new go.Binding("geometryString", "isWeak", weak =>
@@ -265,23 +270,32 @@ export class GojsDiagramComponent implements OnInit {
                   'LineCircle': 'BackwardCircleFork'
                 };
 
-                // Start a transaction to update the link
-                this.diagram.model.startTransaction('Toggle FromArrow');
-
                 // Get the current fromArrow state and assert its type
                 const currentArrow = linkData.fromArrow as ArrowState;
+                let confirmed = true;
 
-                console.log("Current Arrow = ", currentArrow)
+                if (true && currentArrow == 'DoubleLine') {
+                  confirmed = window.confirm("Wirklich machen?")
+                }
 
-                // Determine the new state based on the current state
-                const newArrow = arrowToggleMap[currentArrow]; // This will be safe now
+                if (confirmed) {
 
-                // Set the new fromArrow state
-                this.diagram.model.setDataProperty(linkData, 'fromArrow', newArrow);
+                  // Start a transaction to update the link
+                  this.diagram.model.startTransaction('Toggle FromArrow');
 
-                // Commit the transaction
-                this.diagram.model.commitTransaction('Toggle FromArrow');
-                console.log("FromArrow property of link toggled to:", newArrow);
+                  console.log("Current Arrow = ", currentArrow)
+
+                  // Determine the new state based on the current state
+                  const newArrow = arrowToggleMap[currentArrow]; // This will be safe now
+
+                  // Set the new fromArrow state
+                  this.diagram.model.setDataProperty(linkData, 'fromArrow', newArrow);
+
+                  // Commit the transaction
+                  this.diagram.model.commitTransaction('Toggle FromArrow');
+                  console.log("FromArrow property of link toggled to:", newArrow);
+
+                }
               }
             }
           ),
@@ -430,38 +444,6 @@ export class GojsDiagramComponent implements OnInit {
       const node = this.diagram.selection.first();
       if (node instanceof go.Node) this.nodeClicked.emit(node);
     });
-
-    // Listener for Link changes (Work in Progress)
-    this.diagram.addDiagramListener('LinkDrawn', function(e){
-      const link = e.subject; // The link that was changed
-      const toNode = link.toNode; // Get the toNode
-      // stops Links from being drawn into the empty space
-      if (toNode == null) {
-        e.diagram.remove(link);
-      }
-  
-      // Check if both arrowheads are 'LineCircle'
-      // if (fromArrow === "LineCircle" && toArrow === "LineCircle") {
-      //     // Show a confirmation dialog
-      //     if (confirm("Both arrowheads are 'LineCircle'. Do you want to create a new node?")) {
-      //         // Create a new node
-      //         const newNodeData = { /* your new node data */ };
-      //         this.diagram.model.addNodeData(newNodeData);
-      //         const newNode = this.diagram.findNodeForData(newNodeData);
-  
-      //         // Get the original fromNode and toNode
-      //         const fromNode = link.fromNode;
-      //         const toNode = link.toNode;
-  
-      //         // Remove the original link
-      //         this.diagram.model.removeLinkData(link.data);
-  
-      //         // Create new links from the original nodes to the new node
-      //         this.diagram.model.addLinkData({ from: fromNode.data.key, to: newNodeData.key });
-      //         this.diagram.model.addLinkData({ from: newNodeData.key, to: toNode.data.key });
-      //     }
-      // }
-  })
 
     // Layout erzwingen
     this.diagram.layoutDiagram(true);
