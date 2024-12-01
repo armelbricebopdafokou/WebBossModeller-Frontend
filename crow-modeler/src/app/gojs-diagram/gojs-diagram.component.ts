@@ -4,6 +4,8 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { EditNodeDialogComponent } from '../edit-node-dialog/edit-node-dialog.component';
 import * as go from 'gojs';
 
+import { DrawingModeService } from '../drawing-mode.service';
+
 const $ = go.GraphObject.make;
 
 @Component({
@@ -21,16 +23,21 @@ export class GojsDiagramComponent implements OnInit {
   @Input() public model!: go.GraphLinksModel;
   @Output() public nodeClicked = new EventEmitter();
 
-  constructor(public dialog: MatDialog) { }
 
-  ngOnInit(): void { }
+  constructor(private modeService: DrawingModeService) { }
+
+  ngOnInit(): void {
+    this.modeService.currentMode.subscribe(mode =>{
+      this.isAdvancedMode = mode;
+    })
+  }
 
   ngAfterViewInit() {
     // Diagram-Initialisierung
     this.diagram = $(go.Diagram, this.diagramDiv.nativeElement, {
       //layout: $(go.GridLayout, { wrappingColumn: 3, spacing: new go.Size(20, 20) }),
       'draggingTool.dragsLink': true,
-      'linkingTool.isUnconnectedLinkValid': true,
+      'linkingTool.isUnconnectedLinkValid': false, // Links must be connected to two nodes
       'draggingTool.gridSnapCellSize': new go.Size(10, 1),
       'draggingTool.isGridSnapEnabled': true,
       'undoManager.isEnabled': true,
@@ -84,13 +91,16 @@ export class GojsDiagramComponent implements OnInit {
             stroke: "black",
             strokeWidth: 2,
             portId: '',
-            cursor: 'pointer',
+            cursor: 'grab',
             fromLinkable: true,
             toLinkable: true,
             alignment: go.Spot.Center,
             stretch: go.Stretch.Fill
           },
-          new go.Binding('fill', 'color')
+          new go.Binding('fill', 'color'),
+          new go.Binding("geometryString", "isWeak", weak =>
+            weak ? "F M0 10 L10 0 H90 L100 10 V90 L90 100 H10 L0 90z" : null
+          )
         ),
 
         // Slanted shape for weak tables
@@ -99,7 +109,7 @@ export class GojsDiagramComponent implements OnInit {
             fill: null,
             stroke: "black",
             strokeWidth: 1.5,
-            alignment: go.Spot.Center,
+            //alignment: go.Spot.Center,
             stretch: go.Stretch.Fill
           },
           new go.Binding("geometryString", "isWeak", weak =>
@@ -134,7 +144,7 @@ export class GojsDiagramComponent implements OnInit {
               columnSpan: 2,
               stroke: 'black',
               strokeWidth: 1,
-              stretch: go.GraphObject.Horizontal, // Streckt die Linie horizontal basierend auf dem Container
+              stretch: go.Stretch.Horizontal, // Streckt die Linie horizontal basierend auf dem Panel Container
               margin: new go.Margin(2, 2, 2, 2),
               alignment: go.Spot.Top // Optional: Positioniere die Linie innerhalb der Zelle
             }
@@ -248,7 +258,7 @@ export class GojsDiagramComponent implements OnInit {
             }
           ),
           $('ContextMenuButton',
-            $(go.TextBlock, "Toggle FromNode Anzahl"),
+            $(go.TextBlock, 'Toggle FromNode Anzahl').bind('text', 'from', v => 'Toggle '+ v + ' Anzahl'),
             {
               click: (e, obj) => {
                 // Get the data of the link that was clicked
@@ -265,28 +275,49 @@ export class GojsDiagramComponent implements OnInit {
                   'LineCircle': 'BackwardCircleFork'
                 };
 
-                // Start a transaction to update the link
-                this.diagram.model.startTransaction('Toggle FromArrow');
-
                 // Get the current fromArrow state and assert its type
                 const currentArrow = linkData.fromArrow as ArrowState;
+                const otherArrow = linkData.toArrow
+                let confirmed = true;
 
-                console.log("Current Arrow = ", currentArrow)
+                if (this.isAdvancedMode && 
+                  (
+                    (currentArrow == 'DoubleLine' && otherArrow == 'LineFork') ||
+                    (currentArrow == 'LineCircle' && otherArrow == 'LineFork') ||
+                    (currentArrow == 'DoubleLine' && otherArrow == 'CircleFork') ||
+                    (currentArrow == 'LineCircle' && otherArrow == 'CircleFork'))
+                  ) { // stops links from being changed into M:M relation in Advanced mode.
+                    console.log('Error message should appear');
+                    window.alert('M:M relationship is not allowed in Advanced mode!')
+                    confirmed = false              
+                }
+                else {
+                  confirmed = true;
+                }
+                
+                if (confirmed) {
 
-                // Determine the new state based on the current state
-                const newArrow = arrowToggleMap[currentArrow]; // This will be safe now
+                  // Start a transaction to update the link
+                  this.diagram.model.startTransaction('Toggle FromArrow');
 
-                // Set the new fromArrow state
-                this.diagram.model.setDataProperty(linkData, 'fromArrow', newArrow);
+                  console.log("Current Arrow = ", currentArrow)
 
-                // Commit the transaction
-                this.diagram.model.commitTransaction('Toggle FromArrow');
-                console.log("FromArrow property of link toggled to:", newArrow);
+                  // Determine the new state based on the current state
+                  const newArrow = arrowToggleMap[currentArrow]; // This will be safe now
+
+                  // Set the new fromArrow state
+                  this.diagram.model.setDataProperty(linkData, 'fromArrow', newArrow);
+
+                  // Commit the transaction
+                  this.diagram.model.commitTransaction('Toggle FromArrow');
+                  console.log("FromArrow property of link toggled to:", newArrow);
+
+                }
               }
             }
           ),
           $('ContextMenuButton',
-            $(go.TextBlock, "Toggle FromNode Kann/Muss"),
+            $(go.TextBlock, "Toggle FromNode Kann/Muss").bind('text', 'from', v => 'Toggle '+ v + ' Kann/Muss'),
             {
               click: (e, obj) => {
                 // Get the data of the link that was clicked
@@ -324,7 +355,7 @@ export class GojsDiagramComponent implements OnInit {
             }
           ),
           $('ContextMenuButton',
-            $(go.TextBlock, "Toggle ToNode Anzahl"),
+            $(go.TextBlock, "Toggle ToNode Anzahl").bind('text', 'to', v => 'Toggle '+ v + ' Anzahl'),
             {
               click: (e, obj) => {
                 // Get the data of the link that was clicked
@@ -341,11 +372,30 @@ export class GojsDiagramComponent implements OnInit {
                   'LineCircle': 'CircleFork'
                 };
 
-                // Start a transaction to update the link
-                this.diagram.model.startTransaction('Toggle toArrow');
-
                 // Get the current toArrow state and assert its type
                 const currentArrow = linkData.toArrow as ArrowState;
+                const otherArrow = linkData.fromArrow
+
+                let confirmed = true;
+
+                if (this.isAdvancedMode && 
+                  (
+                    (currentArrow == 'DoubleLine' && otherArrow == 'BackwardLineFork') ||
+                    (currentArrow == 'LineCircle' && otherArrow == 'BackwardLineFork') ||
+                    (currentArrow == 'DoubleLine' && otherArrow == 'BackwardCircleFork') ||
+                    (currentArrow == 'LineCircle' && otherArrow == 'BackwardCircleFork'))
+                  ) { // stops links from being changed into M:M relation in Advanced mode.
+                    console.log('Error message should appear');
+                    window.alert('M:M relationship is not allowed in Advanced mode!')
+                    confirmed = false              
+                }
+                else {
+                  confirmed = true;
+                }
+
+                if (confirmed){
+                  // Start a transaction to update the link
+                this.diagram.model.startTransaction('Toggle toArrow');
 
                 console.log("Current Arrow = ", currentArrow)
 
@@ -358,11 +408,12 @@ export class GojsDiagramComponent implements OnInit {
                 // Commit the transaction
                 this.diagram.model.commitTransaction('Toggle toArrow');
                 console.log("ToArrow property of link toggled to:", newArrow);
+                }                
               }
             }
           ),
           $('ContextMenuButton',
-            $(go.TextBlock, "Toggle ToNode Kann/Muss"),
+            $(go.TextBlock, "Toggle ToNode Kann/Muss").bind('text', 'to', v => 'Toggle '+ v + ' Kann/Muss'),
             {
               click: (e, obj) => {
                 // Get the data of the link that was clicked
@@ -431,7 +482,6 @@ export class GojsDiagramComponent implements OnInit {
       if (node instanceof go.Node) this.nodeClicked.emit(node);
     });
 
-    // Listener for Link changes (Work in Progress)
     this.diagram.addDiagramListener('LinkDrawn', function (e) {
       const link = e.subject; // The link that was changed
       const toNode = link.toNode; // Get the toNode
