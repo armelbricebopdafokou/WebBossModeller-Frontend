@@ -21,9 +21,15 @@ export class GojsDiagramComponent implements OnInit {
   @Input() public model!: go.GraphLinksModel;
   @Output() public nodeClicked = new EventEmitter();
 
-  constructor() { }
+  isAdvancedMode!: boolean;
 
-  ngOnInit(): void { }
+  constructor(private modeService: DrawingModeService) { }
+
+  ngOnInit(): void {
+    this.modeService.currentMode.subscribe(mode =>{
+      this.isAdvancedMode = mode;
+    })
+  }
 
   ngAfterViewInit() {
     // Diagram-Initialisierung
@@ -138,7 +144,7 @@ export class GojsDiagramComponent implements OnInit {
               columnSpan: 2,
               stroke: 'black',
               strokeWidth: 1,
-              stretch: go.GraphObject.Horizontal, // Streckt die Linie horizontal basierend auf dem Container
+              stretch: go.Stretch.Horizontal, // Streckt die Linie horizontal basierend auf dem Panel Container
               margin: new go.Margin(2, 2, 2, 2),
               //alignment: go.Spot.Top // Optional: Positioniere die Linie innerhalb der Zelle
             }
@@ -252,7 +258,7 @@ export class GojsDiagramComponent implements OnInit {
             }
           ),
           $('ContextMenuButton',
-            $(go.TextBlock, "Toggle FromNode Anzahl"),
+            $(go.TextBlock, 'Toggle FromNode Anzahl').bind('text', 'from', v => 'Toggle '+ v + ' Anzahl'),
             {
               click: (e, obj) => {
                 // Get the data of the link that was clicked
@@ -271,12 +277,23 @@ export class GojsDiagramComponent implements OnInit {
 
                 // Get the current fromArrow state and assert its type
                 const currentArrow = linkData.fromArrow as ArrowState;
+                const otherArrow = linkData.toArrow
                 let confirmed = true;
 
-                if (true && currentArrow == 'DoubleLine') {
-                  confirmed = window.confirm("Wirklich machen?")
+                if (this.isAdvancedMode && 
+                  (
+                    (currentArrow == 'DoubleLine' && otherArrow == 'LineFork') ||
+                    (currentArrow == 'LineCircle' && otherArrow == 'LineFork') ||
+                    (currentArrow == 'DoubleLine' && otherArrow == 'CircleFork') ||
+                    (currentArrow == 'LineCircle' && otherArrow == 'CircleFork'))
+                  ) { // stops links from being changed into M:M relation in Advanced mode.
+                    console.log('Error message should appear');    
+                    confirmed = false              
                 }
-
+                else {
+                  confirmed = true;
+                }
+                
                 if (confirmed) {
 
                   // Start a transaction to update the link
@@ -299,7 +316,7 @@ export class GojsDiagramComponent implements OnInit {
             }
           ),
           $('ContextMenuButton',
-            $(go.TextBlock, "Toggle FromNode Kann/Muss"),
+            $(go.TextBlock, "Toggle FromNode Kann/Muss").bind('text', 'from', v => 'Toggle '+ v + ' Kann/Muss'),
             {
               click: (e, obj) => {
                 // Get the data of the link that was clicked
@@ -337,7 +354,7 @@ export class GojsDiagramComponent implements OnInit {
             }
           ),
           $('ContextMenuButton',
-            $(go.TextBlock, "Toggle ToNode Anzahl"),
+            $(go.TextBlock, "Toggle ToNode Anzahl").bind('text', 'to', v => 'Toggle '+ v + ' Anzahl'),
             {
               click: (e, obj) => {
                 // Get the data of the link that was clicked
@@ -375,7 +392,7 @@ export class GojsDiagramComponent implements OnInit {
             }
           ),
           $('ContextMenuButton',
-            $(go.TextBlock, "Toggle ToNode Kann/Muss"),
+            $(go.TextBlock, "Toggle ToNode Kann/Muss").bind('text', 'to', v => 'Toggle '+ v + ' Kann/Muss'),
             {
               click: (e, obj) => {
                 // Get the data of the link that was clicked
