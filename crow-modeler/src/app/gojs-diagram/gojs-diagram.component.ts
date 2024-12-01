@@ -23,10 +23,9 @@ export class GojsDiagramComponent implements OnInit {
   @Input() public model!: go.GraphLinksModel;
   @Output() public nodeClicked = new EventEmitter();
   isAdvancedMode!: boolean;
-  dialog: any;
 
 
-  constructor(private modeService: DrawingModeService) { }
+  constructor(public dialog: MatDialog,private modeService: DrawingModeService) { }
 
   ngOnInit(): void {
     this.modeService.currentMode.subscribe(mode =>{
