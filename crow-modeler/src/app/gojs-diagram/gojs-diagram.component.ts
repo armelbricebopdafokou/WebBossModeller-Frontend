@@ -22,6 +22,8 @@ export class GojsDiagramComponent implements OnInit {
 
   @Input() public model!: go.GraphLinksModel;
   @Output() public nodeClicked = new EventEmitter();
+  isAdvancedMode!: boolean;
+  dialog: any;
 
 
   constructor(private modeService: DrawingModeService) { }
@@ -535,7 +537,7 @@ export class GojsDiagramComponent implements OnInit {
         data: { ...contextItem.data }
       });
 
-      dialogRef.afterClosed().subscribe(result => {
+      dialogRef.afterClosed().subscribe((result: go.ObjectData) => {
         if (result) {
           this.diagram.startTransaction('update node data');
           this.diagram.model.assignAllDataProperties(contextItem.data, result);
