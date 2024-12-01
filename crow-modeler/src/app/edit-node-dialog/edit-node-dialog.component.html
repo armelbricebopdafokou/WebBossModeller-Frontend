@@ -1,0 +1,37 @@
+<h1 mat-dialog-title>Bearbeite Tabelle "{{ data.className }}"</h1>
+<div mat-dialog-content>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Datentyp</th>
+        <th>PK</th>
+        <th>NN</th>
+        <th>Unique</th>
+        <th>Check</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><input [(ngModel)]="data.name" /></td>
+        <td>
+          <select [(ngModel)]="data.datatype">
+            <option value="integer">integer</option>
+            <option value="string">string</option>
+            <option value="boolean">boolean</option>
+          </select>
+        </td>
+        <td><input type="checkbox" [(ngModel)]="data.pk" /></td>
+        <td><input type="checkbox" [(ngModel)]="data.nn" /></td>
+        <td><input type="checkbox" [(ngModel)]="data.unique" /></td>
+        <td><input [(ngModel)]="data.check" /></td>
+        <td><input [(ngModel)]="data.default" /></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Abbrechen</button>
+  <button mat-button (click)="save()">Speichern</button>
+</div>

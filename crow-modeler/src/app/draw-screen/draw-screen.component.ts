@@ -1,10 +1,11 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CreateClassDialogComponent } from '../create-class-dialog/create-class-dialog.component';
 import { GojsAngularModule } from 'gojs-angular';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { GojsDiagramComponent } from '../gojs-diagram/gojs-diagram.component';
+import { EditNodeDialogComponent } from '../edit-node-dialog/edit-node-dialog.component';
 import { HeaderComponent } from '../header/header.component';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { SideComponent } from '../side/side.component';
@@ -20,13 +21,13 @@ import { FormsModule } from '@angular/forms';
     GojsDiagramComponent,
     MatSidenavModule,
     HeaderComponent,
-    SideComponent, 
+    SideComponent,
     InspectorComponent,
-    MatTooltipModule, // Hinzufügen des MatTooltipModule
+    MatTooltipModule,
     RouterLink,
     RouterLinkActive,
-    SideComponent,
-    FormsModule
+    FormsModule,
+    MatDialogModule // Wichtig für die Verwendung von MatDialog
   ],
   templateUrl: './draw-screen.component.html',
   styleUrls: ['./draw-screen.component.css']
@@ -149,15 +150,13 @@ export class DrawScreenComponent {
   }
 
   zoomIn() {
-    console.log('Zooming in');
-    if (this.diagramComponent) {
+    if (this.diagramComponent && this.diagramComponent.diagram.scale < 3) {
       this.diagramComponent.diagram.scale += 0.1;
     }
   }
 
   zoomOut() {
-    console.log('Zooming out');
-    if (this.diagramComponent && this.diagramComponent.diagram.scale > 0.1) {
+    if (this.diagramComponent && this.diagramComponent.diagram.scale > 0.2) {
       this.diagramComponent.diagram.scale -= 0.1;
     }
   }

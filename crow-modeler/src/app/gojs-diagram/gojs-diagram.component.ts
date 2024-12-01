@@ -1,5 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { EditNodeDialogComponent } from '../edit-node-dialog/edit-node-dialog.component';
 import * as go from 'gojs';
 
 import { DrawingModeService } from '../drawing-mode.service';
@@ -9,7 +11,7 @@ const $ = go.GraphObject.make;
 @Component({
   selector: 'app-gojs-diagram',
   standalone: true,
-  imports: [MatButtonModule],
+  imports: [MatButtonModule, MatDialogModule, EditNodeDialogComponent],
   templateUrl: './gojs-diagram.component.html',
   styleUrls: ['./gojs-diagram.component.css']
 })
@@ -23,7 +25,7 @@ export class GojsDiagramComponent implements OnInit {
 
   isAdvancedMode!: boolean;
 
-  constructor(private modeService: DrawingModeService) { }
+  constructor(public dialog: MatDialogprivate modeService: DrawingModeService) { }
 
   ngOnInit(): void {
     this.modeService.currentMode.subscribe(mode =>{
@@ -59,7 +61,7 @@ export class GojsDiagramComponent implements OnInit {
 
     // Define the template for nodes in the diagram
     this.diagram.nodeTemplate =
-      $(go.Node, 'Spot',  
+      $(go.Node, 'Spot',
         {
           selectionAdorned: true,
           resizable: true,
@@ -79,7 +81,6 @@ export class GojsDiagramComponent implements OnInit {
                 this.deleteNode(obj);
               }
             }),
-           
           )
         },
         new go.Binding('location', 'location').makeTwoWay(),
@@ -119,7 +120,7 @@ export class GojsDiagramComponent implements OnInit {
 
         // Panel for attributes and header
         $(go.Panel, 'Table',
-          { padding: 4 },
+          { padding: 6 },
 
           // Header
           $(go.TextBlock,
@@ -146,7 +147,7 @@ export class GojsDiagramComponent implements OnInit {
               strokeWidth: 1,
               stretch: go.Stretch.Horizontal, // Streckt die Linie horizontal basierend auf dem Panel Container
               margin: new go.Margin(2, 2, 2, 2),
-              //alignment: go.Spot.Top // Optional: Positioniere die Linie innerhalb der Zelle
+              alignment: go.Spot.Top // Optional: Positioniere die Linie innerhalb der Zelle
             }
           ),
 
@@ -495,67 +496,25 @@ export class GojsDiagramComponent implements OnInit {
     }
   }
 
+
   openEditDialog(obj: go.GraphObject) {
     const contextItem = obj.part;
     if (contextItem?.data) {
-      // Öffnet ein Fenster zum Bearbeiten des Elements (angepasst für detaillierte Bearbeitung)
-      const newWindow = window.open('', '_blank', 'width=800,height=400');
-      if (newWindow) {
-        newWindow.document.write(`
-          <html>
-            <head>
-              <title>Tabelle "${contextItem.data.className}" bearbeiten</title>
-              <style>
-                table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-                th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
-                button { margin-top: 20px; padding: 10px; }
-              </style>
-            </head>
-            <body>
-              <h2>Tabelle "${contextItem.data.className}" bearbeiten</h2>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Auswahl</th>
-                    <th>Name</th>
-                    <th>Datentyp</th>
-                    <th>PK</th>
-                    <th>NN</th>
-                    <th>Unique</th>
-                    <th>Check</th>
-                    <th>Default</th>
-                    <th>FK TableName</th>
-                    <th>FK ColumnName</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><input type="checkbox"></td>
-                    <td><input type="text" value="${contextItem.data.name || ''}"></td>
-                    <td>
-                      <select>
-                        <option value="integer" ${contextItem.data.datatype === 'integer' ? 'selected' : ''}>integer</option>
-                        <option value="string" ${contextItem.data.datatype === 'string' ? 'selected' : ''}>string</option>
-                        <option value="boolean" ${contextItem.data.datatype === 'boolean' ? 'selected' : ''}>boolean</option>
-                      </select>
-                    </td>
-                    <td><input type="checkbox" ${contextItem.data.pk ? 'checked' : ''}></td>
-                    <td><input type="checkbox" ${contextItem.data.nn ? 'checked' : ''}></td>
-                    <td><input type="checkbox" ${contextItem.data.unique ? 'checked' : ''}></td>
-                    <td><input type="text" value="${contextItem.data.check || ''}"></td>
-                    <td><input type="text" value="${contextItem.data.default || ''}"></td>
-                    <td><input type="text" value="${contextItem.data.fkTableName || ''}"></td>
-                    <td><input type="text" value="${contextItem.data.fkColumnName || ''}"></td>
-                  </tr>
-                </tbody>
-              </table>
-              <button onclick="window.close()">OK</button>
-            </body>
-          </html>
-        `);
-      }
+      const dialogRef = this.dialog.open(EditNodeDialogComponent, {
+        width: '1000px',
+        data: { ...contextItem.data }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.diagram.startTransaction('update node data');
+          this.diagram.model.assignAllDataProperties(contextItem.data, result);
+          this.diagram.commitTransaction('update node data');
+        }
+      });
     }
   }
+  
   deleteNode(obj: go.GraphObject) {
     const contextItem = obj.part;
     if (contextItem instanceof go.Node && contextItem.diagram) {
