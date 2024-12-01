@@ -28,10 +28,10 @@ export class GojsDiagramComponent implements OnInit {
   isAdvancedMode!: boolean;
 >>>>>>> 1ea398ca94e6991e5580ab1b4c844d09f93da8b9
 
-  constructor(public dialog: MatDialog,private modeService: DrawingModeService) { }
+  constructor(public dialog: MatDialogprivate modeService: DrawingModeService) { }
 
   ngOnInit(): void {
-    this.modeService.currentMode.subscribe((mode: boolean) =>{
+    this.modeService.currentMode.subscribe(mode =>{
       this.isAdvancedMode = mode;
     })
   }
@@ -542,7 +542,7 @@ export class GojsDiagramComponent implements OnInit {
         data: { ...contextItem.data }
       });
 
-      dialogRef.afterClosed().subscribe((result: go.ObjectData) => {
+      dialogRef.afterClosed().subscribe(result => {
         if (result) {
           this.diagram.startTransaction('update node data');
           this.diagram.model.assignAllDataProperties(contextItem.data, result);
