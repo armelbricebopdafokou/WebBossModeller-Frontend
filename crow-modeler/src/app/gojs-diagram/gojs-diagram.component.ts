@@ -53,7 +53,7 @@ export class GojsDiagramComponent implements OnInit {
 
     // Define the template for nodes in the diagram
     this.diagram.nodeTemplate =
-      $(go.Node, 'Auto',
+      $(go.Node, 'Spot',  
         {
           selectionAdorned: true,
           resizable: true,
@@ -73,9 +73,7 @@ export class GojsDiagramComponent implements OnInit {
                 this.deleteNode(obj);
               }
             }),
-            $('ContextMenuButton', $(go.TextBlock, 'Set No'), {
-              click: (e, obj) => this.toggleProperty(obj, 'isNotNull')
-            })
+           
           )
         },
         new go.Binding('location', 'location').makeTwoWay(),
@@ -140,8 +138,9 @@ export class GojsDiagramComponent implements OnInit {
               columnSpan: 2,
               stroke: 'black',
               strokeWidth: 1,
-              stretch: go.GraphObject.Horizontal,
-              margin: new go.Margin(2, 2, 2, 2)
+              stretch: go.GraphObject.Horizontal, // Streckt die Linie horizontal basierend auf dem Container
+              margin: new go.Margin(2, 2, 2, 2),
+              //alignment: go.Spot.Top // Optional: Positioniere die Linie innerhalb der Zelle
             }
           ),
 
