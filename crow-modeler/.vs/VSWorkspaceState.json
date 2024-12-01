@@ -3,9 +3,8 @@
     "",
     "\\src",
     "\\src\\app",
-    "\\src\\app\\edit-node-dialog",
-    "\\src\\app\\gojs-diagram",
-    "\\src\\app\\header"
+    "\\src\\app\\draw-screen",
+    "\\src\\app\\gojs-diagram"
   ],
   "PreviewInSolutionExplorer": false
 }

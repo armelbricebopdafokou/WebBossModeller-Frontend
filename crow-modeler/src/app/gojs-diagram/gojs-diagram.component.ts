@@ -23,15 +23,11 @@ export class GojsDiagramComponent implements OnInit {
   @Input() public model!: go.GraphLinksModel;
   @Output() public nodeClicked = new EventEmitter();
 
-<<<<<<< HEAD
-=======
-  isAdvancedMode!: boolean;
->>>>>>> 1ea398ca94e6991e5580ab1b4c844d09f93da8b9
 
-  constructor(public dialog: MatDialog,private modeService: DrawingModeService) { }
+  constructor(private modeService: DrawingModeService) { }
 
   ngOnInit(): void {
-    this.modeService.currentMode.subscribe((mode: boolean) =>{
+    this.modeService.currentMode.subscribe(mode =>{
       this.isAdvancedMode = mode;
     })
   }
@@ -486,7 +482,6 @@ export class GojsDiagramComponent implements OnInit {
       if (node instanceof go.Node) this.nodeClicked.emit(node);
     });
 
-<<<<<<< HEAD
     this.diagram.addDiagramListener('LinkDrawn', function (e) {
       const link = e.subject; // The link that was changed
       const toNode = link.toNode; // Get the toNode
@@ -518,8 +513,6 @@ export class GojsDiagramComponent implements OnInit {
       // }
     })
 
-=======
->>>>>>> 1ea398ca94e6991e5580ab1b4c844d09f93da8b9
     // Layout erzwingen
     this.diagram.layoutDiagram(true);
   }
@@ -542,7 +535,7 @@ export class GojsDiagramComponent implements OnInit {
         data: { ...contextItem.data }
       });
 
-      dialogRef.afterClosed().subscribe((result: go.ObjectData) => {
+      dialogRef.afterClosed().subscribe(result => {
         if (result) {
           this.diagram.startTransaction('update node data');
           this.diagram.model.assignAllDataProperties(contextItem.data, result);
