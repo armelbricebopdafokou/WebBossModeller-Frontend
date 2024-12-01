@@ -5,6 +5,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { DrawingModeService } from '../drawing-mode.service';
+import { DrawScreenComponent } from '../draw-screen/draw-screen.component';
 
 @Component({
   selector: 'app-header',
@@ -14,8 +15,16 @@ import { DrawingModeService } from '../drawing-mode.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent {
-  @ViewChild('drawScreen') drawScreen!: ElementRef;
+  @ViewChild('drawScreen', { static: true }) drawScreen!: ElementRef;
+  @ViewChild(DrawScreenComponent, { static: false }) drawScreenComponent!: DrawScreenComponent;
   private zoomLevel: number = 1;
+  isAdvancedMode: boolean = false;
+
+  constructor(private drawingModeService: DrawingModeService) {
+    this.drawingModeService.currentMode.subscribe(mode => {
+      this.isAdvancedMode = mode;
+    });
+  }
 
   navigateHome() {
     console.log('Navigating to Home');
@@ -37,28 +46,55 @@ export class HeaderComponent {
     // Speichere das aktuelle Projekt
   }
 
+
   exportImage() {
-    console.log('Exporting as SVG');
-    if (this.drawScreen) {
-      const svgElement = this.drawScreen.nativeElement.querySelector('svg');
+    console.log('Exporting image as PNG via HeaderComponent');
+    if (this.drawScreenComponent) {
+      const svgElement = this.drawScreenComponent.drawScreen.nativeElement.querySelector('svg');
       if (svgElement) {
-        const serializer = new XMLSerializer();
-        const svgBlob = new Blob([serializer.serializeToString(svgElement)], { type: 'image/svg+xml;charset=utf-8' });
-        const url = URL.createObjectURL(svgBlob);
+        try {
+          const svgString = new XMLSerializer().serializeToString(svgElement);
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          const img = new Image();
 
-        const downloadLink = document.createElement('a');
-        downloadLink.href = url;
-        downloadLink.download = 'exported_image.svg';
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
+          img.onload = () => {
+            // Set canvas dimensions based on the loaded image dimensions
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx?.drawImage(img, 0, 0);
 
-        console.log('SVG export successful');
+            // Convert canvas to blob and provide a download link
+            canvas.toBlob((blob) => {
+              if (blob) {
+                const pngUrl = URL.createObjectURL(blob);
+                const downloadLink = document.createElement('a');
+                downloadLink.href = pngUrl;
+                downloadLink.download = 'exported_image.png';
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+                URL.revokeObjectURL(pngUrl);
+                console.log('PNG export successful');
+              } else {
+                console.error('Failed to create a PNG blob');
+              }
+            }, 'image/png');
+          };
+
+          // Assign the SVG data to the image source
+          img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
+        } catch (error) {
+          console.error('Error during PNG export:', error);
+        }
       } else {
         console.error('No SVG element found in drawScreen');
       }
+    } else {
+      console.error('DrawScreenComponent not found');
     }
   }
+
 
   exportSQL() {
     console.log('Exporting as SQL');
@@ -87,14 +123,6 @@ export class HeaderComponent {
       this.drawScreen.nativeElement.style.transform = `scale(${this.zoomLevel})`;
       this.drawScreen.nativeElement.style.transformOrigin = '0 0';
     }
-  }
-
-  isAdvancedMode: boolean = false;
-
-  constructor(private drawingModeService: DrawingModeService) {
-    this.drawingModeService.currentMode.subscribe(mode => {
-      this.isAdvancedMode = mode;
-    });
   }
 
   toggleMode(event: Event) {
