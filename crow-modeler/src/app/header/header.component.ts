@@ -18,6 +18,13 @@ export class HeaderComponent {
   @ViewChild('drawScreen', { static: true }) drawScreen!: ElementRef;
   @ViewChild(DrawScreenComponent, { static: false }) drawScreenComponent!: DrawScreenComponent;
   private zoomLevel: number = 1;
+  isAdvancedMode: boolean = false;
+
+  constructor(private drawingModeService: DrawingModeService) {
+    this.drawingModeService.currentMode.subscribe(mode => {
+      this.isAdvancedMode = mode;
+    });
+  }
 
   navigateHome() {
     console.log('Navigating to Home');
@@ -118,14 +125,6 @@ export class HeaderComponent {
     }
   }
 
-  isAdvancedMode!: boolean;
-
-  constructor(private drawingModeService: DrawingModeService) {
-    this.drawingModeService.currentMode.subscribe(mode => {
-      this.isAdvancedMode = mode;
-    });
-  }
-  // Method for toggle button. Toggles between easy and advanced mode
   toggleMode(event: Event) {
     this.drawingModeService.toggleMode();
   }
