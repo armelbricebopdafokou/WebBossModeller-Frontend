@@ -89,7 +89,7 @@
               "RelativeDocumentMoniker": "src\\app\\gojs-diagram\\gojs-diagram.component.ts",
               "ToolTip": "C:\\Users\\jansi\\Documents\\GitHub\\WebBossModeller\\crow-modeler\\src\\app\\gojs-diagram\\gojs-diagram.component.ts",
               "RelativeToolTip": "src\\app\\gojs-diagram\\gojs-diagram.component.ts",
-              "ViewState": "AgIAAOgBAAAAAAAAAAAkwNwBAAADAAAAAAAAAA==",
+              "ViewState": "AgIAACkCAAAAAAAAAAAQwAkCAAAwAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
               "WhenOpened": "2024-10-30T20:06:40.097Z",
               "IsPinned": true,
@@ -105,8 +105,7 @@
               "RelativeToolTip": "src\\app\\edit-node-dialog\\edit-node-dialog.component.spec.ts",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2024-12-01T21:04:17.195Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-01T21:04:17.195Z"
             },
             {
               "$type": "Document",
@@ -118,8 +117,7 @@
               "RelativeToolTip": "src\\app\\edit-node-dialog\\edit-node-dialog.component.css",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAFcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2024-12-01T21:04:14.233Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-01T21:04:14.233Z"
             },
             {
               "$type": "Document",
@@ -167,8 +165,7 @@
               "RelativeToolTip": "src\\app\\edit-node-dialog\\edit-node-dialog.component.html",
               "ViewState": "AgIAAA8AAAAAAAAAAAAAABUAAAA0AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
-              "WhenOpened": "2024-12-01T20:07:33.425Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-01T20:07:33.425Z"
             },
             {
               "$type": "Document",
@@ -180,8 +177,7 @@
               "RelativeToolTip": "src\\app\\edit-node-dialog\\edit-node-dialog.component.ts",
               "ViewState": "AgIAAAYAAAAAAAAAAAAAABoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2024-12-01T20:07:17.447Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-01T20:07:17.447Z"
             },
             {
               "$type": "Document",
