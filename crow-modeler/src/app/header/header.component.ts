@@ -6,6 +6,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { DrawingModeService } from '../drawing-mode.service';
 import { DrawScreenComponent } from '../draw-screen/draw-screen.component';
+import html2canvas from 'html2canvas';
 
 @Component({
   selector: 'app-header',
@@ -38,53 +39,34 @@ export class HeaderComponent {
     console.log('Saving the current project');
     // Speichere das aktuelle Projekt
   }
-
-
   exportImage() {
-    console.log('Exporting image as PNG via HeaderComponent');
-    if (this.drawScreenComponent) {
-      const svgElement = this.drawScreenComponent.drawScreen.nativeElement.querySelector('svg');
-      if (svgElement) {
-        try {
-          const svgString = new XMLSerializer().serializeToString(svgElement);
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          const img = new Image();
+    console.log('Exporting image as PNG via GojsDiagramComponent');
 
-          img.onload = () => {
-            // Set canvas dimensions based on the loaded image dimensions
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx?.drawImage(img, 0, 0);
+    // Zugriff auf den Diagramm-Bereich
+    const element = document.querySelector('#gojs-diagram'); // Stellt sicher, dass das Diagramm-Element erfasst wird
 
-            // Convert canvas to blob and provide a download link
-            canvas.toBlob((blob) => {
-              if (blob) {
-                const pngUrl = URL.createObjectURL(blob);
-                const downloadLink = document.createElement('a');
-                downloadLink.href = pngUrl;
-                downloadLink.download = 'exported_image.png';
-                document.body.appendChild(downloadLink);
-                downloadLink.click();
-                document.body.removeChild(downloadLink);
-                URL.revokeObjectURL(pngUrl);
-                console.log('PNG export successful');
-              } else {
-                console.error('Failed to create a PNG blob');
-              }
-            }, 'image/png');
-          };
+    if (element && element instanceof HTMLElement) {
+      html2canvas(element).then(canvas => {
+        // Canvas in ein Bild umwandeln
+        const screenshot = canvas.toDataURL('image/png');
 
-          // Assign the SVG data to the image source
-          img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
-        } catch (error) {
-          console.error('Error during PNG export:', error);
-        }
-      } else {
-        console.error('No SVG element found in drawScreen');
-      }
+        // Erstellen eines Download-Links
+        const downloadLink = document.createElement('a');
+        downloadLink.href = screenshot;
+        downloadLink.download = 'exported_diagram.png';
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+
+        console.log('PNG export successful');
+        alert('Diagramm erfolgreich exportiert!');
+      }).catch(error => {
+        console.error('Error during PNG export:', error);
+        alert('Fehler beim Exportieren des Diagramms. Bitte versuchen Sie es erneut.');
+      });
     } else {
-      console.error('DrawScreenComponent not found');
+      console.error('GojsDiagramComponent not found or not an HTMLElement');
+      alert('Diagramm-Bereich nicht gefunden oder ungültig!');
     }
   }
 
@@ -95,26 +77,12 @@ export class HeaderComponent {
   }
 
   reload() {
-    console.log('Reloading the page');
-    window.location.reload();
-    // Seite neu laden oder Inhalt aktualisieren
-  }
-
-  zoomIn() {
-    console.log('Zooming in');
-    if (this.drawScreen) {
-      this.zoomLevel += 0.1;
-      this.drawScreen.nativeElement.style.transform = `scale(${this.zoomLevel})`;
-      this.drawScreen.nativeElement.style.transformOrigin = '0 0';
-    }
-  }
-
-  zoomOut() {
-    console.log('Zooming out');
-    if (this.drawScreen && this.zoomLevel > 0.1) {
-      this.zoomLevel -= 0.1;
-      this.drawScreen.nativeElement.style.transform = `scale(${this.zoomLevel})`;
-      this.drawScreen.nativeElement.style.transformOrigin = '0 0';
+    const confirmReload = window.confirm('Sind Sie sicher, dass Sie die Seite neu laden möchten? Ungespeicherte Änderungen könnten verloren gehen.');
+    if (confirmReload) {
+      console.log('Die Seite wird neu geladen');
+      window.location.reload();
+    } else {
+      console.log('Das Neuladen wurde abgebrochen');
     }
   }
 
@@ -125,6 +93,7 @@ export class HeaderComponent {
       this.isAdvancedMode = mode;
     });
   }
+
   // Method for toggle button. Toggles between easy and advanced mode
   toggleMode(event: Event) {
     this.drawingModeService.toggleMode();
@@ -132,6 +101,9 @@ export class HeaderComponent {
 
   logout() {
     console.log('Logging out');
-    // Hier wird die Auslog-Funktion ausgeführt
+    sessionStorage.clear(); // Löscht Sitzungsdaten
+    localStorage.clear(); // Löscht gespeicherte Token
+    window.location.href = '/login'; // Weiterleitung zur Login-Seite
   }
 }
+
