@@ -1,7 +1,8 @@
 <header>
   <div class="header-container">
     <div class="icons">
-      <button routerLink="/home" routerLinkActive="active" ariaCurrentWhenActive="page" class="icon-button" matTooltip="Home" (click)="navigateHome()">
+      <button routerLink="/home" routerLinkActive="active" ariaCurrentWhenActive="page" class="icon-button"
+        matTooltip="Home" (click)="navigateHome()">
         <img src="../assets/img/haus-leer.png" alt="Icon 1">
       </button>
       <button class="icon-button" matTooltip="Neues Projekt" (click)="createNewProject()">
@@ -45,8 +46,58 @@
         <img src="../assets/img/menu-burger.png" alt="Menu Icon">
       </button>
       <mat-menu #menu="matMenu">
-        <button mat-menu-item (click)="navigateHome()"routerLink="/home" routerLinkActive="active" ariaCurrentWhenActive="page" class="icon-button" matTooltip="Home" (click)="navigateHome()">Logout</button>
+        <button mat-menu-item (click)="navigateHome()" routerLink="/home" routerLinkActive="active"
+          ariaCurrentWhenActive="page" class="icon-button" matTooltip="Home" (click)="navigateHome()">Logout</button>
       </mat-menu>
     </div>
   </div>
+  <!-- Dialog for loading a project -->
+  <dialog class="openProjectDialog">
+    <h1>Projekt öffnen...</h1>
+    <p>Bitte wählen Sie ein Diagram zum Öffnen:</p>
+    <div class="button-container">
+      <button class="diagram-button" data-value="diagram1">
+        <img src="..\assets\img\diagr_1.png" alt="Diagram 1 Thumbnail">
+        Diagram 1
+      </button>
+      <button class="diagram-button" data-value="diagram2">
+        <img src="..\assets\img\diagr_2.png" alt="Diagram 2 Thumbnail">
+        Diagram 2
+      </button>
+      <button class="diagram-button" data-value="diagram3">
+        <img src="..\assets\img\diagr_3.png"
+          alt="Diagram 3 Thumbnail">
+        Diagram 3
+      </button>
+    </div>
+    <div>
+      <button id="closeButton" autofocus>Close</button>
+    </div>
+  </dialog>
+
+  <style>
+    .button-container {
+      display: flex;
+      gap: 10px;
+      /* Space between buttons */
+    }
+
+    .diagram-button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: none;
+      background: none;
+      cursor: pointer;
+    }
+
+    .diagram-button img {
+      width: 100px;
+      /* Set the desired width for thumbnails */
+      height: auto;
+      /* Maintain aspect ratio */
+      margin-bottom: 5px;
+      /* Space between image and text */
+    }
+  </style>
 </header>

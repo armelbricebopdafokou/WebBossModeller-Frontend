@@ -15,10 +15,19 @@ import html2canvas from 'html2canvas';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
+
 export class HeaderComponent {
   @ViewChild('drawScreen', { static: true }) drawScreen!: ElementRef;
   @ViewChild(DrawScreenComponent, { static: false }) drawScreenComponent!: DrawScreenComponent;
   private zoomLevel: number = 1;
+
+  isAdvancedMode!: boolean;
+
+  constructor(private drawingModeService: DrawingModeService) {
+    this.drawingModeService.currentMode.subscribe(mode => {
+      this.isAdvancedMode = mode;
+    });
+  }
 
   navigateHome() {
     console.log('Navigating to Home');
@@ -32,7 +41,27 @@ export class HeaderComponent {
 
   openProject() {
     console.log('Opening an existing project');
+    // Öffnet Dialog
+    const dialog = document.querySelector("dialog");
+    dialog?.showModal();
+    // Schließt Dialog
+    const closeButton = document.getElementById("closeButton");
+    closeButton?.addEventListener("click", () => {
+      dialog?.close();
+    });
+    const diagramButtons = document.querySelectorAll('.diagram-button');
     // Logik zum Öffnen eines Projekts
+    // Add click event listeners to diagram buttons
+    diagramButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const selectedDiagram = button.getAttribute('data-value');
+        console.log(`Selected: ${selectedDiagram}`);
+        // Add your logic to open the selected diagram here
+        // For example, you could close the dialog after selection
+        dialog?.close();
+      });
+    });
+
   }
 
   saveProject() {
@@ -44,6 +73,7 @@ export class HeaderComponent {
 
     // Zugriff auf den Diagramm-Bereich
     const element = document.querySelector('#gojs-diagram'); // Stellt sicher, dass das Diagramm-Element erfasst wird
+    console.log(element);
 
     if (element && element instanceof HTMLElement) {
       html2canvas(element).then(canvas => {
@@ -86,14 +116,6 @@ export class HeaderComponent {
     }
   }
 
-  isAdvancedMode!: boolean;
-
-  constructor(private drawingModeService: DrawingModeService) {
-    this.drawingModeService.currentMode.subscribe(mode => {
-      this.isAdvancedMode = mode;
-    });
-  }
-
   // Method for toggle button. Toggles between easy and advanced mode
   toggleMode(event: Event) {
     this.drawingModeService.toggleMode();
@@ -106,4 +128,3 @@ export class HeaderComponent {
     window.location.href = '/login'; // Weiterleitung zur Login-Seite
   }
 }
-

@@ -462,7 +462,7 @@ export class GojsDiagramComponent implements OnInit {
           strokeWidth: 1.2,
           scale: 2,
           fill: 'white',
-          toArrow: 'Standard'
+          toArrow: 'CircleFork'
         },
         new go.Binding('toArrow', 'toArrow')
       ),
@@ -471,7 +471,7 @@ export class GojsDiagramComponent implements OnInit {
           strokeWidth: 1.2,
           scale: 2,
           fill: 'white',
-          fromArrow: 'Standard',
+          fromArrow: 'BackwardCircleFork',
         },
         new go.Binding('fromArrow', 'fromArrow')
       )
