@@ -6,9 +6,9 @@ import { Inject } from '@angular/core';
 @Component({
   selector: 'app-edit-node-dialog',
   standalone: true,
-  imports: [FormsModule], // FormsModule importieren
+  imports: [FormsModule],
   templateUrl: './edit-node-dialog.component.html',
-  styleUrls: ['./edit-node-dialog.component.css']
+  styleUrls: ['./edit-node-dialog.component.css'],
 })
 export class EditNodeDialogComponent {
   constructor(
@@ -16,12 +16,38 @@ export class EditNodeDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
 
+  // Initialisieren Sie die Spalten-Datenstruktur
+  columns = [
+    {
+      name: '',
+      datatype: 'string',
+      pk: false,
+      nn: false,
+      unique: false,
+      check: '',
+      default: '',
+    },
+  ];
+
+  // Methode, um eine neue Spalte hinzuzufügen
+  addColumn(): void {
+    this.columns.push({
+      name: '',
+      datatype: 'string',
+      pk: false,
+      nn: false,
+      unique: false,
+      check: '',
+      default: '',
+    });
+  }
+
+  // Abbrechen und Speichern-Methoden
   onNoClick(): void {
     this.dialogRef.close();
   }
 
   save(): void {
-    this.dialogRef.close(this.data);
+    this.dialogRef.close({ ...this.data, columns: this.columns });
   }
 }
-
