@@ -3,10 +3,7 @@
 :host {
   display: block;
   padding: 20px;
-  font-family: 'Arial', sans-serif;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
 }
 
 h2 {
@@ -17,28 +14,21 @@ h2 {
   text-align: center;
 }
 
-/* Table Styles */
 table {
   width: 100%;
   border-collapse: collapse;
   margin: 20px 0;
-  background-color: white;
-  border-radius: 8px;
-  overflow: hidden;
 }
 
 th, td {
-  padding: 12px;
+  padding: 10px;
   border: 1px solid #ddd;
   text-align: left;
 }
 
 th {
-  background-color: #f0f0f0;
+  background-color: #f5f5f5;
   font-weight: bold;
-  color: #555;
-  text-transform: uppercase;
-  font-size: 14px;
 }
 
 td input[type="text"],
@@ -48,73 +38,42 @@ td select {
   box-sizing: border-box;
   border: 1px solid #ccc;
   border-radius: 4px;
-  font-size: 14px;
-  background-color: #fefefe;
 }
 
 td input[type="checkbox"] {
-  transform: scale(1.3);
+  transform: scale(1.2);
   cursor: pointer;
-  margin: auto;
-  display: block;
 }
 
-/* Button Styles */
 button {
   margin-top: 20px;
-  padding: 12px 24px;
+  padding: 10px 20px;
   font-size: 16px;
   color: white;
   background-color: #007bff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease, box-shadow 0.2s ease;
+  transition: background-color 0.3s ease;
 }
 
   button:hover {
     background-color: #0056b3;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 
   button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
-    box-shadow: none;
   }
 
-/* Drag-and-Drop Placeholder Styles */
-.cdk-drag-placeholder {
-  background: #e8e8e8;
-  border: dashed 2px #bbb;
-  height: 48px;
-  box-sizing: border-box;
-}
-
-.cdk-drag-preview {
-  background-color: #fefefe;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.cdk-drag {
-  cursor: grab;
-}
-
-  .cdk-drag:active {
-    cursor: grabbing;
-  }
-
-/* Responsive Design */
+/* Responsive design for mobile devices */
 @media (max-width: 600px) {
   table {
     font-size: 14px;
   }
 
   th, td {
-    padding: 10px;
+    padding: 8px;
   }
 
   h2 {
@@ -122,24 +81,7 @@ button {
   }
 
   button {
-    padding: 10px 18px;
+    padding: 8px 16px;
     font-size: 14px;
   }
-
-  td input[type="text"],
-  td select {
-    font-size: 12px;
-    padding: 6px;
-  }
-}
-
-/* Highlight on Table Row Hover */
-tbody tr:hover {
-  background-color: #f5faff;
-  transition: background-color 0.2s ease;
-}
-
-/* Subtle Shadow for Table */
-table {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
