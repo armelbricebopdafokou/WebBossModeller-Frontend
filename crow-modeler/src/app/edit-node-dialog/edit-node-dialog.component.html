@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>Bearbeite Tabelle "{{ data.className }}"</h1>
 <div mat-dialog-content>
-  <table cdkDropList (cdkDropListDropped)="drop($event)">
+  <table>
     <thead>
       <tr>
         <th>Name</th>
@@ -14,7 +14,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let column of columns; let i = index" cdkDrag>
+      <tr *ngFor="let column of columns; let i = index">
         <td><input [(ngModel)]="column.name" /></td>
         <td>
           <select [(ngModel)]="column.datatype">
