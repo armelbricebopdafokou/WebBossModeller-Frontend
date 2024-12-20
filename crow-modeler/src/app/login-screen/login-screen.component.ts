@@ -7,14 +7,11 @@ import {ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
-
-import { RouterLink } from '@angular/router';
-import { RouterLinkActive } from '@angular/router';
 import {FormGroup, FormControl} from '@angular/forms';
 import { NgIf } from '@angular/common';
 import { UserService } from '../services/user.service';
-import { Observable } from 'rxjs';
 import { User } from '../interfaces/user';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login-screen',
@@ -27,8 +24,7 @@ import { User } from '../interfaces/user';
      MatFormFieldModule, 
      MatInputModule, 
      MatIconModule, 
-     RouterLink, 
-     RouterLinkActive],
+     ],
   templateUrl: './login-screen.component.html',
   styleUrl: './login-screen.component.css'
 })
@@ -41,8 +37,8 @@ export class LoginScreenComponent {
   hide = true;
 
   //login$!: Observable<User>;
-
-  constructor(service: UserService){
+  errorMessage:any
+  constructor(private service: UserService, private router: Router){
 
   }
   
@@ -53,6 +49,22 @@ export class LoginScreenComponent {
     return this.loginForm.get('passwordCtrl')!;
   }
   submitForm(){
-      console.log(this.loginForm.value)
+    let obj = {
+      "username": this.email.value,
+      "password": this.password.value
+    }
+    
+      this.service.login(obj).subscribe({
+       next: (data)=> {
+          localStorage.setItem('authToken', data.token); // Save token
+          this.router.navigate(['/draw-screen'])
+        },
+        error: (err)=> {
+         this.errorMessage = err;
+        },
+       complete: ()=> {
+          
+        }
+      })
   }
 }

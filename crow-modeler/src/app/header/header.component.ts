@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgIf } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
@@ -20,6 +20,8 @@ export class HeaderComponent {
   @ViewChild(DrawScreenComponent, { static: false }) drawScreenComponent!: DrawScreenComponent;
   private zoomLevel: number = 1;
 
+  @Output() clicked = new EventEmitter<boolean>()
+
   navigateHome() {
     console.log('Navigating to Home');
     // Hier könnte Navigationslogik hinzugefügt werden
@@ -38,6 +40,7 @@ export class HeaderComponent {
   saveProject() {
     console.log('Saving the current project');
     // Speichere das aktuelle Projekt
+    this.clicked.emit(true)
   }
   exportImage() {
     console.log('Exporting image as PNG via GojsDiagramComponent');

@@ -51,23 +51,12 @@
           <div class="col">
             <p>Don't you have an account? <a href="#">Create one</a> </p>
           </div>
-          <div class="row">
-            <p class="text-center"> OR Log in</p>
-          </div>
-          <div class="row logWith">
-            <div class="col ">
-              <button mat-raised-button>
-              Google
-            </button>
-          </div>
-            <div class="col"><button mat-raised-button>SSO</button></div>
-          </div>
         </div>
         <!--Um CSRF angriff zu vermeiden, benutze ich div anstatt form-->
        
       </div>
       <div class="col">
-        <h2>Jetzt kann man zusätzliche Information hinzufügen</h2>
+        <h2>{{errorMessage}}</h2>
       </div>
     </div>
   

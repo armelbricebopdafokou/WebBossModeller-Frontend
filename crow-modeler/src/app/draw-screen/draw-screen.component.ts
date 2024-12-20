@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { CreateClassDialogComponent } from '../create-class-dialog/create-class-dialog.component';
 import { GojsAngularModule } from 'gojs-angular';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -9,9 +9,13 @@ import { EditNodeDialogComponent } from '../edit-node-dialog/edit-node-dialog.co
 import { HeaderComponent } from '../header/header.component';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { SideComponent } from '../side/side.component';
+//import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { InspectorComponent } from '../inspector/inspector.component';
 import * as go from 'gojs';
 import { FormsModule } from '@angular/forms';
+import { UserService } from '../services/user.service';
+import {  ToastrService  } from 'ngx-toastr';
+
 
 @Component({
   selector: 'app-draw-screen',
@@ -21,11 +25,7 @@ import { FormsModule } from '@angular/forms';
     GojsDiagramComponent,
     MatSidenavModule,
     HeaderComponent,
-    SideComponent,
-    InspectorComponent,
     MatTooltipModule,
-    RouterLink,
-    RouterLinkActive,
     FormsModule,
     MatDialogModule // Wichtig für die Verwendung von MatDialog
   ],
@@ -36,14 +36,16 @@ export class DrawScreenComponent {
   title = 'crow-modeler';
   events: string[] = [];
   opened: boolean = true;
+ 
 
   @ViewChild('drawScreen', { static: false }) drawScreen!: ElementRef;
   @ViewChild(GojsDiagramComponent, { static: false }) diagramComponent!: GojsDiagramComponent;
 
   public selectedNode: any = null;
   text: string = 'color here';
-
-  constructor(public dialog: MatDialog) { }
+ 
+  constructor(public dialog: MatDialog, private toastr: ToastrService,
+     private userService: UserService) { }
 
   openDialog(): void {
     const dialogRef = this.dialog.open(CreateClassDialogComponent, {
@@ -161,11 +163,25 @@ export class DrawScreenComponent {
     }
   }
 
-  toJson() {
-    console.log(this.model.toJson());
+  get toJson() {
+      return this.model.toJson()
   }
 
   onButtonClick() {
-    console.log('Button clicked!');
+    let obj = {
+      "graphics": this.toJson
+    }
+    this.userService.saveGraphics(obj).subscribe({
+      next: (data)=> {
+         console.log('got value ' + data.message);
+       },
+       error: (err)=> {
+        //this.errorMessage = err;
+        this.toastr.error(err.message, 'Error');
+       },
+      complete: ()=> {
+        this.toastr.success('This is a success message!', 'Success');
+       }
+     })
   }
 }
