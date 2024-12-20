@@ -1,11 +1,11 @@
-/* Styles for the EditNodeDialogComponent */
-
+/* Host-Stile für den gesamten Dialog */
 :host {
   display: block;
   padding: 20px;
   font-family: Arial, sans-serif;
 }
 
+/* Überschrift-Stile */
 h2 {
   font-size: 24px;
   font-weight: bold;
@@ -14,13 +14,15 @@ h2 {
   text-align: center;
 }
 
+/* Tabellen-Stile */
 table {
   width: 100%;
   border-collapse: collapse;
   margin: 20px 0;
 }
 
-th, td {
+th,
+td {
   padding: 10px;
   border: 1px solid #ddd;
   text-align: left;
@@ -31,6 +33,7 @@ th {
   font-weight: bold;
 }
 
+/* Eingabefelder und Dropdowns in Tabellenzellen */
 td input[type="text"],
 td select {
   width: 100%;
@@ -40,11 +43,13 @@ td select {
   border-radius: 4px;
 }
 
+/* Checkbox-Stile in Tabellenzellen */
 td input[type="checkbox"] {
   transform: scale(1.2);
   cursor: pointer;
 }
 
+/* Allgemeine Button-Stile */
 button {
   margin-top: 20px;
   padding: 10px 20px;
@@ -57,29 +62,35 @@ button {
   transition: background-color 0.3s ease;
 }
 
+  /* Hover-Effekt für Buttons */
   button:hover {
     background-color: #0056b3;
   }
 
+  /* Deaktivierte Buttons */
   button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
   }
 
-/* Responsive design for mobile devices */
+/* Responsive Design für mobile Geräte */
 @media (max-width: 600px) {
+  /* Tabelle an kleinere Bildschirme anpassen */
   table {
     font-size: 14px;
   }
 
-  th, td {
+  th,
+  td {
     padding: 8px;
   }
 
+  /* Kleinere Überschrift für mobile Ansicht */
   h2 {
     font-size: 20px;
   }
 
+  /* Buttons verkleinern */
   button {
     padding: 8px 16px;
     font-size: 14px;

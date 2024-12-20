@@ -15,30 +15,42 @@
     </thead>
     <tbody>
       <tr *ngFor="let column of columns; let i = index">
-        <td><input [(ngModel)]="column.name" /></td>
+        <td>
+          <input [(ngModel)]="column.name" placeholder="Name eingeben" />
+        </td>
         <td>
           <select [(ngModel)]="column.datatype">
-            <option value="integer">integer</option>
-            <option value="string">string</option>
-            <option value="boolean">boolean</option>
+            <option value="integer">Integer</option>
+            <option value="string">String</option>
+            <option value="boolean">Boolean</option>
           </select>
         </td>
-        <td><input type="checkbox" [(ngModel)]="column.pk" /></td>
-        <td><input type="checkbox" [(ngModel)]="column.nn" /></td>
-        <td><input type="checkbox" [(ngModel)]="column.unique" /></td>
-        <td><input [(ngModel)]="column.check" /></td>
-        <td><input [(ngModel)]="column.default" /></td>
         <td>
-          <button mat-button color="warn" (click)="columns.splice(i, 1)">
-            Entfernen
-          </button>
+          <input type="checkbox" [(ngModel)]="column.pk" />
+        </td>
+        <td>
+          <input type="checkbox" [(ngModel)]="column.nn" />
+        </td>
+        <td>
+          <input type="checkbox" [(ngModel)]="column.unique" />
+        </td>
+        <td>
+          <input [(ngModel)]="column.check" placeholder="Check-Bedingung" />
+        </td>
+        <td>
+          <input [(ngModel)]="column.default" placeholder="Standardwert" />
+        </td>
+        <td>
+          <button mat-button color="warn" (click)="removeColumn(i)">Entfernen</button>
         </td>
       </tr>
     </tbody>
   </table>
-  <button mat-button color="primary" (click)="addColumn()">+ Spalte hinzufügen</button>
+  <div>
+    <button mat-button color="primary" (click)="addColumn()">+ Spalte hinzufügen</button>
+  </div>
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="onNoClick()">Abbrechen</button>
-  <button mat-button (click)="save()">Speichern</button>
+  <button mat-button color="primary" (click)="save()">Speichern</button>
 </div>
