@@ -58,7 +58,7 @@ export class DrawScreenComponent {
     });
   }
 
-  nodeDataArray = [
+ /* nodeDataArray = [
     {
       key: 'Produkt',
       className: 'Produkt',
@@ -94,12 +94,12 @@ export class DrawScreenComponent {
   linkDataArray = [
     { from: 'Produkt', to: 'Kategorie', weak: true, fromArrow: 'BackwardLineFork', toArrow: 'LineFork' }
   ];
-
+  */
   public model: go.GraphLinksModel = new go.GraphLinksModel({
     copiesArrays: true,
     copiesArrayObjects: true,
-    nodeDataArray: this.nodeDataArray,
-    linkDataArray: this.linkDataArray
+   // nodeDataArray: this.nodeDataArray,
+    //linkDataArray: this.linkDataArray
   });
 
   public setSelectedNode(node: any) {

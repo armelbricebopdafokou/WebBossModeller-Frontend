@@ -14,20 +14,23 @@ export class EditNodeDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<EditNodeDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
-  ) { }
+  ) {
+    // Initialisieren Sie die Spalten-Datenstruktur mit den vorhandenen Spalten
+    this.columns = data.columns || [
+      {
+        name: '',
+        datatype: 'string',
+        pk: false,
+        nn: false,
+        unique: false,
+        check: '',
+        default: '',
+      },
+    ];
+  }
 
-  // Initialisieren Sie die Spalten-Datenstruktur
-  columns = [
-    {
-      name: '',
-      datatype: 'string',
-      pk: false,
-      nn: false,
-      unique: false,
-      check: '',
-      default: '',
-    },
-  ];
+  // Spalten-Datenstruktur
+  columns: Array<{ name: string; datatype: string; pk: boolean; nn: boolean; unique: boolean; check: string; default: string; }>;
 
   // Methode, um eine neue Spalte hinzuzufügen
   addColumn(): void {
