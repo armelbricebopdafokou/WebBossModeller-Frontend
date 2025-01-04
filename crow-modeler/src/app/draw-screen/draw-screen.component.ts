@@ -57,7 +57,7 @@ export class DrawScreenComponent {
       }
     });
   }
-  /*
+
   nodeDataArray = [
     {
       key: 'Produkt',
@@ -89,7 +89,7 @@ export class DrawScreenComponent {
         { name: 'CategoryID', iskey: false, figure: 'Decision', color: 'purple' }
       ]
     }
-  ];*/
+  ];
 
   linkDataArray = [
     { from: 'Produkt', to: 'Kategorie', weak: true, fromArrow: 'BackwardLineFork', toArrow: 'LineFork' }
@@ -98,7 +98,7 @@ export class DrawScreenComponent {
   public model: go.GraphLinksModel = new go.GraphLinksModel({
     copiesArrays: true,
     copiesArrayObjects: true,
-    //nodeDataArray: this.nodeDataArray,
+    nodeDataArray: this.nodeDataArray,
     linkDataArray: this.linkDataArray
   });
 
