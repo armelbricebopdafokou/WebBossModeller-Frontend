@@ -25,17 +25,24 @@ export class GojsDiagramComponent implements OnInit {
   isAdvancedMode!: boolean;
 
 
-  constructor(public dialog: MatDialog, private modeService: DrawingModeService) { }
+  constructor(public dialog: MatDialog,private modeService: DrawingModeService) { }
 
   ngOnInit(): void {
-    this.modeService.currentMode.subscribe(mode => {
+    this.modeService.currentMode.subscribe(mode =>{
       this.isAdvancedMode = mode;
     })
   }
 
   ngAfterViewInit() {
+    // Diagram-Initialisierung
     this.diagram = $(go.Diagram, this.diagramDiv.nativeElement, {
+      //layout: $(go.GridLayout, { wrappingColumn: 3, spacing: new go.Size(20, 20) }),
+      'draggingTool.dragsLink': true,
+      'linkingTool.isUnconnectedLinkValid': false, // Links must be connected to two nodes
+      'draggingTool.gridSnapCellSize': new go.Size(10, 1),
+      'draggingTool.isGridSnapEnabled': true,
       'undoManager.isEnabled': true,
+      // autoScale: go.Diagram.Uniform //This disables the zoom feature
     });
 
     this.diagram.model = this.model;
@@ -252,7 +259,7 @@ export class GojsDiagramComponent implements OnInit {
             }
           ),
           $('ContextMenuButton',
-            $(go.TextBlock, 'Toggle FromNode Anzahl').bind('text', 'from', v => 'Toggle ' + v + ' Anzahl'),
+            $(go.TextBlock, 'Toggle FromNode Anzahl').bind('text', 'from', v => 'Toggle '+ v + ' Anzahl'),
             {
               click: (e, obj) => {
                 // Get the data of the link that was clicked
@@ -274,21 +281,21 @@ export class GojsDiagramComponent implements OnInit {
                 const otherArrow = linkData.toArrow
                 let confirmed = true;
 
-                if (this.isAdvancedMode &&
+                if (this.isAdvancedMode && 
                   (
                     (currentArrow == 'DoubleLine' && otherArrow == 'LineFork') ||
                     (currentArrow == 'LineCircle' && otherArrow == 'LineFork') ||
                     (currentArrow == 'DoubleLine' && otherArrow == 'CircleFork') ||
                     (currentArrow == 'LineCircle' && otherArrow == 'CircleFork'))
-                ) { // stops links from being changed into M:M relation in Advanced mode.
-                  console.log('Error message should appear');
-                  window.alert('M:M relationship is not allowed in Advanced mode!')
-                  confirmed = false
+                  ) { // stops links from being changed into M:M relation in Advanced mode.
+                    console.log('Error message should appear');
+                    window.alert('M:M relationship is not allowed in Advanced mode!')
+                    confirmed = false              
                 }
                 else {
                   confirmed = true;
                 }
-
+                
                 if (confirmed) {
 
                   // Start a transaction to update the link
@@ -311,7 +318,7 @@ export class GojsDiagramComponent implements OnInit {
             }
           ),
           $('ContextMenuButton',
-            $(go.TextBlock, "Toggle FromNode Kann/Muss").bind('text', 'from', v => 'Toggle ' + v + ' Kann/Muss'),
+            $(go.TextBlock, "Toggle FromNode Kann/Muss").bind('text', 'from', v => 'Toggle '+ v + ' Kann/Muss'),
             {
               click: (e, obj) => {
                 // Get the data of the link that was clicked
@@ -349,7 +356,7 @@ export class GojsDiagramComponent implements OnInit {
             }
           ),
           $('ContextMenuButton',
-            $(go.TextBlock, "Toggle ToNode Anzahl").bind('text', 'to', v => 'Toggle ' + v + ' Anzahl'),
+            $(go.TextBlock, "Toggle ToNode Anzahl").bind('text', 'to', v => 'Toggle '+ v + ' Anzahl'),
             {
               click: (e, obj) => {
                 // Get the data of the link that was clicked
@@ -372,42 +379,42 @@ export class GojsDiagramComponent implements OnInit {
 
                 let confirmed = true;
 
-                if (this.isAdvancedMode &&
+                if (this.isAdvancedMode && 
                   (
                     (currentArrow == 'DoubleLine' && otherArrow == 'BackwardLineFork') ||
                     (currentArrow == 'LineCircle' && otherArrow == 'BackwardLineFork') ||
                     (currentArrow == 'DoubleLine' && otherArrow == 'BackwardCircleFork') ||
                     (currentArrow == 'LineCircle' && otherArrow == 'BackwardCircleFork'))
-                ) { // stops links from being changed into M:M relation in Advanced mode.
-                  console.log('Error message should appear');
-                  window.alert('M:M relationship is not allowed in Advanced mode!')
-                  confirmed = false
+                  ) { // stops links from being changed into M:M relation in Advanced mode.
+                    console.log('Error message should appear');
+                    window.alert('M:M relationship is not allowed in Advanced mode!')
+                    confirmed = false              
                 }
                 else {
                   confirmed = true;
                 }
 
-                if (confirmed) {
+                if (confirmed){
                   // Start a transaction to update the link
-                  this.diagram.model.startTransaction('Toggle toArrow');
+                this.diagram.model.startTransaction('Toggle toArrow');
 
-                  console.log("Current Arrow = ", currentArrow)
+                console.log("Current Arrow = ", currentArrow)
 
-                  // Determine the new state based on the current state
-                  const newArrow = arrowToggleMap[currentArrow]; // This will be safe now
+                // Determine the new state based on the current state
+                const newArrow = arrowToggleMap[currentArrow]; // This will be safe now
 
-                  // Set the new toArrow state
-                  this.diagram.model.setDataProperty(linkData, 'toArrow', newArrow);
+                // Set the new toArrow state
+                this.diagram.model.setDataProperty(linkData, 'toArrow', newArrow);
 
-                  // Commit the transaction
-                  this.diagram.model.commitTransaction('Toggle toArrow');
-                  console.log("ToArrow property of link toggled to:", newArrow);
-                }
+                // Commit the transaction
+                this.diagram.model.commitTransaction('Toggle toArrow');
+                console.log("ToArrow property of link toggled to:", newArrow);
+                }                
               }
             }
           ),
           $('ContextMenuButton',
-            $(go.TextBlock, "Toggle ToNode Kann/Muss").bind('text', 'to', v => 'Toggle ' + v + ' Kann/Muss'),
+            $(go.TextBlock, "Toggle ToNode Kann/Muss").bind('text', 'to', v => 'Toggle '+ v + ' Kann/Muss'),
             {
               click: (e, obj) => {
                 // Get the data of the link that was clicked
@@ -524,25 +531,21 @@ export class GojsDiagramComponent implements OnInit {
   openEditDialog(obj: go.GraphObject) {
     const contextItem = obj.part;
     if (contextItem?.data) {
-      // Öffne den Dialog und übergib die bestehenden Daten
       const dialogRef = this.dialog.open(EditNodeDialogComponent, {
         width: '1000px',
-        data: { ...contextItem.data }, // Daten kopieren und übergeben
+        data: { ...contextItem.data }
       });
 
       dialogRef.afterClosed().subscribe((result: go.ObjectData) => {
         if (result) {
-          // Starte eine GoJS-Transaktion, um die Änderungen zu speichern
           this.diagram.startTransaction('update node data');
-          this.diagram.model.assignAllDataProperties(contextItem.data, result); // Aktualisiere die Knoten-Daten
+          this.diagram.model.assignAllDataProperties(contextItem.data, result);
           this.diagram.commitTransaction('update node data');
-          console.log('Node data updated:', contextItem.data);
         }
       });
     }
   }
-
-
+  
   deleteNode(obj: go.GraphObject) {
     const contextItem = obj.part;
     if (contextItem instanceof go.Node && contextItem.diagram) {
