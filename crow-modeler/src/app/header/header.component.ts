@@ -55,7 +55,8 @@ export class HeaderComponent {
     diagramButtons.forEach(button => {
       button.addEventListener('click', () => {
         const selectedDiagram = button.getAttribute('data-value');
-        console.log(`Selected: ${selectedDiagram}`);
+        let openFilename = `${selectedDiagram}.json`;
+        console.log(`Selected: ${selectedDiagram}, filename: ${openFilename}`);
         // Add your logic to open the selected diagram here
         // For example, you could close the dialog after selection
         dialog?.close();

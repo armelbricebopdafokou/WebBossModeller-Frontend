@@ -60,39 +60,39 @@ export class DrawScreenComponent {
 
   nodeDataArray = [
     {
-      key: 'Produkt',
+      key: 0,
       className: 'Produkt',
       location: new go.Point(250, 250),
       items: [
-        { name: 'ProductID', iskey: true, figure: 'Decision', color: 'purple' },
-        { name: 'ProductName', iskey: false, figure: 'Hexagon', color: 'blue' },
-        { name: 'ItemDescription', iskey: false, figure: 'Hexagon', color: 'blue' },
-        { name: 'WholesalePrice', iskey: false, figure: 'Circle', color: 'green' },
-        { name: 'ProductPhoto', iskey: false, figure: 'TriangleUp', color: 'red' }
+        { name: 'ProductID', iskey: true, notNull: false },
+        { name: 'ProductName', iskey: false, notNull: false },
+        { name: 'ItemDescription', iskey: false, notNull: false },
+        { name: 'WholesalePrice', iskey: false, notNull: false },
+        { name: 'ProductPhoto', iskey: false, notNull: false }
       ],
       inheritedItems: [
-        { name: 'SupplierID', iskey: false, figure: 'Decision', color: 'purple' },
-        { name: 'CategoryID', iskey: false, figure: 'Decision', color: 'purple' }
+        { name: 'SupplierID', iskey: false, notNull: true },
+        { name: 'CategoryID', iskey: false, notNull: true }
       ]
     },
     {
-      key: 'Kategorie',
+      key: 1,
       className: 'Kategorie',
       location: new go.Point(500, 0),
       items: [
-        { name: 'CategoryID', iskey: true, figure: 'Decision', color: 'purple' },
-        { name: 'CategoryName', iskey: false, figure: 'Hexagon', color: 'blue' },
-        { name: 'Description', iskey: false, figure: 'Hexagon', color: 'blue' }
+        { name: 'CategoryID', iskey: true, notNull: false },
+        { name: 'CategoryName', iskey: false, notNull: false },
+        { name: 'Description', iskey: false, notNull: false }
       ],
       inheritedItems: [
-        { name: 'SupplierID', iskey: false, figure: 'Decision', color: 'purple' },
-        { name: 'CategoryID', iskey: false, figure: 'Decision', color: 'purple' }
+        { name: 'SupplierID', iskey: false, notNull: true },
+        { name: 'CategoryID', iskey: false, notNull: true }
       ]
     }
   ];
 
   linkDataArray = [
-    { from: 'Produkt', to: 'Kategorie', weak: true, fromArrow: 'BackwardLineFork', toArrow: 'LineFork' }
+    { from: 0, to: 1, weak: true, fromArrow: 'BackwardLineFork', toArrow: 'LineFork' }
   ];
 
   public model: go.GraphLinksModel = new go.GraphLinksModel({
@@ -113,13 +113,13 @@ export class DrawScreenComponent {
       className: 'Zulieferer',
       location: new go.Point(0, 15),
       items: [
-        { name: 'SupplierID', iskey: true, figure: 'Decision', color: 'purple' },
-        { name: 'SupplierName', iskey: false, figure: 'Hexagon', color: 'blue' },
-        { name: 'Description', iskey: false, figure: 'Hexagon', color: 'blue' }
+        { name: 'SupplierID', iskey: true, notNull: false },
+        { name: 'SupplierName', iskey: false, notNull: false },
+        { name: 'Description', iskey: false, notNull: false }
       ],
       inheritedItems: [
-        { name: 'SupplierID', iskey: false, figure: 'Decision', color: 'purple' },
-        { name: 'CategoryID', iskey: false, figure: 'Decision', color: 'purple' }
+        { name: 'SupplierID', iskey: false, notNull: false },
+        { name: 'CategoryID', iskey: false, notNull: false }
       ]
     });
     this.model.commitTransaction('make new node');

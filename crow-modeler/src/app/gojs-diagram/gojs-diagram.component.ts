@@ -51,10 +51,10 @@ export class GojsDiagramComponent implements OnInit {
     const itemTempl = $(go.Panel, 'Horizontal',
       { margin: new go.Margin(2, 0), background: "transparent", click: (e, obj) => e.diagram.select(obj.part) },
       $(go.TextBlock,
-        { font: '14px sans-serif', stroke: 'black', editable: true, isUnderline: false },
+        { font: '14px sans-serif', stroke: 'black', cursor: 'grab', editable: true, isUnderline: false },
         new go.Binding('text', 'name'),
-        new go.Binding('font', 'choice1', k => (k ? 'italic 14px sans-serif' : '14px sans-serif')),
-        new go.Binding('isUnderline', 'choice1', k => !!k)
+        new go.Binding('font', 'iskey', k => (k ? 'italic 14px sans-serif' : '14px sans-serif')),
+        new go.Binding('isUnderline', 'iskey', k => !!k)
       ),
       new go.Binding('background', 'isSelected', sel => sel ? 'lightblue' : 'transparent').ofObject()
     );
@@ -65,7 +65,7 @@ export class GojsDiagramComponent implements OnInit {
         {
           selectionAdorned: true,
           resizable: true,
-          layoutConditions: go.LayoutConditions.Standard & ~go.LayoutConditions.NodeSized,
+          layoutConditions: go.LayoutConditions.Standard,// go.LayoutConditions.Standard & ~go.LayoutConditions.NodeSized,
           fromSpot: go.Spot.AllSides,
           toSpot: go.Spot.AllSides
         },
@@ -88,23 +88,24 @@ export class GojsDiagramComponent implements OnInit {
         // Outer frame of the table
         $(go.Shape, 'Rectangle',
           {
+            //geometryString: "F 0 0 L 100 0 L 100 100 L 0 100 L 0 0 L 20 0 L 0 20 L 0 80 L 20 100 L 80 100 L 100 80 L 100 20 L 80 0 L 100 20 L 100 30 L 0 30 ", //"F 0 0 L 100 0 L 100 100 L 0 100 L 0 0 L 0 30 L 100 30 ",
             fill: 'lightgreen',
             stroke: "black",
             strokeWidth: 2,
             portId: '',
-            cursor: 'grab',
+            cursor: 'crosshair',
             fromLinkable: true,
             toLinkable: true,
             alignment: go.Spot.Center,
             stretch: go.Stretch.Fill
           },
           new go.Binding('fill', 'color'),
-          new go.Binding("geometryString", "isWeak", weak =>
-            weak ? "F M0 10 L10 0 H90 L100 10 V90 L90 100 H10 L0 90z" : null
-          )
+          // new go.Binding("geometryString", "isWeak", weak =>
+          //   weak ? "F 0 0 L 100 0 L 100 100 L 0 100 L 0 0 L 20 0 L 0 20 L 0 80 L 20 100 L 80 100 L 100 80 L 100 20 L 80 0 L 100 20 L 100 30 L 0 30 " : null
+          // ) // Der obige geometryString macht die Darstellung für die Weak Classes mit Trennlinie.
         ),
 
-        // Slanted shape for weak tables
+        // Slanted shape for weak tables (Redundant aktuell?)
         $(go.Shape,
           {
             fill: null,
@@ -129,15 +130,16 @@ export class GojsDiagramComponent implements OnInit {
               column: 0,
               columnSpan: 2,
               stroke: 'black',
+              cursor: 'grab',
               alignment: go.Spot.Center,
               editable: true,
               font: 'bold 16px sans-serif',
               margin: new go.Margin(2, 2, 2, 2)
-            },
-            new go.Binding('text', 'className')
-          ),
+            }
+            // new go.Binding('text', 'className').makeTwoWay()
+          ).bindTwoWay("text", "className"),
 
-          // Divider line under the header
+          // Divider line under the header (Potenziell überflüssig mit neuem Shape)
           $(go.Shape, 'LineH',
             {
               row: 1,
@@ -259,7 +261,7 @@ export class GojsDiagramComponent implements OnInit {
             }
           ),
           $('ContextMenuButton',
-            $(go.TextBlock, 'Toggle FromNode Anzahl').bind('text', 'from', v => 'Toggle '+ v + ' Anzahl'),
+            $(go.TextBlock, 'Toggle FromNode Anzahl').bind('text', 'fromName', v => 'Toggle '+ v + ' Anzahl'),
             {
               click: (e, obj) => {
                 // Get the data of the link that was clicked
@@ -318,7 +320,7 @@ export class GojsDiagramComponent implements OnInit {
             }
           ),
           $('ContextMenuButton',
-            $(go.TextBlock, "Toggle FromNode Kann/Muss").bind('text', 'from', v => 'Toggle '+ v + ' Kann/Muss'),
+            $(go.TextBlock, "Toggle FromNode Kann/Muss").bind('text', 'fromName', v => 'Toggle '+ v + ' Kann/Muss'),
             {
               click: (e, obj) => {
                 // Get the data of the link that was clicked
@@ -356,7 +358,7 @@ export class GojsDiagramComponent implements OnInit {
             }
           ),
           $('ContextMenuButton',
-            $(go.TextBlock, "Toggle ToNode Anzahl").bind('text', 'to', v => 'Toggle '+ v + ' Anzahl'),
+            $(go.TextBlock, "Toggle ToNode Anzahl").bind('text', 'toName', v => 'Toggle '+ v + ' Anzahl'),
             {
               click: (e, obj) => {
                 // Get the data of the link that was clicked
@@ -414,7 +416,7 @@ export class GojsDiagramComponent implements OnInit {
             }
           ),
           $('ContextMenuButton',
-            $(go.TextBlock, "Toggle ToNode Kann/Muss").bind('text', 'to', v => 'Toggle '+ v + ' Kann/Muss'),
+            $(go.TextBlock, "Toggle ToNode Kann/Muss").bind('text', 'toName', v => 'Toggle '+ v + ' Kann/Muss'),
             {
               click: (e, obj) => {
                 // Get the data of the link that was clicked
@@ -451,6 +453,13 @@ export class GojsDiagramComponent implements OnInit {
               }
             }
           ),
+          $('ContextMenuButton',
+            $(go.TextBlock, "toJson (for dev reasons)"),{
+              click: (e, obj) =>{
+                console.log(this.model.toJson());
+              }
+            }
+          )
         )
       },
       $(go.Shape, { strokeDashOffset: 1, strokeWidth: 2, stroke: 'grey', strokeDashArray: [1, 0], },
@@ -464,7 +473,7 @@ export class GojsDiagramComponent implements OnInit {
           fill: 'white',
           toArrow: 'CircleFork'
         },
-        new go.Binding('toArrow', 'toArrow')
+        new go.Binding('toArrow', 'toArrow').makeTwoWay()
       ),
       $(go.Shape,
         {
@@ -473,7 +482,7 @@ export class GojsDiagramComponent implements OnInit {
           fill: 'white',
           fromArrow: 'BackwardCircleFork',
         },
-        new go.Binding('fromArrow', 'fromArrow')
+        new go.Binding('fromArrow', 'fromArrow').makeTwoWay()
       )
     );
 
@@ -483,13 +492,22 @@ export class GojsDiagramComponent implements OnInit {
       if (node instanceof go.Node) this.nodeClicked.emit(node);
     });
 
-    this.diagram.addDiagramListener('LinkDrawn', function (e) {
+    this.diagram.addDiagramListener('LinkDrawn',  (e) => {
       const link = e.subject; // The link that was changed
       const toNode = link.toNode; // Get the toNode
+      const fromNode = link.fromNode;
       // stops Links from being drawn into the empty space
-      if (toNode == null) {
-        e.diagram.remove(link);
-      }
+      let b = this.diagram.model.toJson();
+      const lda = this.diagram.model.copyNodeData;
+
+      
+      console.log("Link Drawn")
+      console.log(b)
+      console.log("Calling update function")
+      this.updateLinkFromName(link)
+      console.log("Updated link")
+      b = this.diagram.model.toJson();
+      console.log(b)
 
       // Check if both arrowheads are 'LineCircle'
       // if (fromArrow === "LineCircle" && toArrow === "LineCircle") {
@@ -515,8 +533,40 @@ export class GojsDiagramComponent implements OnInit {
     })
 
     // Layout erzwingen
-    this.diagram.layoutDiagram(true);
+    //this.diagram.layoutDiagram(true);
   }
+  // Function to update link data with fromName
+  updateLinkFromName(link: go.Link) {
+    const fromNode = link.fromNode;
+    const toNode = link.toNode;
+    const fromArrow = link.data.fromArrow;
+    const toArrow = link.data.toArrow;
+    const arrowheads = link.data.arrowheads;
+    console.log("FromArrow is: "+ fromArrow+"\ttoArrow: "+toArrow+"\nArrowheads: "+arrowheads);
+    if (fromNode && toNode) {
+        const fromName = fromNode.data.className; // Get the key of the fromNode
+        const toName = toNode.data.className; // Get the key of the toNode
+        this.diagram.model.startTransaction('updateLinkFromName');
+        console.log(link.data)
+        this.diagram.model.setDataProperty(link.data, 'fromName', fromName); // Set the fromName attribute
+        this.diagram.model.setDataProperty(link.data, 'toName', toName); // Set the fromName attribute
+        this.diagram.model.commitTransaction('updateLinkFromName');
+    }
+    if (arrowheads == undefined){
+      console.log("undefined section");
+      this.diagram.model.startTransaction("adding arrowheads defaults");
+      this.diagram.model.setDataProperty(link.data, "fromArrow", 'BackwardLineFork') //, fromArrow: 'BackwardLineFork', toArrow: 'LineFork'
+      this.diagram.model.setDataProperty(link.data, "toArrow", 'LineFork')
+      this.diagram.model.commitTransaction("adding arrowheads defaults");
+      
+    }
+}
+
+// // Add an event listener for the LinkDrawn event
+// myDiagram.addDiagramListener("LinkDrawn", function(e) {
+//     const link = e.subject;  // the drawn link
+//     updateLinkFromName(link); // Update the link with fromName
+// });
 
   toggleProperty(obj: go.GraphObject, property: string) {
     const contextItem = obj.part;
