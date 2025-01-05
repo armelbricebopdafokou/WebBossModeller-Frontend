@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgIf } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
@@ -19,6 +19,8 @@ import html2canvas from 'html2canvas';
 export class HeaderComponent {
   @ViewChild('drawScreen', { static: true }) drawScreen!: ElementRef;
   @ViewChild(DrawScreenComponent, { static: false }) drawScreenComponent!: DrawScreenComponent;
+  @Output() buttonClick = new EventEmitter<string>();
+
   private zoomLevel: number = 1;
 
   isAdvancedMode!: boolean;
@@ -42,7 +44,7 @@ export class HeaderComponent {
   openProject() {
     console.log('Opening an existing project');
     // Öffnet Dialog
-    const dialog = document.querySelector("dialog");
+    const dialog = document.getElementById("loadDialog") as HTMLDialogElement;
     dialog?.showModal();
     // Schließt Dialog
     const closeButton = document.getElementById("closeButton");
@@ -69,6 +71,11 @@ export class HeaderComponent {
     console.log('Saving the current project');
     // Speichere das aktuelle Projekt
   }
+
+  saveProjectAsJSON() {
+    this.buttonClick.emit();
+  }
+
   exportImage() {
     console.log('Exporting image as PNG via GojsDiagramComponent');
 
@@ -105,6 +112,14 @@ export class HeaderComponent {
   exportSQL() {
     console.log('Exporting as SQL');
     // Exportiere das Projekt als SQL-Datei
+    // Öffnet Dialog
+    const dialog = document.getElementById("SQLdialog") as HTMLDialogElement;
+    dialog?.showModal();
+    // Schließt Dialog
+    const closeSQLButton = document.getElementById("closeSQLButton");
+    closeSQLButton?.addEventListener("click", () => {
+      dialog?.close();
+    });
   }
 
   reload() {

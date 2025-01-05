@@ -58,6 +58,10 @@ export class DrawScreenComponent {
     });
   }
 
+  onButtonClick() {
+    this.diagramComponent.downloadJSON();
+  }
+
   nodeDataArray = [
     {
       key: 0,
@@ -165,7 +169,8 @@ export class DrawScreenComponent {
     console.log(this.model.toJson());
   }
 
-  onButtonClick() {
-    console.log('Button clicked!');
+  onJSONButtonClick() {
+    console.log('Button clicked! For JSON-Download');
+    this.diagramComponent.downloadJSON();
   }
 }

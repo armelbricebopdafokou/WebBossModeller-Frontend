@@ -11,7 +11,7 @@
       <button class="icon-button" matTooltip="Projekt öffnen" (click)="openProject()">
         <img src="../assets/img/ordner-geoffnet.png" alt="Icon 3">
       </button>
-      <button class="icon-button" matTooltip="Speichern" (click)="saveProject()">
+      <button class="icon-button" matTooltip="Speichern" (click)="saveProjectAsJSON()">
         <img src="../assets/img/scheibe.png" alt="Icon 4">
       </button>
       <button class="icon-button" matTooltip="Bild Export" (click)="exportImage()">
@@ -52,7 +52,7 @@
     </div>
   </div>
   <!-- Dialog for loading a project -->
-  <dialog class="openProjectDialog">
+  <dialog id="loadDialog">
     <h1>Projekt öffnen...</h1>
     <p>Bitte wählen Sie ein Diagram zum Öffnen:</p>
     <div class="button-container">
@@ -65,13 +65,28 @@
         Diagram 2
       </button>
       <button class="diagram-button" data-value="diagram3">
-        <img src="..\assets\img\diagr_3.png"
-          alt="Diagram 3 Thumbnail">
+        <img src="..\assets\img\diagr_3.png" alt="Diagram 3 Thumbnail">
         Diagram 3
       </button>
     </div>
     <div>
       <button id="closeButton" autofocus>Close</button>
+    </div>
+  </dialog>
+
+  <dialog id="SQLdialog">
+    <h1>Wählen Sie den gewünschten SQL-Export</h1>
+    <select id="exportOptions">
+      <option value="export1">Export 1</option>
+      <option value="export2">Export 2</option>
+      <option value="export3">Export 3</option>
+    </select>
+    <button id="confirmButton" onclick="loadData()">Bestätigen</button>
+    <div>
+      <textarea id="output" rows="4" cols="30" readonly></textarea>
+    </div>
+    <div>
+      <button id="closeSQLButton">Schließen</button>
     </div>
   </dialog>
 

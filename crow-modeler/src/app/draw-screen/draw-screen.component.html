@@ -1,4 +1,4 @@
-<app-header></app-header>
+<app-header (buttonClick)="onJSONButtonClick()"></app-header>
 
 <div #drawScreen>
   <app-gojs-diagram [model]="model" (nodeClicked)='setSelectedNode($event)'></app-gojs-diagram>

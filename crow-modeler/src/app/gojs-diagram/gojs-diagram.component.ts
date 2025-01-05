@@ -25,10 +25,10 @@ export class GojsDiagramComponent implements OnInit {
   isAdvancedMode!: boolean;
 
 
-  constructor(public dialog: MatDialog,private modeService: DrawingModeService) { }
+  constructor(public dialog: MatDialog, private modeService: DrawingModeService) { }
 
   ngOnInit(): void {
-    this.modeService.currentMode.subscribe(mode =>{
+    this.modeService.currentMode.subscribe(mode => {
       this.isAdvancedMode = mode;
     })
   }
@@ -261,7 +261,7 @@ export class GojsDiagramComponent implements OnInit {
             }
           ),
           $('ContextMenuButton',
-            $(go.TextBlock, 'Toggle FromNode Anzahl').bind('text', 'fromName', v => 'Toggle '+ v + ' Anzahl'),
+            $(go.TextBlock, 'Toggle FromNode Anzahl').bind('text', 'fromName', v => 'Toggle ' + v + ' Anzahl'),
             {
               click: (e, obj) => {
                 // Get the data of the link that was clicked
@@ -283,21 +283,21 @@ export class GojsDiagramComponent implements OnInit {
                 const otherArrow = linkData.toArrow
                 let confirmed = true;
 
-                if (this.isAdvancedMode && 
+                if (this.isAdvancedMode &&
                   (
                     (currentArrow == 'DoubleLine' && otherArrow == 'LineFork') ||
                     (currentArrow == 'LineCircle' && otherArrow == 'LineFork') ||
                     (currentArrow == 'DoubleLine' && otherArrow == 'CircleFork') ||
                     (currentArrow == 'LineCircle' && otherArrow == 'CircleFork'))
-                  ) { // stops links from being changed into M:M relation in Advanced mode.
-                    console.log('Error message should appear');
-                    window.alert('M:M relationship is not allowed in Advanced mode!')
-                    confirmed = false              
+                ) { // stops links from being changed into M:M relation in Advanced mode.
+                  console.log('Error message should appear');
+                  window.alert('M:M relationship is not allowed in Advanced mode!')
+                  confirmed = false
                 }
                 else {
                   confirmed = true;
                 }
-                
+
                 if (confirmed) {
 
                   // Start a transaction to update the link
@@ -320,7 +320,7 @@ export class GojsDiagramComponent implements OnInit {
             }
           ),
           $('ContextMenuButton',
-            $(go.TextBlock, "Toggle FromNode Kann/Muss").bind('text', 'fromName', v => 'Toggle '+ v + ' Kann/Muss'),
+            $(go.TextBlock, "Toggle FromNode Kann/Muss").bind('text', 'fromName', v => 'Toggle ' + v + ' Kann/Muss'),
             {
               click: (e, obj) => {
                 // Get the data of the link that was clicked
@@ -358,7 +358,7 @@ export class GojsDiagramComponent implements OnInit {
             }
           ),
           $('ContextMenuButton',
-            $(go.TextBlock, "Toggle ToNode Anzahl").bind('text', 'toName', v => 'Toggle '+ v + ' Anzahl'),
+            $(go.TextBlock, "Toggle ToNode Anzahl").bind('text', 'toName', v => 'Toggle ' + v + ' Anzahl'),
             {
               click: (e, obj) => {
                 // Get the data of the link that was clicked
@@ -381,42 +381,42 @@ export class GojsDiagramComponent implements OnInit {
 
                 let confirmed = true;
 
-                if (this.isAdvancedMode && 
+                if (this.isAdvancedMode &&
                   (
                     (currentArrow == 'DoubleLine' && otherArrow == 'BackwardLineFork') ||
                     (currentArrow == 'LineCircle' && otherArrow == 'BackwardLineFork') ||
                     (currentArrow == 'DoubleLine' && otherArrow == 'BackwardCircleFork') ||
                     (currentArrow == 'LineCircle' && otherArrow == 'BackwardCircleFork'))
-                  ) { // stops links from being changed into M:M relation in Advanced mode.
-                    console.log('Error message should appear');
-                    window.alert('M:M relationship is not allowed in Advanced mode!')
-                    confirmed = false              
+                ) { // stops links from being changed into M:M relation in Advanced mode.
+                  console.log('Error message should appear');
+                  window.alert('M:M relationship is not allowed in Advanced mode!')
+                  confirmed = false
                 }
                 else {
                   confirmed = true;
                 }
 
-                if (confirmed){
+                if (confirmed) {
                   // Start a transaction to update the link
-                this.diagram.model.startTransaction('Toggle toArrow');
+                  this.diagram.model.startTransaction('Toggle toArrow');
 
-                console.log("Current Arrow = ", currentArrow)
+                  console.log("Current Arrow = ", currentArrow)
 
-                // Determine the new state based on the current state
-                const newArrow = arrowToggleMap[currentArrow]; // This will be safe now
+                  // Determine the new state based on the current state
+                  const newArrow = arrowToggleMap[currentArrow]; // This will be safe now
 
-                // Set the new toArrow state
-                this.diagram.model.setDataProperty(linkData, 'toArrow', newArrow);
+                  // Set the new toArrow state
+                  this.diagram.model.setDataProperty(linkData, 'toArrow', newArrow);
 
-                // Commit the transaction
-                this.diagram.model.commitTransaction('Toggle toArrow');
-                console.log("ToArrow property of link toggled to:", newArrow);
-                }                
+                  // Commit the transaction
+                  this.diagram.model.commitTransaction('Toggle toArrow');
+                  console.log("ToArrow property of link toggled to:", newArrow);
+                }
               }
             }
           ),
           $('ContextMenuButton',
-            $(go.TextBlock, "Toggle ToNode Kann/Muss").bind('text', 'toName', v => 'Toggle '+ v + ' Kann/Muss'),
+            $(go.TextBlock, "Toggle ToNode Kann/Muss").bind('text', 'toName', v => 'Toggle ' + v + ' Kann/Muss'),
             {
               click: (e, obj) => {
                 // Get the data of the link that was clicked
@@ -454,11 +454,12 @@ export class GojsDiagramComponent implements OnInit {
             }
           ),
           $('ContextMenuButton',
-            $(go.TextBlock, "toJson (for dev reasons)"),{
-              click: (e, obj) =>{
-                console.log(this.model.toJson());
-              }
+            $(go.TextBlock, "toJson (for dev reasons)"), {
+            click: (e, obj) => {
+              console.log(this.model.toJson());
+              this.downloadJSON();
             }
+          }
           )
         )
       },
@@ -492,19 +493,17 @@ export class GojsDiagramComponent implements OnInit {
       if (node instanceof go.Node) this.nodeClicked.emit(node);
     });
 
-    this.diagram.addDiagramListener('LinkDrawn',  (e) => {
+    this.diagram.addDiagramListener('LinkDrawn', (e) => {
       const link = e.subject; // The link that was changed
       const toNode = link.toNode; // Get the toNode
       const fromNode = link.fromNode;
-      // stops Links from being drawn into the empty space
       let b = this.diagram.model.toJson();
-      const lda = this.diagram.model.copyNodeData;
 
-      
+
       console.log("Link Drawn")
       console.log(b)
       console.log("Calling update function")
-      this.updateLinkFromName(link)
+      this.updateLinkData(link)
       console.log("Updated link")
       b = this.diagram.model.toJson();
       console.log(b)
@@ -536,38 +535,30 @@ export class GojsDiagramComponent implements OnInit {
     //this.diagram.layoutDiagram(true);
   }
   // Function to update link data with fromName
-  updateLinkFromName(link: go.Link) {
+  updateLinkData(link: go.Link) {
     const fromNode = link.fromNode;
     const toNode = link.toNode;
     const fromArrow = link.data.fromArrow;
     const toArrow = link.data.toArrow;
     const arrowheads = link.data.arrowheads;
-    console.log("FromArrow is: "+ fromArrow+"\ttoArrow: "+toArrow+"\nArrowheads: "+arrowheads);
+    console.log("FromArrow is: " + fromArrow + "\ttoArrow: " + toArrow + "\nArrowheads: " + arrowheads);
     if (fromNode && toNode) {
-        const fromName = fromNode.data.className; // Get the key of the fromNode
-        const toName = toNode.data.className; // Get the key of the toNode
-        this.diagram.model.startTransaction('updateLinkFromName');
-        console.log(link.data)
-        this.diagram.model.setDataProperty(link.data, 'fromName', fromName); // Set the fromName attribute
-        this.diagram.model.setDataProperty(link.data, 'toName', toName); // Set the fromName attribute
-        this.diagram.model.commitTransaction('updateLinkFromName');
+      const fromName = fromNode.data.className; // Get the key of the fromNode
+      const toName = toNode.data.className; // Get the key of the toNode
+      this.diagram.model.startTransaction('updateLinkFromName');
+      console.log(link.data)
+      this.diagram.model.setDataProperty(link.data, 'fromName', fromName); // Set the fromName attribute
+      this.diagram.model.setDataProperty(link.data, 'toName', toName); // Set the fromName attribute
+      this.diagram.model.commitTransaction('updateLinkFromName');
     }
-    if (arrowheads == undefined){
-      console.log("undefined section");
+    if (arrowheads == undefined) { // Sets the default values for fromArrow and toArrow to the link data. Necessary to be changed in the context menu
       this.diagram.model.startTransaction("adding arrowheads defaults");
-      this.diagram.model.setDataProperty(link.data, "fromArrow", 'BackwardLineFork') //, fromArrow: 'BackwardLineFork', toArrow: 'LineFork'
+      this.diagram.model.setDataProperty(link.data, "fromArrow", 'BackwardLineFork')
       this.diagram.model.setDataProperty(link.data, "toArrow", 'LineFork')
       this.diagram.model.commitTransaction("adding arrowheads defaults");
-      
+
     }
-}
-
-// // Add an event listener for the LinkDrawn event
-// myDiagram.addDiagramListener("LinkDrawn", function(e) {
-//     const link = e.subject;  // the drawn link
-//     updateLinkFromName(link); // Update the link with fromName
-// });
-
+  }
   toggleProperty(obj: go.GraphObject, property: string) {
     const contextItem = obj.part;
     if (contextItem?.data) {
@@ -577,6 +568,30 @@ export class GojsDiagramComponent implements OnInit {
     }
   }
 
+  downloadJSON() {
+    let b = this.diagram.model.toJson();
+    // Create a Blob from the JSON string
+    let blob = new Blob([b], { type: 'application/json' });
+
+    // Create a link element
+    let link = document.createElement('a');
+
+    // Create a URL for the Blob and set it as the href of the link
+    link.href = URL.createObjectURL(blob);
+
+    // Set the download attribute with a filename
+    link.download = 'diagram.json';
+
+    // Append the link to the body (not necessary for the download to work)
+    document.body.appendChild(link);
+
+    // Programmatically click the link to trigger the download
+    link.click();
+
+    // Clean up by removing the link and revoking the Blob URL
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+  }
 
   openEditDialog(obj: go.GraphObject) {
     const contextItem = obj.part;
@@ -595,7 +610,7 @@ export class GojsDiagramComponent implements OnInit {
       });
     }
   }
-  
+
   deleteNode(obj: go.GraphObject) {
     const contextItem = obj.part;
     if (contextItem instanceof go.Node && contextItem.diagram) {
