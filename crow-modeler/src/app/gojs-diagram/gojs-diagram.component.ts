@@ -39,7 +39,7 @@ export class GojsDiagramComponent implements OnInit {
       //layout: $(go.GridLayout, { wrappingColumn: 3, spacing: new go.Size(20, 20) }),
       'draggingTool.dragsLink': true,
       'linkingTool.isUnconnectedLinkValid': false, // Links must be connected to two nodes
-      'draggingTool.gridSnapCellSize': new go.Size(10, 1),
+      'draggingTool.gridSnapCellSize': new go.Size(10, 10),
       'draggingTool.isGridSnapEnabled': true,
       'undoManager.isEnabled': true,
       // autoScale: go.Diagram.Uniform //This disables the zoom feature
@@ -204,22 +204,22 @@ export class GojsDiagramComponent implements OnInit {
 
     this.myPalette.model.nodeDataArray = [
       {
-        key: 'ClassKey',
-        className: 'Name',
+        className: 'Table',
         location: new go.Point(0, 0),
-        items: [{ name: 'NameID', iskey: true }, { name: 'AnotherAttribute', iskey: false }]
+        items: [],
+        inheritedItems: [],
+        isWeak: false
       },
       {
-        key: 'WeakClassKey',
-        className: 'Weak Name',
+        className: 'Weak Table',
         location: new go.Point(0, 0),
-        items: [{ name: 'NameID', iskey: true }, { name: 'AnotherAttribute', iskey: false }],
+        items: [],
+        inheritedItems: [],
         isWeak: true
       },
       {
-        key: 'Commentary',
         className: 'Kommentar',
-        items: [{ name: 'NameID', iskey: true }, { name: 'AnotherAttribute', iskey: false }],
+        items: [],
         isWeak: false,
         color: 'yellow'
       }
@@ -305,8 +305,8 @@ export class GojsDiagramComponent implements OnInit {
 
                   console.log("Current Arrow = ", currentArrow)
 
-                  // Determine the new state based on the current state
-                  const newArrow = arrowToggleMap[currentArrow]; // This will be safe now
+                  // Determine the new state based on the current state from the Map
+                  const newArrow = arrowToggleMap[currentArrow];
 
                   // Set the new fromArrow state
                   this.diagram.model.setDataProperty(linkData, 'fromArrow', newArrow);
@@ -315,6 +315,8 @@ export class GojsDiagramComponent implements OnInit {
                   this.diagram.model.commitTransaction('Toggle FromArrow');
                   console.log("FromArrow property of link toggled to:", newArrow);
 
+                  // Updates the Nodes' values for not null.
+                  // this.updateNotNull() - got stuck - try LinkDrawnEvent first.
                 }
               }
             }
@@ -534,7 +536,7 @@ export class GojsDiagramComponent implements OnInit {
     // Layout erzwingen
     //this.diagram.layoutDiagram(true);
   }
-  // Function to update link data with fromName
+  // Function to update link data with fromName and toName
   updateLinkData(link: go.Link) {
     const fromNode = link.fromNode;
     const toNode = link.toNode;
@@ -545,20 +547,50 @@ export class GojsDiagramComponent implements OnInit {
     if (fromNode && toNode) {
       const fromName = fromNode.data.className; // Get the key of the fromNode
       const toName = toNode.data.className; // Get the key of the toNode
-      this.diagram.model.startTransaction('updateLinkFromName');
-      console.log(link.data)
+      this.diagram.model.startTransaction('updateLinkData');
+      console.log(link.data);
+      this.diagram.model.setDataProperty(link.data, 'weak', true);
       this.diagram.model.setDataProperty(link.data, 'fromName', fromName); // Set the fromName attribute
       this.diagram.model.setDataProperty(link.data, 'toName', toName); // Set the fromName attribute
-      this.diagram.model.commitTransaction('updateLinkFromName');
+      this.diagram.model.commitTransaction('updateLinkData');
     }
     if (arrowheads == undefined) { // Sets the default values for fromArrow and toArrow to the link data. Necessary to be changed in the context menu
       this.diagram.model.startTransaction("adding arrowheads defaults");
-      this.diagram.model.setDataProperty(link.data, "fromArrow", 'BackwardLineFork')
-      this.diagram.model.setDataProperty(link.data, "toArrow", 'LineFork')
+      this.diagram.model.setDataProperty(link.data, "fromArrow", 'BackwardCircleFork')
+      this.diagram.model.setDataProperty(link.data, "toArrow", 'DoubleLine')
       this.diagram.model.commitTransaction("adding arrowheads defaults");
 
     }
+    if(fromNode != null && toNode != null){
+      this.updateForeignKey(link, fromNode, toNode);
+    }
   }
+
+  updateNotNull() {
+    throw new Error('Function not implemented.');
+  }
+
+  updateForeignKey(link: go.Link, fromNode: go.Node, toNode: go.Node) {
+    console.log("Hey, it's fun: "+link.data.fromArrow);
+    if ((link.data.fromArrow == 'BackwardCircleFork' || link.data.fromArrow == 'BackwardLineFork') && (link.data.toArrow == 'DoubleLine' || link.data.toArrow == 'LineCircle')){
+      console.log("case BackwardCircleFork + DoubleLine -> " + link.data.fromArrow + " + " + link.data.toArrow);
+      this.diagram.model.startTransaction("foreign key + not null");
+      console.log("testeste "+ toNode.data.items[4].name);
+      let arr = fromNode.data.items;
+      let idx = fromNode.data.items.length;
+      let name = toNode.data.className + "ID";
+      if (link.data.toArrow == 'LineCircle'){
+        this.diagram.model.insertArrayItem(arr, idx, {"name":name,"iskey":false,"notNull":false})
+      }
+      else{
+        this.diagram.model.insertArrayItem(arr, idx, {"name":name,"iskey":false,"notNull":true})
+      }
+      
+      //this.diagram.model.insertArrayItem(fromNode.itemArray, fromNode?.itemArray?.lastIndexOf+1, "balblablablabaAAAAAblbala")
+      this.diagram.model.commitTransaction("foreign key + not null");
+    }    
+  }
+
   toggleProperty(obj: go.GraphObject, property: string) {
     const contextItem = obj.part;
     if (contextItem?.data) {

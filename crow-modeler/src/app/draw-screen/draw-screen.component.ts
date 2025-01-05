@@ -96,7 +96,7 @@ export class DrawScreenComponent {
   ];
 
   linkDataArray = [
-    { from: 0, to: 1, weak: true, fromArrow: 'BackwardLineFork', toArrow: 'LineFork' }
+    { from: 0, to: 1, weak: true, fromArrow: 'BackwardCircleFork', toArrow: 'DoubleLine' }
   ];
 
   public model: go.GraphLinksModel = new go.GraphLinksModel({
