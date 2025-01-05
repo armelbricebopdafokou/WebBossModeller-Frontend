@@ -1,0 +1,149 @@
+{
+    "class": "GraphLinksModel2",
+    "copiesArrays": true,
+    "copiesArrayObjects": true,
+    "nodeDataArray": [
+        {
+            "key": "Produkt",
+            "className": "Produkt",
+            "location": {
+                "class": "go.Point",
+                "x": -70,
+                "y": -46
+            },
+            "items": [
+                {
+                    "name": "ProductID",
+                    "iskey": true,
+                    "notNull": false
+                },
+                {
+                    "name": "ProductName",
+                    "iskey": false,
+                    "notNull": false
+                },
+                {
+                    "name": "ItemDescription",
+                    "iskey": false,
+                    "notNull": false
+                },
+                {
+                    "name": "WholesalePrice",
+                    "iskey": false,
+                    "notNull": false
+                },
+                {
+                    "name": "ProductPhoto",
+                    "iskey": false,
+                    "notNull": false
+                }
+            ],
+            "inheritedItems": [
+                {
+                    "name": "SupplierID",
+                    "iskey": false,
+                    "notNull": true
+                },
+                {
+                    "name": "CategoryID",
+                    "iskey": false,
+                    "notNull": true
+                }
+            ]
+        },
+        {
+            "key": "Kategorie",
+            "className": "Kategorie",
+            "location": {
+                "class": "go.Point",
+                "x": 200,
+                "y": -14
+            },
+            "items": [
+                {
+                    "name": "CategoryID",
+                    "iskey": true,
+                    "notNull": false
+                },
+                {
+                    "name": "CategoryName",
+                    "iskey": false,
+                    "notNull": false
+                },
+                {
+                    "name": "Description",
+                    "iskey": false,
+                    "notNull": false
+                }
+            ],
+            "inheritedItems": [
+                {
+                    "name": "SupplierID",
+                    "iskey": false,
+                    "notNull": true
+                },
+                {
+                    "name": "CategoryID",
+                    "iskey": false,
+                    "notNull": true
+                }
+            ]
+        },
+        {
+            "key": "schwach",
+            "className": "Schwach",
+            "location": {
+                "class": "go.Point",
+                "x": -420,
+                "y": 2
+            },
+            "items": [
+                {
+                    "name": "schwachID",
+                    "iskey": true
+                },
+                {
+                    "name": "AnotherAttribute",
+                    "iskey": false
+                }
+            ],
+            "isWeak": true
+        },
+        {
+            "key": "Haendler",
+            "className": "H\u00e4ndler",
+            "location": {
+                "class": "go.Point",
+                "x": -220,
+                "y": 141
+            },
+            "items": [
+                {
+                    "name": "händlerID",
+                    "iskey": true
+                },
+                {
+                    "name": "adresse",
+                    "iskey": false
+                }
+            ]
+        }
+    ],
+    "linkDataArray": [
+        {
+            "from": "Produkt",
+            "to": "Kategorie",
+            "weak": true,
+            "fromArrow": "BackwardLineFork",
+            "toArrow": "LineFork"
+        },
+        {
+            "from": "Haendler",
+            "to": "Produkt"
+        },
+        {
+            "from": "schwach",
+            "to": "Produkt"
+        }
+    ]
+}

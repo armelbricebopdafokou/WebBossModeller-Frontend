@@ -16,20 +16,22 @@ import html2canvas from 'html2canvas';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
+
 export class HeaderComponent {
   @ViewChild('drawScreen', { static: true }) drawScreen!: ElementRef;
   @ViewChild(DrawScreenComponent, { static: false }) drawScreenComponent!: DrawScreenComponent;
   private zoomLevel: number = 1;
 
+  isAdvancedMode!: boolean;
+  
   @Output() clicked = new EventEmitter<boolean>()
   @Output() export = new EventEmitter<string>()
-  
 
   constructor(private drawingModeService: DrawingModeService) {
-      this.drawingModeService.currentMode.subscribe(mode => {
-        this.isAdvancedMode = mode;
-      });
-    }
+    this.drawingModeService.currentMode.subscribe(mode => {
+      this.isAdvancedMode = mode;
+    });
+  }
 
   navigateHome() {
     console.log('Navigating to Home');
@@ -43,7 +45,28 @@ export class HeaderComponent {
 
   openProject() {
     console.log('Opening an existing project');
+    // Öffnet Dialog
+    const dialog = document.querySelector("dialog");
+    dialog?.showModal();
+    // Schließt Dialog
+    const closeButton = document.getElementById("closeButton");
+    closeButton?.addEventListener("click", () => {
+      dialog?.close();
+    });
+    const diagramButtons = document.querySelectorAll('.diagram-button');
     // Logik zum Öffnen eines Projekts
+    // Add click event listeners to diagram buttons
+    diagramButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const selectedDiagram = button.getAttribute('data-value');
+        let openFilename = `${selectedDiagram}.json`;
+        console.log(`Selected: ${selectedDiagram}, filename: ${openFilename}`);
+        // Add your logic to open the selected diagram here
+        // For example, you could close the dialog after selection
+        dialog?.close();
+      });
+    });
+
   }
 
   saveProject() {
@@ -57,6 +80,7 @@ export class HeaderComponent {
 
     // Zugriff auf den Diagramm-Bereich
     const element = document.querySelector('#gojs-diagram'); // Stellt sicher, dass das Diagramm-Element erfasst wird
+    console.log(element);
 
     if (element && element instanceof HTMLElement) {
       html2canvas(element).then(canvas => {
@@ -121,4 +145,3 @@ export class HeaderComponent {
     window.location.href = '/login'; // Weiterleitung zur Login-Seite
   }
 }
-
