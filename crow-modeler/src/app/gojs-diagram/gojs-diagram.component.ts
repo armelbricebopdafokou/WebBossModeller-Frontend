@@ -153,6 +153,29 @@ export class GojsDiagramComponent implements OnInit {
       )
     );
 
+    // NodeTemplate für Kommentare
+    this.diagram.nodeTemplateMap.add('Comment',
+      $(go.Node, 'Auto',
+        {
+          locationSpot: go.Spot.Center,
+          resizable: true,
+          resizeObjectName: 'TEXT',
+          selectionAdorned: true
+        },
+        $(go.Shape, 'RoundedRectangle', { fill: 'lightyellow', stroke: 'orange', strokeWidth: 2 }),
+        $(go.TextBlock,
+          {
+            name: 'TEXT',
+            margin: 10,
+            textAlign: 'center',
+            editable: true,
+            font: 'italic 12px sans-serif'
+          },
+          new go.Binding('text', 'comment').makeTwoWay()
+        )
+      )
+    );
+
     // LinkTemplate für Beziehungen
     this.diagram.linkTemplate = $(go.Link,
       {
@@ -191,12 +214,8 @@ export class GojsDiagramComponent implements OnInit {
         nodeTemplateMap: this.diagram.nodeTemplateMap,
         model: new go.GraphLinksModel([
           {
-            category: 'WeakEntity',
-            name: 'Schwache Entität',
-            attributes: [
-              { name: 'Fremdschlüssel1', isForeignKey: true },
-              { name: 'Fremdschlüssel2', isForeignKey: true }
-            ]
+            category: 'Comment',
+            comment: 'Kommentar hier einfügen'
           },
           {
             key: 'PaletteNode',
@@ -204,6 +223,14 @@ export class GojsDiagramComponent implements OnInit {
             attributes: [
               { name: 'id' },
               { name: 'name' }
+            ]
+          },
+          {
+            category: 'WeakEntity',
+            name: 'Schwache Entität',
+            attributes: [
+              { name: 'Fremdschlüssel1', isForeignKey: true },
+              { name: 'Fremdschlüssel2', isForeignKey: true }
             ]
           }
         ])
