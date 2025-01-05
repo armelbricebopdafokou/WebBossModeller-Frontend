@@ -15,6 +15,7 @@ import * as go from 'gojs';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../services/user.service';
 import {  ToastrService  } from 'ngx-toastr';
+import { SqlService } from '../services/sql.service';
 
 
 @Component({
@@ -44,7 +45,7 @@ export class DrawScreenComponent {
   public selectedNode: any = null;
   text: string = 'color here';
  
-  constructor(public dialog: MatDialog, private toastr: ToastrService,
+  constructor(public dialog: MatDialog, private toastr: ToastrService, private service: SqlService,
      private userService: UserService) { }
 
   openDialog(): void {
@@ -59,6 +60,10 @@ export class DrawScreenComponent {
       }
     });
   }
+    
+ngAfterViewInit(){  
+  document.body.style.backgroundColor='#ffffff';
+}
 
   nodeDataArray = [
     {
@@ -183,5 +188,55 @@ export class DrawScreenComponent {
         this.toastr.success('This is a success message!', 'Success');
        }
      })
+  }
+
+  exportToSQL(type: string) {
+    switch(type) {
+        case 'MSSQL':
+            this.service.getSQLCodeMssql(this.toJson).subscribe({
+                next: (data)=> {
+                   console.log('got value ' + data.message);
+                 },
+                 error: (err)=> {
+                  //this.errorMessage = err;
+                  this.toastr.error(err.message, 'Error');
+                 },
+                complete: ()=> {
+                  this.toastr.success('This is a success message!', 'Success');
+                 }
+               })
+        break;
+        case 'MYSQL':
+            this.service.getSQLCodeMysql(this.toJson).subscribe({
+                next: (data)=> {
+                   console.log('got value ' + data.message);
+                 },
+                 error: (err)=> {
+                  //this.errorMessage = err;
+                  this.toastr.error(err.message, 'Error');
+                 },
+                complete: ()=> {
+                  this.toastr.success('This is a success message!', 'Success');
+                 }
+               })
+        break;
+
+        case 'POSTGRESQL':
+            this.service.getSQLCodePostgres(this.toJson).subscribe({
+                next: (data)=> {
+                   console.log('got value ' + data.message);
+                 },
+                 error: (err)=> {
+                  //this.errorMessage = err;
+                  this.toastr.error(err.message, 'Error');
+                 },
+                complete: ()=> {
+                  this.toastr.success('This is a success message!', 'Success');
+                 }
+               })
+        break;
+    }
+    
+    
   }
 }

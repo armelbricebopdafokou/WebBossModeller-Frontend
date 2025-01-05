@@ -12,6 +12,7 @@ import { NgIf } from '@angular/common';
 import { UserService } from '../services/user.service';
 import { User } from '../interfaces/user';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login-screen',
@@ -38,10 +39,15 @@ export class LoginScreenComponent {
 
   //login$!: Observable<User>;
   errorMessage:any
-  constructor(private service: UserService, private router: Router){
+  constructor(private service: UserService,private toastr: ToastrService,
+     private router: Router){
 
   }
   
+ngAfterViewInit(){  
+  document.body.style.backgroundColor='#9EF2E4'
+}
+
   get email() {
     return this.loginForm.get('emailCtrl')!;
   }
@@ -55,15 +61,18 @@ export class LoginScreenComponent {
     }
     
       this.service.login(obj).subscribe({
-       next: (data)=> {
-          localStorage.setItem('authToken', data.token); // Save token
-          this.router.navigate(['/draw-screen'])
+       next: (data: any)=> {
+        console.log(data)         
+         
+            localStorage.setItem('authToken', data.token); // Save token
+            this.router.navigate(['/draw-screen'])
+          
         },
         error: (err)=> {
-         this.errorMessage = err;
+          this.toastr.error(err.message, 'Error');
         },
        complete: ()=> {
-          
+       
         }
       })
   }

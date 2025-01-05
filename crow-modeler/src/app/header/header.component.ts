@@ -1,12 +1,13 @@
 import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgIf } from '@angular/common';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import {  RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { DrawingModeService } from '../drawing-mode.service';
 import { DrawScreenComponent } from '../draw-screen/draw-screen.component';
 import html2canvas from 'html2canvas';
+
 
 @Component({
   selector: 'app-header',
@@ -21,6 +22,14 @@ export class HeaderComponent {
   private zoomLevel: number = 1;
 
   @Output() clicked = new EventEmitter<boolean>()
+  @Output() export = new EventEmitter<string>()
+  
+
+  constructor(private drawingModeService: DrawingModeService) {
+      this.drawingModeService.currentMode.subscribe(mode => {
+        this.isAdvancedMode = mode;
+      });
+    }
 
   navigateHome() {
     console.log('Navigating to Home');
@@ -42,6 +51,7 @@ export class HeaderComponent {
     // Speichere das aktuelle Projekt
     this.clicked.emit(true)
   }
+
   exportImage() {
     console.log('Exporting image as PNG via GojsDiagramComponent');
 
@@ -74,9 +84,15 @@ export class HeaderComponent {
   }
 
 
-  exportSQL() {
-    console.log('Exporting as SQL');
-    // Exportiere das Projekt als SQL-Datei
+  exportSQLMssql() {
+    this.export.emit('MSSQL')
+  }
+
+  exportSQLMySql() {
+    this.export.emit('MYSQL')
+  }
+  exportSQLPostgres() {
+    this.export.emit('POSTGRESQL')
   }
 
   reload() {
@@ -91,11 +107,7 @@ export class HeaderComponent {
 
   isAdvancedMode!: boolean;
 
-  constructor(private drawingModeService: DrawingModeService) {
-    this.drawingModeService.currentMode.subscribe(mode => {
-      this.isAdvancedMode = mode;
-    });
-  }
+  
 
   // Method for toggle button. Toggles between easy and advanced mode
   toggleMode(event: Event) {
