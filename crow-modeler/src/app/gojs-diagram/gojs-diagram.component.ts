@@ -1,22 +1,24 @@
 import { Component, ElementRef, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import * as go from 'gojs';
-import { DrawingModeService } from '../drawing-mode.service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { EditNodeDialogComponent } from '../edit-node-dialog/edit-node-dialog.component';
+import * as go from 'gojs';
+
+import { DrawingModeService } from '../drawing-mode.service';
 
 const $ = go.GraphObject.make;
 
 @Component({
   selector: 'app-gojs-diagram',
   standalone: true,
+  imports: [MatButtonModule, MatDialogModule, EditNodeDialogComponent],
   templateUrl: './gojs-diagram.component.html',
   styleUrls: ['./gojs-diagram.component.css']
 })
 export class GojsDiagramComponent implements OnInit {
   @ViewChild('diagramDiv', { static: true }) diagramDiv!: ElementRef;
-  @ViewChild('paletteDiv', { static: true }) paletteDiv!: ElementRef;
   public diagram!: go.Diagram;
-  public palette!: go.Palette;
+  public myPalette!: go.Palette;
 
   @Input() public model!: go.GraphLinksModel;
   @Output() public nodeClicked = new EventEmitter();
@@ -31,192 +33,91 @@ export class GojsDiagramComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    // Diagram initialisieren
+    // Diagram-Initialisierung
     this.diagram = $(go.Diagram, this.diagramDiv.nativeElement, {
+      'draggingTool.dragsLink': true,
+      'linkingTool.isUnconnectedLinkValid': false,
+      'draggingTool.gridSnapCellSize': new go.Size(10, 1),
+      'draggingTool.isGridSnapEnabled': true,
       'undoManager.isEnabled': true,
     });
 
-    // NodeTemplate für Entitäten
-    this.diagram.nodeTemplate = $(go.Node, 'Auto',
-      {
-        selectionAdorned: true,
-        resizable: true,
-        resizeObjectName: 'TABLE',
-        fromSpot: go.Spot.AllSides,
-        toSpot: go.Spot.AllSides,
-        portId: '',
-        contextMenu: $(go.Adornment, 'Vertical',
-          $('ContextMenuButton',
-            $(go.TextBlock, 'Bearbeiten'),
-            { click: (e, obj) => this.openEditDialog(obj) }
-          ),
-          $('ContextMenuButton',
-            $(go.TextBlock, 'Löschen'),
-            { click: (e, obj) => this.deleteNode(obj) }
-          ),
-          $('ContextMenuButton',
-            $(go.TextBlock, 'Neuen Knoten hinzufügen'),
-            { click: (e, obj) => this.addNodeFromContext(obj) }
-          )
-        )
-      },
-      $(go.Shape, 'Rectangle', { fill: 'white', stroke: 'black', strokeWidth: 1 }),
+    this.diagram.model = this.model;
 
-      // Panel für Kopfzeile und Attribute
-      $(go.Panel, 'Table',
-        { name: 'TABLE', stretch: go.GraphObject.Fill },
-
-        // Kopfzeile
-        $(go.Panel, 'Auto',
-          { row: 0, stretch: go.GraphObject.Horizontal },
-          $(go.Shape, 'Rectangle', { fill: 'gray', stroke: null }),
-          $(go.TextBlock,
-            {
-              margin: 5,
-              font: 'bold 12px sans-serif',
-              stroke: 'white',
-              textAlign: 'center',
-              editable: true
-            },
-            new go.Binding('text', 'name').makeTwoWay()
+    // Define the template for nodes in the diagram
+    this.diagram.nodeTemplate =
+      $(go.Node, 'Spot',
+        {
+          selectionAdorned: true,
+          resizable: true,
+          fromSpot: go.Spot.AllSides,
+          toSpot: go.Spot.AllSides,
+          contextMenu: $(go.Adornment, 'Vertical',
+            $('ContextMenuButton', $(go.TextBlock, 'Bearbeiten'), {
+              click: (e, obj) => {
+                this.openEditDialog(obj);
+              }
+            }),
+            $('ContextMenuButton', $(go.TextBlock, 'Löschen'), {
+              click: (e, obj) => {
+                this.deleteNode(obj);
+              }
+            }),
           )
+        },
+        new go.Binding('location', 'location').makeTwoWay(),
+
+        // Outer frame of the table
+        $(go.Shape, 'Rectangle',
+          {
+            fill: 'lightgreen',
+            stroke: "black",
+            strokeWidth: 2,
+            portId: '',
+            cursor: 'grab',
+            fromLinkable: true,
+            toLinkable: true,
+            alignment: go.Spot.Center,
+            stretch: go.Stretch.Fill
+          },
+          new go.Binding('fill', 'color')
         ),
 
-        // Tabelle für Attribute
-        $(go.Panel, 'Vertical',
-          { row: 1, stretch: go.GraphObject.Fill },
-          $(go.Panel, 'Table',
-            new go.Binding('itemArray', 'attributes'),
-            {
-              itemTemplate: $(
-                go.Panel, 'TableRow',
-                $(go.TextBlock,
-                  { margin: 5, column: 0, editable: true },
-                  new go.Binding('text', 'name').makeTwoWay()
-                ),
-                $(go.TextBlock,
-                  { margin: 5, column: 1 },
-                  new go.Binding('text', 'type')
-                ),
-                $(go.TextBlock,
-                  { margin: 5, column: 2 },
-                  new go.Binding('text', 'isPK', (pk) => pk ? 'PK' : '')
-                ),
-                $(go.TextBlock,
-                  { margin: 5, column: 3 },
-                  new go.Binding('text', 'isFK', (fk) => fk ? 'FK' : '')
-                )
-              )
-            }
-          )
-        )
-      )
-    );
-
-    // LinkTemplate für Beziehungen
-    this.diagram.linkTemplate = $(go.Link,
-      {
-        routing: go.Link.Orthogonal,
-        corner: 5,
-        relinkableFrom: true,
-        relinkableTo: true
-      },
-      $(go.Shape, { strokeWidth: 2 }),
-      $(go.TextBlock,
-        {
-          segmentOffset: new go.Point(0, -10),
-          editable: true
-        },
-        new go.Binding('text', 'label').makeTwoWay()
-      ),
-      $(go.TextBlock,
-        {
-          segmentOffset: new go.Point(-20, 10),
-          editable: true
-        },
-        new go.Binding('text', 'fromCardinality').makeTwoWay()
-      ),
-      $(go.TextBlock,
-        {
-          segmentOffset: new go.Point(20, 10),
-          editable: true
-        },
-        new go.Binding('text', 'toCardinality').makeTwoWay()
-      )
-    );
-
-    // Palette initialisieren
-    this.palette = $(go.Palette, this.paletteDiv.nativeElement,
-      {
-        nodeTemplate: this.diagram.nodeTemplate,
-        model: new go.GraphLinksModel([
+        // Inner text block
+        $(go.TextBlock,
           {
-            key: 'PaletteNode',
-            name: 'Neue Entität',
-            attributes: [
-              { name: 'id', type: 'int', isPK: true, isFK: false },
-              { name: 'name', type: 'varchar', isPK: false, isFK: false }
-            ]
-          }
-        ])
-      });
+            font: 'bold 14px sans-serif',
+            margin: 5,
+            editable: true, // Ermöglicht die Bearbeitung des Textes direkt im Diagramm
+            textAlign: 'center'
+          },
+          new go.Binding('text', 'name').makeTwoWay() // Bindung für den Text
+        )
+      );
 
-    // Modell-Daten
-    this.diagram.model = new go.GraphLinksModel(
-      [
-        {
-          key: 1,
-          name: 'Kunde',
-          attributes: [
-            { name: 'KundenID', type: 'int', isPK: true, isFK: false },
-            { name: 'Name', type: 'varchar', isPK: false, isFK: false },
-            { name: 'Adresse', type: 'varchar', isPK: false, isFK: false }
-          ]
-        },
-        {
-          key: 2,
-          name: 'Bestellung',
-          attributes: [
-            { name: 'BestellID', type: 'int', isPK: true, isFK: false },
-            { name: 'KundenID', type: 'int', isPK: false, isFK: true },
-            { name: 'Datum', type: 'date', isPK: false, isFK: false }
-          ]
-        }
-      ],
-      [
-        { from: 1, to: 2, label: 'erstellt', fromCardinality: '1', toCardinality: 'n' }
-      ]
-    );
+    // Palette-Initialisierung
+    this.myPalette = $(go.Palette, 'myPaletteDiv', {
+      nodeTemplate: this.diagram.nodeTemplate,
+      model: new go.GraphLinksModel([
+        { key: 1, name: 'Node 1', color: 'lightblue' },
+        { key: 2, name: 'Node 2', color: 'lightgreen' }
+      ])
+    });
   }
 
-  addNodeFromContext(obj: go.GraphObject) {
-    const newNode = {
-      key: this.diagram.model.nodeDataArray.length + 1,
-      name: 'Neue Entität',
-      attributes: [
-        { name: 'id', type: 'int', isPK: true, isFK: false },
-        { name: 'name', type: 'varchar', isPK: false, isFK: false }
-      ]
-    };
-
-    this.diagram.startTransaction('add node');
-    this.diagram.model.addNodeData(newNode);
-    this.diagram.commitTransaction('add node');
-  }
-
+  // Methode zum Öffnen des Editierdialogs
   openEditDialog(obj: go.GraphObject) {
     const contextItem = obj.part;
     if (contextItem?.data) {
       const dialogRef = this.dialog.open(EditNodeDialogComponent, {
-        width: '300px',
-        data: { name: contextItem.data.name, attributes: contextItem.data.attributes }
+        width: '400px',
+        data: { ...contextItem.data } // Übergeben der aktuellen Knotendaten
       });
 
-      dialogRef.afterClosed().subscribe(result => {
+      dialogRef.afterClosed().subscribe((result: go.ObjectData) => {
         if (result) {
           this.diagram.startTransaction('update node data');
           this.diagram.model.assignAllDataProperties(contextItem.data, result);
-          this.diagram.updateAllTargetBindings();
           this.diagram.commitTransaction('update node data');
         }
       });
@@ -226,9 +127,7 @@ export class GojsDiagramComponent implements OnInit {
   deleteNode(obj: go.GraphObject) {
     const node = obj.part;
     if (node) {
-      this.diagram.startTransaction('delete node');
       this.diagram.model.removeNodeData(node.data);
-      this.diagram.commitTransaction('delete node');
     }
   }
 }
