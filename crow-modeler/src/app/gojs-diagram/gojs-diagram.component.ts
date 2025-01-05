@@ -304,26 +304,22 @@ export class GojsDiagramComponent implements OnInit {
         width: '1000px',
         data: {
           name: contextItem.data.name,
-          attributes: [...contextItem.data.attributes] // Kopie der Attribute für den Dialog
+          attributes: [...contextItem.data.attributes]
         }
       });
 
-      // Live-Bindung: Aktualisierung während der Bearbeitung im Dialog
-      dialogRef.componentInstance.data = new Proxy(dialogRef.componentInstance.data, {
-        set: (target, property, value) => {
-          target[property as keyof typeof target] = value;
-
-          if (property === 'name') {
-            this.diagram.startTransaction('update node name');
-            this.diagram.model.setDataProperty(contextItem.data, 'name', value);
-            this.diagram.commitTransaction('update node name');
-          }
-
-          return true;
+      dialogRef.componentInstance.attributesUpdated.subscribe((updatedAttributes: any[]) => {
+        // Validierung der Attribute
+        if (updatedAttributes.some(attr => !attr.name)) {
+          alert('Alle Attribute müssen einen Namen haben.');
+          return;
         }
+
+        this.diagram.startTransaction('update node attributes');
+        this.diagram.model.setDataProperty(contextItem.data, 'attributes', updatedAttributes);
+        this.diagram.commitTransaction('update node attributes');
       });
 
-      // Änderungen speichern, wenn der Dialog geschlossen wird
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           this.diagram.startTransaction('update node data');
@@ -336,11 +332,29 @@ export class GojsDiagramComponent implements OnInit {
   }
 
   deleteNode(obj: go.GraphObject) {
+
     const node = obj.part;
+
     if (node) {
-      this.diagram.startTransaction('delete node');
-      this.diagram.model.removeNodeData(node.data);
-      this.diagram.commitTransaction('delete node');
+
+      const confirmation = confirm('Möchten Sie diesen Knoten wirklich löschen?');
+
+      if (confirmation) {
+
+        this.diagram.startTransaction('delete node');
+
+        this.diagram.model.removeNodeData(node.data);
+
+        this.diagram.commitTransaction('delete node');
+
+      }
+
+    } else {
+
+      console.error('Kein Knoten gefunden zum Löschen.');
+
     }
+
   }
 }
+
