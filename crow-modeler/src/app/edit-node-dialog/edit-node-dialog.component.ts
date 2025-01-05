@@ -24,11 +24,36 @@ import { CommonModule } from '@angular/common';
 export class EditNodeDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<EditNodeDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { name: string; attributes: { name: string }[] }
+    @Inject(MAT_DIALOG_DATA) public data: {
+      name: string;
+      attributes: {
+        name: string;
+        selected?: boolean;
+        datatype?: string;
+        pk?: boolean;
+        nn?: boolean;
+        unique?: boolean;
+        check?: string;
+        defaultValue?: string;
+        fkTableName?: string;
+        fkColumnName?: string;
+      }[];
+    }
   ) { }
 
   addAttribute() {
-    this.data.attributes.push({ name: '' });
+    this.data.attributes.push({
+      name: '',
+      selected: false,
+      datatype: 'string',
+      pk: false,
+      nn: false,
+      unique: false,
+      check: '',
+      defaultValue: '',
+      fkTableName: '',
+      fkColumnName: ''
+    });
   }
 
   removeAttribute(index: number) {
