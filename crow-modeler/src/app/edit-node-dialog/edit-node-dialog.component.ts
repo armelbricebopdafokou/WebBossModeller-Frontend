@@ -1,56 +1,45 @@
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-edit-node-dialog',
   standalone: true,
-  imports: [FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule
+  ],
   templateUrl: './edit-node-dialog.component.html',
-  styleUrls: ['./edit-node-dialog.component.css'],
+  styleUrls: ['./edit-node-dialog.component.css']
 })
 export class EditNodeDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<EditNodeDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {
-    // Initialisieren Sie die Spalten-Datenstruktur mit den vorhandenen Spalten
-    this.columns = data.columns || [
-      {
-        name: '',
-        datatype: 'string',
-        pk: false,
-        nn: false,
-        unique: false,
-        check: '',
-        default: '',
-      },
-    ];
+    @Inject(MAT_DIALOG_DATA) public data: { name: string; attributes: { name: string }[] }
+  ) { }
+
+  addAttribute() {
+    this.data.attributes.push({ name: '' });
   }
 
-  // Spalten-Datenstruktur
-  columns: Array<{ name: string; datatype: string; pk: boolean; nn: boolean; unique: boolean; check: string; default: string; }>;
-
-  // Methode, um eine neue Spalte hinzuzufügen
-  addColumn(): void {
-    this.columns.push({
-      name: '',
-      datatype: 'string',
-      pk: false,
-      nn: false,
-      unique: false,
-      check: '',
-      default: '',
-    });
+  removeAttribute(index: number) {
+    this.data.attributes.splice(index, 1);
   }
 
-  // Abbrechen und Speichern-Methoden
-  onNoClick(): void {
+  onCancel(): void {
     this.dialogRef.close();
   }
 
-  save(): void {
-    this.dialogRef.close({ ...this.data, columns: this.columns });
+  onSave(): void {
+    this.dialogRef.close(this.data);
   }
 }

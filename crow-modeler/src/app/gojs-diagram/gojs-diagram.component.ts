@@ -274,10 +274,29 @@ export class GojsDiagramComponent implements OnInit {
     const contextItem = obj.part;
     if (contextItem?.data) {
       const dialogRef = this.dialog.open(EditNodeDialogComponent, {
-        width: '300px',
-        data: { name: contextItem.data.name, attributes: contextItem.data.attributes }
+        width: '400px',
+        data: {
+          name: contextItem.data.name,
+          attributes: [...contextItem.data.attributes] // Kopie der Attribute für den Dialog
+        }
       });
 
+      // Live-Bindung: Aktualisierung während der Bearbeitung im Dialog
+      dialogRef.componentInstance.data = new Proxy(dialogRef.componentInstance.data, {
+        set: (target, property, value) => {
+          target[property as keyof typeof target] = value;
+
+          if (property === 'name') {
+            this.diagram.startTransaction('update node name');
+            this.diagram.model.setDataProperty(contextItem.data, 'name', value);
+            this.diagram.commitTransaction('update node name');
+          }
+
+          return true;
+        }
+      });
+
+      // Änderungen speichern, wenn der Dialog geschlossen wird
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           this.diagram.startTransaction('update node data');
