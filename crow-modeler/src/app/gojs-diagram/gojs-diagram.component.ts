@@ -93,7 +93,7 @@ export class GojsDiagramComponent implements OnInit {
 
     // NodeTemplate für schwache Entitäten
     this.diagram.nodeTemplateMap.add('WeakEntity',
-      $(go.Node, 'Auto',
+      $(go.Node, 'Auto',  // Auto-Layout für das Hauptrechteck
         {
           selectionAdorned: true,
           resizable: true,
@@ -112,9 +112,27 @@ export class GojsDiagramComponent implements OnInit {
             )
           )
         },
-        $(go.Shape, 'Rectangle', { fill: 'white', stroke: 'black', strokeWidth: 2, strokeDashArray: [4, 2] }),
+        $(go.Panel, 'Spot',  // Spot-Panel für Ecken und Hauptrechteck
+          $(go.Shape, 'Rectangle',  // Hauptrechteck
+            { fill: 'white', stroke: 'black', strokeWidth: 2 }
+          ),
+          // Ecken hinzufügen
+          $(go.Shape,  // Obere linke Ecke
+            { geometryString: 'M0 0 L10 0 L0 10 Z', fill: 'black', alignment: go.Spot.TopLeft }
+          ),
+          $(go.Shape,  // Obere rechte Ecke
+            { geometryString: 'M0 0 L10 0 L10 10 Z', fill: 'black', alignment: go.Spot.TopRight }
+          ),
+          $(go.Shape,  // Untere linke Ecke
+            { geometryString: 'M0 0 L10 10 L0 10 Z', fill: 'black', alignment: go.Spot.BottomLeft }
+          ),
+          $(go.Shape,  // Untere rechte Ecke
+            { geometryString: 'M0 10 L10 0 L10 10 Z', fill: 'black', alignment: go.Spot.BottomRight }
+          )
+        ),
         $(go.Panel, 'Table',
           { name: 'TABLE', stretch: go.GraphObject.Fill },
+          // Überschrift
           $(go.Panel, 'Auto',
             { row: 0, stretch: go.GraphObject.Horizontal },
             $(go.Shape, 'Rectangle', { fill: 'lightgray', stroke: null }),
@@ -129,6 +147,7 @@ export class GojsDiagramComponent implements OnInit {
               new go.Binding('text', 'name').makeTwoWay()
             )
           ),
+          // Attributliste
           $(go.Panel, 'Vertical',
             { row: 1, stretch: go.GraphObject.Fill },
             $(go.Panel, 'Table',
@@ -152,6 +171,12 @@ export class GojsDiagramComponent implements OnInit {
         )
       )
     );
+
+
+
+
+
+
 
     // NodeTemplate für Kommentare
     this.diagram.nodeTemplateMap.add('Comment',
@@ -304,17 +329,12 @@ export class GojsDiagramComponent implements OnInit {
         width: '1000px',
         data: {
           name: contextItem.data.name,
-          attributes: [...contextItem.data.attributes]
+          attributes: [...contextItem.data.attributes] // Kopie der Attribute für den Dialog
         }
       });
 
+      // Live-Updates bei Änderungen der Attribute
       dialogRef.componentInstance.attributesUpdated.subscribe((updatedAttributes: any[]) => {
-        // Validierung der Attribute
-        if (updatedAttributes.some(attr => !attr.name)) {
-          alert('Alle Attribute müssen einen Namen haben.');
-          return;
-        }
-
         this.diagram.startTransaction('update node attributes');
         this.diagram.model.setDataProperty(contextItem.data, 'attributes', updatedAttributes);
         this.diagram.commitTransaction('update node attributes');
@@ -332,29 +352,16 @@ export class GojsDiagramComponent implements OnInit {
   }
 
   deleteNode(obj: go.GraphObject) {
-
     const node = obj.part;
-
     if (node) {
-
       const confirmation = confirm('Möchten Sie diesen Knoten wirklich löschen?');
-
       if (confirmation) {
-
         this.diagram.startTransaction('delete node');
-
         this.diagram.model.removeNodeData(node.data);
-
         this.diagram.commitTransaction('delete node');
-
       }
-
     } else {
-
       console.error('Kein Knoten gefunden zum Löschen.');
-
     }
-
   }
 }
-
