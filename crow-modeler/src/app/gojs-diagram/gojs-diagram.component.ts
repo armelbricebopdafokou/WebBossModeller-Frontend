@@ -36,7 +36,7 @@ export class GojsDiagramComponent implements OnInit {
       'undoManager.isEnabled': true,
     });
 
-    // NodeTemplate für Entitäten
+    // NodeTemplate für normale Entitäten
     this.diagram.nodeTemplate = $(go.Node, 'Auto',
       {
         selectionAdorned: true,
@@ -53,20 +53,12 @@ export class GojsDiagramComponent implements OnInit {
           $('ContextMenuButton',
             $(go.TextBlock, 'Löschen'),
             { click: (e, obj) => this.deleteNode(obj) }
-          ),
-          $('ContextMenuButton',
-            $(go.TextBlock, 'Neuen Knoten hinzufügen'),
-            { click: (e, obj) => this.addNodeFromContext(obj) }
           )
         )
       },
       $(go.Shape, 'Rectangle', { fill: 'white', stroke: 'black', strokeWidth: 1 }),
-
-      // Panel für Kopfzeile und Attribute
       $(go.Panel, 'Table',
         { name: 'TABLE', stretch: go.GraphObject.Fill },
-
-        // Kopfzeile
         $(go.Panel, 'Auto',
           { row: 0, stretch: go.GraphObject.Horizontal },
           $(go.Shape, 'Rectangle', { fill: 'gray', stroke: null }),
@@ -81,8 +73,6 @@ export class GojsDiagramComponent implements OnInit {
             new go.Binding('text', 'name').makeTwoWay()
           )
         ),
-
-        // Tabelle für Attribute
         $(go.Panel, 'Vertical',
           { row: 1, stretch: go.GraphObject.Fill },
           $(go.Panel, 'Table',
@@ -93,21 +83,71 @@ export class GojsDiagramComponent implements OnInit {
                 $(go.TextBlock,
                   { margin: 5, column: 0, editable: true },
                   new go.Binding('text', 'name').makeTwoWay()
-                ),
-                $(go.TextBlock,
-                  { margin: 5, column: 1 },
-                  new go.Binding('text', 'type')
-                ),
-                $(go.TextBlock,
-                  { margin: 5, column: 2 },
-                  new go.Binding('text', 'isPK', (pk) => pk ? 'PK' : '')
-                ),
-                $(go.TextBlock,
-                  { margin: 5, column: 3 },
-                  new go.Binding('text', 'isFK', (fk) => fk ? 'FK' : '')
                 )
               )
             }
+          )
+        )
+      )
+    );
+
+    // NodeTemplate für schwache Entitäten
+    this.diagram.nodeTemplateMap.add('WeakEntity',
+      $(go.Node, 'Auto',
+        {
+          selectionAdorned: true,
+          resizable: true,
+          resizeObjectName: 'TABLE',
+          fromSpot: go.Spot.AllSides,
+          toSpot: go.Spot.AllSides,
+          portId: '',
+          contextMenu: $(go.Adornment, 'Vertical',
+            $('ContextMenuButton',
+              $(go.TextBlock, 'Bearbeiten'),
+              { click: (e, obj) => this.openEditDialog(obj) }
+            ),
+            $('ContextMenuButton',
+              $(go.TextBlock, 'Löschen'),
+              { click: (e, obj) => this.deleteNode(obj) }
+            )
+          )
+        },
+        $(go.Shape, 'Rectangle', { fill: 'white', stroke: 'black', strokeWidth: 2, strokeDashArray: [4, 2] }),
+        $(go.Panel, 'Table',
+          { name: 'TABLE', stretch: go.GraphObject.Fill },
+          $(go.Panel, 'Auto',
+            { row: 0, stretch: go.GraphObject.Horizontal },
+            $(go.Shape, 'Rectangle', { fill: 'lightgray', stroke: null }),
+            $(go.TextBlock,
+              {
+                margin: 5,
+                font: 'bold 12px sans-serif',
+                stroke: 'black',
+                textAlign: 'center',
+                editable: true
+              },
+              new go.Binding('text', 'name').makeTwoWay()
+            )
+          ),
+          $(go.Panel, 'Vertical',
+            { row: 1, stretch: go.GraphObject.Fill },
+            $(go.Panel, 'Table',
+              new go.Binding('itemArray', 'attributes'),
+              {
+                itemTemplate: $(
+                  go.Panel, 'TableRow',
+                  $(go.TextBlock,
+                    {
+                      margin: 5,
+                      column: 0,
+                      editable: true,
+                      stroke: 'blue'
+                    },
+                    new go.Binding('text', 'name').makeTwoWay()
+                  )
+                )
+              }
+            )
           )
         )
       )
@@ -146,30 +186,28 @@ export class GojsDiagramComponent implements OnInit {
     );
 
     // Palette initialisieren
-    this.palette = $(go.Palette, this.paletteDiv.nativeElement, {
-      nodeTemplate: $(go.Node, 'Auto',
-        $(go.Shape, 'Rectangle', { fill: 'lightblue', strokeWidth: 1 }),
-        $(go.TextBlock,
-          { margin: 5, font: 'bold 12px sans-serif', editable: false },
-          new go.Binding('text', 'name')
-        )
-      ),
-      model: new go.GraphLinksModel([
-        {
-          key: 'EntityNode',
-          name: 'Entität',
-          attributes: [
-            { name: 'id', type: 'int', isPK: true, isFK: false },
-            { name: 'name', type: 'varchar', isPK: false, isFK: false }
-          ]
-        },
-        {
-          key: 'RelationshipNode',
-          name: 'Beziehung',
-          attributes: []
-        }
-      ])
-    });
+    this.palette = $(go.Palette, this.paletteDiv.nativeElement,
+      {
+        nodeTemplateMap: this.diagram.nodeTemplateMap,
+        model: new go.GraphLinksModel([
+          {
+            category: 'WeakEntity',
+            name: 'Schwache Entität',
+            attributes: [
+              { name: 'Fremdschlüssel1', isForeignKey: true },
+              { name: 'Fremdschlüssel2', isForeignKey: true }
+            ]
+          },
+          {
+            key: 'PaletteNode',
+            name: 'Normale Entität',
+            attributes: [
+              { name: 'id' },
+              { name: 'name' }
+            ]
+          }
+        ])
+      });
 
     // Modell-Daten
     this.diagram.model = new go.GraphLinksModel(
@@ -178,23 +216,24 @@ export class GojsDiagramComponent implements OnInit {
           key: 1,
           name: 'Kunde',
           attributes: [
-            { name: 'KundenID', type: 'int', isPK: true, isFK: false },
-            { name: 'Name', type: 'varchar', isPK: false, isFK: false },
-            { name: 'Adresse', type: 'varchar', isPK: false, isFK: false }
+            { name: 'KundenID' },
+            { name: 'Name' },
+            { name: 'Adresse' }
           ]
         },
         {
           key: 2,
-          name: 'Bestellung',
+          category: 'WeakEntity',
+          name: 'Bestellposition',
           attributes: [
-            { name: 'BestellID', type: 'int', isPK: true, isFK: false },
-            { name: 'KundenID', type: 'int', isPK: false, isFK: true },
-            { name: 'Datum', type: 'date', isPK: false, isFK: false }
+            { name: 'BestellID', isForeignKey: true },
+            { name: 'ProduktID', isForeignKey: true },
+            { name: 'Menge' }
           ]
         }
       ],
       [
-        { from: 1, to: 2, label: 'erstellt', fromCardinality: '1', toCardinality: 'n' }
+        { from: 1, to: 2, label: 'besteht aus', fromCardinality: '1', toCardinality: 'n' }
       ]
     );
   }
@@ -204,14 +243,31 @@ export class GojsDiagramComponent implements OnInit {
       key: this.diagram.model.nodeDataArray.length + 1,
       name: 'Neue Entität',
       attributes: [
-        { name: 'id', type: 'int', isPK: true, isFK: false },
-        { name: 'name', type: 'varchar', isPK: false, isFK: false }
+        { name: 'id' },
+        { name: 'name' }
       ]
     };
 
     this.diagram.startTransaction('add node');
     this.diagram.model.addNodeData(newNode);
     this.diagram.commitTransaction('add node');
+  }
+
+  addWeakNode() {
+    const newWeakNode = {
+      key: this.diagram.model.nodeDataArray.length + 1,
+      category: 'WeakEntity',
+      name: 'Schwache Entität',
+      attributes: [
+        { name: 'Fremdschlüssel1', isForeignKey: true },
+        { name: 'Fremdschlüssel2', isForeignKey: true },
+        { name: 'Attribut' }
+      ]
+    };
+
+    this.diagram.startTransaction('add weak node');
+    this.diagram.model.addNodeData(newWeakNode);
+    this.diagram.commitTransaction('add weak node');
   }
 
   openEditDialog(obj: go.GraphObject) {
