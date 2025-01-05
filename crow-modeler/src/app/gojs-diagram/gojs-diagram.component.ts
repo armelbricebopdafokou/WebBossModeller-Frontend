@@ -301,7 +301,7 @@ export class GojsDiagramComponent implements OnInit {
     const contextItem = obj.part;
     if (contextItem?.data) {
       const dialogRef = this.dialog.open(EditNodeDialogComponent, {
-        width: '400px',
+        width: '1000px',
         data: {
           name: contextItem.data.name,
           attributes: [...contextItem.data.attributes] // Kopie der Attribute für den Dialog
