@@ -98,7 +98,7 @@ export class DrawScreenComponent {
   linkDataArray = [
     { from: 'Produkt', to: 'Kategorie', weak: true, fromArrow: 'BackwardLineFork', toArrow: 'LineFork' }
   ];
-  */
+  
   public model: go.GraphLinksModel = new go.GraphLinksModel({
     copiesArrays: true,
     copiesArrayObjects: true,
