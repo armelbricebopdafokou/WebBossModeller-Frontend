@@ -533,6 +533,15 @@ export class GojsDiagramComponent implements OnInit {
       // }
     })
 
+    this.diagram.addDiagramListener('TextEdited', (e, ) => {
+      // TODO
+      const what = e.subject;
+      const tf = what.part;
+      console.log("The epic subject");
+      console.log(what);
+      console.log(tf);
+    })
+
     this.diagram.addDiagramListener('SelectionDeleting', function (e) {
       const removedParts = e.subject; // get all removed parts
 

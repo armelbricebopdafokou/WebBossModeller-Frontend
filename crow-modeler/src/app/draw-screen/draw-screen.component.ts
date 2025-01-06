@@ -62,48 +62,48 @@ export class DrawScreenComponent {
     this.diagramComponent.downloadJSON();
   }
 
-  nodeDataArray = [
-    {
-      key: 0,
-      className: 'Produkt',
-      location: new go.Point(250, 250),
-      items: [
-        { name: 'ProductID', iskey: true, notNull: false },
-        { name: 'ProductName', iskey: false, notNull: false },
-        { name: 'ItemDescription', iskey: false, notNull: false },
-        { name: 'WholesalePrice', iskey: false, notNull: false },
-        { name: 'ProductPhoto', iskey: false, notNull: false }
-      ],
-      inheritedItems: [
-        { name: 'SupplierID', iskey: false, notNull: true },
-        { name: 'CategoryID', iskey: false, notNull: true }
-      ]
-    },
-    {
-      key: 1,
-      className: 'Kategorie',
-      location: new go.Point(500, 0),
-      items: [
-        { name: 'CategoryID', iskey: true, notNull: false },
-        { name: 'CategoryName', iskey: false, notNull: false },
-        { name: 'Description', iskey: false, notNull: false }
-      ],
-      inheritedItems: [
-        { name: 'SupplierID', iskey: false, notNull: true },
-        { name: 'CategoryID', iskey: false, notNull: true }
-      ]
-    }
-  ];
+  // nodeDataArray = [ // commented out for realistic first view. Put back in for testing purposes.
+  //   {
+  //     key: 0,
+  //     className: 'Produkt',
+  //     location: new go.Point(250, 250),
+  //     items: [
+  //       { name: 'ProductID', iskey: true, notNull: false },
+  //       { name: 'ProductName', iskey: false, notNull: false },
+  //       { name: 'ItemDescription', iskey: false, notNull: false },
+  //       { name: 'WholesalePrice', iskey: false, notNull: false },
+  //       { name: 'ProductPhoto', iskey: false, notNull: false }
+  //     ],
+  //     inheritedItems: [
+  //       { name: 'SupplierID', iskey: false, notNull: true },
+  //       { name: 'CategoryID', iskey: false, notNull: true }
+  //     ]
+  //   },
+  //   {
+  //     key: 1,
+  //     className: 'Kategorie',
+  //     location: new go.Point(500, 0),
+  //     items: [
+  //       { name: 'CategoryID', iskey: true, notNull: false },
+  //       { name: 'CategoryName', iskey: false, notNull: false },
+  //       { name: 'Description', iskey: false, notNull: false }
+  //     ],
+  //     inheritedItems: [
+  //       { name: 'SupplierID', iskey: false, notNull: true },
+  //       { name: 'CategoryID', iskey: false, notNull: true }
+  //     ]
+  //   }
+  // ];
 
-  linkDataArray = [
-    { from: 0, to: 1, weak: true, fromArrow: 'BackwardCircleFork', toArrow: 'DoubleLine' }
-  ];
+  // linkDataArray = [
+  //   { from: 0, to: 1, weak: true, fromArrow: 'BackwardCircleFork', toArrow: 'DoubleLine' }
+  // ];
 
   public model: go.GraphLinksModel = new go.GraphLinksModel({
     copiesArrays: true,
     copiesArrayObjects: true,
-    nodeDataArray: this.nodeDataArray,
-    linkDataArray: this.linkDataArray
+    //nodeDataArray: this.nodeDataArray, //only use those for testing purposes
+    //linkDataArray: this.linkDataArray
   });
 
   public setSelectedNode(node: any) {

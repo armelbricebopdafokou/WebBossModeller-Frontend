@@ -20,6 +20,7 @@ export class HeaderComponent {
   @ViewChild('drawScreen', { static: true }) drawScreen!: ElementRef;
   @ViewChild(DrawScreenComponent, { static: false }) drawScreenComponent!: DrawScreenComponent;
   @Output() buttonClick = new EventEmitter<string>();
+  @Output() export = new EventEmitter<string>()
 
   private zoomLevel: number = 1;
 
@@ -120,6 +121,17 @@ export class HeaderComponent {
     closeSQLButton?.addEventListener("click", () => {
       dialog?.close();
     });
+  }
+
+  exportSQLMssql() {
+    this.export.emit('MSSQL')
+  }
+
+  exportSQLMySql() {
+    this.export.emit('MYSQL')
+  }
+  exportSQLPostgres() {
+    this.export.emit('POSTGRESQL')
   }
 
   reload() {
