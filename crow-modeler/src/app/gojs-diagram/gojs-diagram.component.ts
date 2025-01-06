@@ -160,7 +160,7 @@ export class GojsDiagramComponent implements OnInit {
               row: 2,
               column: 0,
               columnSpan: 2,
-              alignment: go.Spot.TopLeft,
+              //alignment: go.Spot.TopLeft, //this messed up the alignment of items/attributes in the template and every node dropped into the draw space from it
               itemTemplate: itemTempl
             },
             new go.Binding('itemArray', 'items')
@@ -206,14 +206,14 @@ export class GojsDiagramComponent implements OnInit {
       {
         className: 'Table',
         location: new go.Point(0, 0),
-        items: [],
+        items: [{ name: "TableID", iskey: true }],
         inheritedItems: [],
         isWeak: false
       },
       {
         className: 'Weak Table',
         location: new go.Point(0, 0),
-        items: [],
+        items: [{ name: "WeakTableID", iskey: true }],
         inheritedItems: [],
         isWeak: true
       },
@@ -533,6 +533,45 @@ export class GojsDiagramComponent implements OnInit {
       // }
     })
 
+    this.diagram.addDiagramListener('SelectionDeleting', function (e) {
+      const removedParts = e.subject; // get all removed parts
+
+      removedParts.each(function (part: any) {
+        if (part instanceof go.Node) {
+          // console.log("deleted Node: ", part.data.name);
+        } else if (part instanceof go.Link) {
+          console.log("deleted link from:", part.data.fromName, " to: ", part.data.toName);
+          // console.log(part.fromNode?.data.items[0]);
+          // console.log("Test: isForeignKey selection: ");
+          const obj = part.fromNode?.data.items;
+
+          if (obj) {
+            const l = obj.length;
+            for (let i = 0; i < l; i++) {
+              // console.log(`Item ${i}:`, obj[i]);
+              if (obj[i]) {
+                const l = obj[i].length;
+                for (const key in obj[i]) {
+                  // if (obj[i].hasOwnProperty(key)) { // prints all key+value pairs
+                  //   console.log(`${key}: ${obj[i][key]}`);
+                  // }
+
+                  if (key == 'isForeignKey'){
+                    console.log("gotcha");                    
+                  }
+                }
+              }
+            }
+          }
+          //const obj = part.fromNode?.data.items;
+
+          //console.log(part.fromNode?.data.items[0]["isForeignKey"]);
+
+        }
+      })
+
+    })
+
     // Layout erzwingen
     //this.diagram.layoutDiagram(true);
   }
@@ -561,7 +600,7 @@ export class GojsDiagramComponent implements OnInit {
       this.diagram.model.commitTransaction("adding arrowheads defaults");
 
     }
-    if(fromNode != null && toNode != null){
+    if (fromNode != null && toNode != null) {
       this.updateForeignKey(link, fromNode, toNode);
     }
   }
@@ -571,24 +610,25 @@ export class GojsDiagramComponent implements OnInit {
   }
 
   updateForeignKey(link: go.Link, fromNode: go.Node, toNode: go.Node) {
-    console.log("Hey, it's fun: "+link.data.fromArrow);
-    if ((link.data.fromArrow == 'BackwardCircleFork' || link.data.fromArrow == 'BackwardLineFork') && (link.data.toArrow == 'DoubleLine' || link.data.toArrow == 'LineCircle')){
+    // adds ForeignKey
+    // Currently only called from updateLinkData after LinkDrawn Event
+    // maybe overthink this as this actually changes NodeData with the ForeignKey addition.
+    if ((link.data.fromArrow == 'BackwardCircleFork' || link.data.fromArrow == 'BackwardLineFork') && (link.data.toArrow == 'DoubleLine' || link.data.toArrow == 'LineCircle')) {
       console.log("case BackwardCircleFork + DoubleLine -> " + link.data.fromArrow + " + " + link.data.toArrow);
       this.diagram.model.startTransaction("foreign key + not null");
-      console.log("testeste "+ toNode.data.items[4].name);
       let arr = fromNode.data.items;
       let idx = fromNode.data.items.length;
       let name = toNode.data.className + "ID";
-      if (link.data.toArrow == 'LineCircle'){
-        this.diagram.model.insertArrayItem(arr, idx, {"name":name,"iskey":false,"notNull":false})
+      if (link.data.toArrow == 'LineCircle') {
+        this.diagram.model.insertArrayItem(arr, idx, { "name": name, "iskey": false, "notNull": false, "isForeignKey": true })
       }
-      else{
-        this.diagram.model.insertArrayItem(arr, idx, {"name":name,"iskey":false,"notNull":true})
+      else {
+        this.diagram.model.insertArrayItem(arr, idx, { "name": name, "iskey": false, "notNull": true, "isForeignKey": true })
       }
-      
+
       //this.diagram.model.insertArrayItem(fromNode.itemArray, fromNode?.itemArray?.lastIndexOf+1, "balblablablabaAAAAAblbala")
       this.diagram.model.commitTransaction("foreign key + not null");
-    }    
+    }
   }
 
   toggleProperty(obj: go.GraphObject, property: string) {
