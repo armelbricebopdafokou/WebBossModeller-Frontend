@@ -29,12 +29,12 @@ export class EditNodeDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<EditNodeDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {
-      name: string;
-      attributes: {
+      className: string;
+      items: { //attributes
         name: string;
         selected?: boolean;
         datatype?: string;
-        pk?: boolean;
+        iskey?: boolean; //ehemals pk
         nn?: boolean;
         unique?: boolean;
         check?: string;
@@ -50,7 +50,7 @@ export class EditNodeDialogComponent {
       name: '',
       selected: false,
       datatype: 'string',
-      pk: false,
+      iskey: false, //ehemal pk
       nn: false,
       unique: false,
       check: '',
@@ -58,18 +58,18 @@ export class EditNodeDialogComponent {
       fkTableName: '',
       fkColumnName: ''
     };
-    this.data.attributes.push(newAttribute);
-    this.attributesUpdated.emit(this.data.attributes);
+    this.data.items.push(newAttribute);
+    this.attributesUpdated.emit(this.data.items);
   }
 
   removeAttribute(index: number) {
-    this.data.attributes.splice(index, 1);
-    this.attributesUpdated.emit(this.data.attributes);
+    this.data.items.splice(index, 1);
+    this.attributesUpdated.emit(this.data.items);
   }
 
   onDrop(event: CdkDragDrop<any[]>) {
-    moveItemInArray(this.data.attributes, event.previousIndex, event.currentIndex);
-    this.attributesUpdated.emit(this.data.attributes);
+    moveItemInArray(this.data.items, event.previousIndex, event.currentIndex);
+    this.attributesUpdated.emit(this.data.items);
   }
 
   @HostListener('window:beforeunload', ['$event'])
@@ -86,7 +86,7 @@ export class EditNodeDialogComponent {
   }
 
   onSave(): void {
-    this.attributesUpdated.emit(this.data.attributes);
+    this.attributesUpdated.emit(this.data.items);
     this.dialogRef.close(this.data);
   }
 }

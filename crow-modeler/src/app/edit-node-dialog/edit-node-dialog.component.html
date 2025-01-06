@@ -2,13 +2,13 @@
 <div>
   <mat-form-field appearance="fill">
     <mat-label>Name</mat-label>
-    <input matInput [(ngModel)]="data.name">
+    <input matInput [(ngModel)]="data.className">
   </mat-form-field>
 
   <table cdkDropList (cdkDropListDropped)="onDrop($event)">
     <thead>
       <tr>
-        <th>Auswahl</th>
+        <!-- <th>Auswahl</th> -->
         <th>Attribut</th>
         <th>Datentyp</th>
         <th>PK</th>
@@ -22,8 +22,8 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let attribute of data.attributes; let i = index" cdkDrag>
-        <td><input type="checkbox" [(ngModel)]="attribute.selected"></td>
+      <tr *ngFor="let attribute of data.items; let i = index" cdkDrag>
+        <!-- <td><input type="checkbox" [(ngModel)]="attribute.selected"></td> -->
         <td><input type="text" [(ngModel)]="attribute.name" placeholder="Attribut"></td>
         <td>
           <select [(ngModel)]="attribute.datatype">
@@ -32,7 +32,7 @@
             <option value="boolean">Boolean</option>
           </select>
         </td>
-        <td><input type="checkbox" [(ngModel)]="attribute.pk"></td>
+        <td><input type="checkbox" [(ngModel)]="attribute.iskey"></td>
         <td><input type="checkbox" [(ngModel)]="attribute.nn"></td>
         <td><input type="checkbox" [(ngModel)]="attribute.unique"></td>
         <td><input type="text" [(ngModel)]="attribute.check" placeholder="Check"></td>

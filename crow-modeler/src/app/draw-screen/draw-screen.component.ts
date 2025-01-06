@@ -62,6 +62,32 @@ export class DrawScreenComponent {
     this.diagramComponent.downloadJSON();
   }
 
+  nodeDataArray = [
+    {
+      key: 1,
+      className: 'Kunde',
+      items: [
+        { name: 'KundenID', iskey: true },
+        { name: 'Name' },
+        { name: 'Adresse' }
+      ]
+    },
+    {
+      key: 2,
+      category: 'WeakEntity',
+      className: 'Bestellposition',
+      items: [
+        { name: 'BestellID', isForeignKey: true },
+        { name: 'ProduktID', isForeignKey: true },
+        { name: 'Menge' }
+      ]
+    }
+  ]
+
+  linkDataArray = [
+    { from: 2, to: 1, weak: true, fromArrow: "BackwardCircleFork", toArrow: "DoubleLine", label: 'besteht aus', fromCardinality: '1', toCardinality: 'n' }
+  ]
+
   // nodeDataArray = [ // commented out for realistic first view. Put back in for testing purposes.
   //   {
   //     key: 0,
@@ -95,15 +121,15 @@ export class DrawScreenComponent {
   //   }
   // ];
 
-  linkDataArray = [
-    { from: 'Produkt', to: 'Kategorie', weak: true, fromArrow: 'BackwardLineFork', toArrow: 'LineFork' }
-  ];
+  // linkDataArray = [
+  //   { from: 'Produkt', to: 'Kategorie', weak: true, fromArrow: 'BackwardLineFork', toArrow: 'LineFork' }
+  // ];
   
   public model: go.GraphLinksModel = new go.GraphLinksModel({
     copiesArrays: true,
     copiesArrayObjects: true,
-    //nodeDataArray: this.nodeDataArray, //only use those for testing purposes
-    //linkDataArray: this.linkDataArray
+    nodeDataArray: this.nodeDataArray, //only use those for testing purposes
+    linkDataArray: this.linkDataArray
   });
 
   public setSelectedNode(node: any) {

@@ -14,7 +14,7 @@ const $ = go.GraphObject.make;
 })
 export class GojsDiagramComponent implements OnInit {
   @ViewChild('diagramDiv', { static: true }) diagramDiv!: ElementRef;
-  @ViewChild('paletteDiv', { static: true }) paletteDiv!: ElementRef;
+  @ViewChild('myPaletteDiv', { static: true }) myPaletteDiv!: ElementRef;
   public diagram!: go.Diagram;
   public palette!: go.Palette;
 
@@ -56,16 +56,17 @@ export class GojsDiagramComponent implements OnInit {
       new go.Binding('background', 'isSelected', sel => sel ? 'lightblue' : 'transparent').ofObject()
     );
 
-    // NodeTemplate für schwache Entitäten
-    this.diagram.nodeTemplateMap.add('WeakEntity',
-      $(go.Node, 'Auto',  // Auto-Layout für das Hauptrechteck
+    // Define the template for nodes in the diagram
+    this.diagram.nodeTemplate =
+      $(go.Node, 'Spot',
         {
           selectionAdorned: true,
           resizable: true,
           layoutConditions: go.LayoutConditions.Standard,// go.LayoutConditions.Standard & ~go.LayoutConditions.NodeSized,
           fromSpot: go.Spot.AllSides,
-          toSpot: go.Spot.AllSides,
-          portId: '',
+          toSpot: go.Spot.AllSides
+        },
+        {
           contextMenu: $(go.Adornment, 'Vertical',
             $('ContextMenuButton',
               $(go.TextBlock, 'Bearbeiten'),
@@ -112,6 +113,8 @@ export class GojsDiagramComponent implements OnInit {
             weak ? "F M0 10 L10 0 H90 L100 10 V90 L90 100 H10 L0 90z" : null
           )
         ),
+
+        // Panel for attributes and header
         $(go.Panel, 'Table',
           { padding: 6 },
 
@@ -158,7 +161,7 @@ export class GojsDiagramComponent implements OnInit {
             new go.Binding('itemArray', 'items')
           )
         )
-      ));
+      );
 
     // Diagram-Link-Template (redundant)
     // this.diagram.linkTemplate = $(go.Link,
@@ -671,24 +674,13 @@ export class GojsDiagramComponent implements OnInit {
     if (contextItem?.data) {
       const dialogRef = this.dialog.open(EditNodeDialogComponent, {
         width: '1000px',
-        data: {
-          name: contextItem.data.name,
-          attributes: [...contextItem.data.attributes] // Kopie der Attribute für den Dialog
-        }
+        data: { ...contextItem.data }
       });
 
-      // Live-Updates bei Änderungen der Attribute
-      dialogRef.componentInstance.attributesUpdated.subscribe((updatedAttributes: any[]) => {
-        this.diagram.startTransaction('update node attributes');
-        this.diagram.model.setDataProperty(contextItem.data, 'attributes', updatedAttributes);
-        this.diagram.commitTransaction('update node attributes');
-      });
-
-      dialogRef.afterClosed().subscribe(result => {
+      dialogRef.afterClosed().subscribe((result: go.ObjectData) => {
         if (result) {
           this.diagram.startTransaction('update node data');
           this.diagram.model.assignAllDataProperties(contextItem.data, result);
-          this.diagram.updateAllTargetBindings();
           this.diagram.commitTransaction('update node data');
         }
       });
