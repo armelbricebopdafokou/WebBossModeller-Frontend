@@ -1,40 +1,37 @@
 import { Component, ElementRef, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { EditNodeDialogComponent } from '../edit-node-dialog/edit-node-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 import * as go from 'gojs';
-
 import { DrawingModeService } from '../drawing-mode.service';
+import { EditNodeDialogComponent } from '../edit-node-dialog/edit-node-dialog.component';
 
 const $ = go.GraphObject.make;
 
 @Component({
   selector: 'app-gojs-diagram',
   standalone: true,
-  imports: [MatButtonModule, MatDialogModule, EditNodeDialogComponent],
   templateUrl: './gojs-diagram.component.html',
   styleUrls: ['./gojs-diagram.component.css']
 })
 export class GojsDiagramComponent implements OnInit {
   @ViewChild('diagramDiv', { static: true }) diagramDiv!: ElementRef;
+  @ViewChild('paletteDiv', { static: true }) paletteDiv!: ElementRef;
   public diagram!: go.Diagram;
-  public myPalette!: go.Palette;
+  public palette!: go.Palette;
 
   @Input() public model!: go.GraphLinksModel;
   @Output() public nodeClicked = new EventEmitter();
   isAdvancedMode!: boolean;
-
 
   constructor(public dialog: MatDialog, private modeService: DrawingModeService) { }
 
   ngOnInit(): void {
     this.modeService.currentMode.subscribe(mode => {
       this.isAdvancedMode = mode;
-    })
+    });
   }
 
   ngAfterViewInit() {
-    // Diagram-Initialisierung
+    // Diagram initialisieren
     this.diagram = $(go.Diagram, this.diagramDiv.nativeElement, {
       //layout: $(go.GridLayout, { wrappingColumn: 3, spacing: new go.Size(20, 20) }),
       'draggingTool.dragsLink': true,
@@ -59,28 +56,25 @@ export class GojsDiagramComponent implements OnInit {
       new go.Binding('background', 'isSelected', sel => sel ? 'lightblue' : 'transparent').ofObject()
     );
 
-    // Define the template for nodes in the diagram
-    this.diagram.nodeTemplate =
-      $(go.Node, 'Spot',
+    // NodeTemplate für schwache Entitäten
+    this.diagram.nodeTemplateMap.add('WeakEntity',
+      $(go.Node, 'Auto',  // Auto-Layout für das Hauptrechteck
         {
           selectionAdorned: true,
           resizable: true,
           layoutConditions: go.LayoutConditions.Standard,// go.LayoutConditions.Standard & ~go.LayoutConditions.NodeSized,
           fromSpot: go.Spot.AllSides,
-          toSpot: go.Spot.AllSides
-        },
-        {
+          toSpot: go.Spot.AllSides,
+          portId: '',
           contextMenu: $(go.Adornment, 'Vertical',
-            $('ContextMenuButton', $(go.TextBlock, 'Bearbeiten'), {
-              click: (e, obj) => {
-                this.openEditDialog(obj);
-              }
-            }),
-            $('ContextMenuButton', $(go.TextBlock, 'Löschen'), {
-              click: (e, obj) => {
-                this.deleteNode(obj);
-              }
-            }),
+            $('ContextMenuButton',
+              $(go.TextBlock, 'Bearbeiten'),
+              { click: (e, obj) => this.openEditDialog(obj) }
+            ),
+            $('ContextMenuButton',
+              $(go.TextBlock, 'Löschen'),
+              { click: (e, obj) => this.deleteNode(obj) }
+            )
           )
         },
         new go.Binding('location', 'location').makeTwoWay(),
@@ -118,8 +112,6 @@ export class GojsDiagramComponent implements OnInit {
             weak ? "F M0 10 L10 0 H90 L100 10 V90 L90 100 H10 L0 90z" : null
           )
         ),
-
-        // Panel for attributes and header
         $(go.Panel, 'Table',
           { padding: 6 },
 
@@ -166,7 +158,7 @@ export class GojsDiagramComponent implements OnInit {
             new go.Binding('itemArray', 'items')
           )
         )
-      );
+      ));
 
     // Diagram-Link-Template (redundant)
     // this.diagram.linkTemplate = $(go.Link,
@@ -196,13 +188,13 @@ export class GojsDiagramComponent implements OnInit {
     // );
 
     // Palette-Initialisierung
-    this.myPalette = new go.Palette('myPaletteDiv', {
+    this.palette = new go.Palette('myPaletteDiv', {
       nodeTemplate: this.diagram.nodeTemplate,
       contentAlignment: go.Spot.Center,
       layout: $(go.GridLayout, { wrappingColumn: 1, cellSize: new go.Size(2, 2) })
     });
 
-    this.myPalette.model.nodeDataArray = [
+    this.palette.model.nodeDataArray = [
       {
         className: 'Table',
         location: new go.Point(0, 0),
@@ -229,7 +221,7 @@ export class GojsDiagramComponent implements OnInit {
     // Link template (the real one)
     this.diagram.linkTemplate = $(go.Link,
       {
-        routing: go.Routing.AvoidsNodes,
+        routing: go.Link.Orthogonal,
         corner: 5,
         relinkableFrom: true,
         relinkableTo: true,
@@ -679,41 +671,42 @@ export class GojsDiagramComponent implements OnInit {
     if (contextItem?.data) {
       const dialogRef = this.dialog.open(EditNodeDialogComponent, {
         width: '1000px',
-        data: { ...contextItem.data }
+        data: {
+          name: contextItem.data.name,
+          attributes: [...contextItem.data.attributes] // Kopie der Attribute für den Dialog
+        }
       });
 
-      dialogRef.afterClosed().subscribe((result: go.ObjectData) => {
+      // Live-Updates bei Änderungen der Attribute
+      dialogRef.componentInstance.attributesUpdated.subscribe((updatedAttributes: any[]) => {
+        this.diagram.startTransaction('update node attributes');
+        this.diagram.model.setDataProperty(contextItem.data, 'attributes', updatedAttributes);
+        this.diagram.commitTransaction('update node attributes');
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
         if (result) {
           this.diagram.startTransaction('update node data');
           this.diagram.model.assignAllDataProperties(contextItem.data, result);
+          this.diagram.updateAllTargetBindings();
           this.diagram.commitTransaction('update node data');
         }
       });
     }
   }
 
+
   deleteNode(obj: go.GraphObject) {
-    const contextItem = obj.part;
-    if (contextItem instanceof go.Node && contextItem.diagram) {
-      this.diagram.startTransaction('delete node');
-      this.diagram.remove(contextItem);
-      this.diagram.commitTransaction('delete node');
+    const node = obj.part;
+    if (node) {
+      const confirmation = confirm('Möchten Sie diesen Knoten wirklich löschen?');
+      if (confirmation) {
+        this.diagram.startTransaction('delete node');
+        this.diagram.model.removeNodeData(node.data);
+        this.diagram.commitTransaction('delete node');
+      }
+    } else {
+      console.error('Kein Knoten gefunden zum Löschen.');
     }
-  }
-  toggleLinkWeakness(obj: go.GraphObject) {
-    const linkData = obj.part?.data;
-    if (linkData) {
-      this.diagram.model.startTransaction('Toggle link weakness');
-      this.diagram.model.setDataProperty(linkData, 'weak', !linkData.weak);
-      this.diagram.model.commitTransaction('Toggle link weakness');
-    }
-  }
-
-  zoomIn() {
-    this.diagram?.commandHandler.increaseZoom();
-  }
-
-  zoomOut() {
-    this.diagram?.commandHandler.decreaseZoom();
   }
 }

@@ -1,37 +1,58 @@
-<h1 mat-dialog-title>Bearbeite Tabelle "{{ data.className }}"</h1>
-<div mat-dialog-content>
-  <table>
+<h1>Tabelle bearbeiten</h1>
+<div>
+  <mat-form-field appearance="fill">
+    <mat-label>Name</mat-label>
+    <input matInput [(ngModel)]="data.name">
+  </mat-form-field>
+
+  <table cdkDropList (cdkDropListDropped)="onDrop($event)">
     <thead>
       <tr>
-        <th>Name</th>
+        <th>Auswahl</th>
+        <th>Attribut</th>
         <th>Datentyp</th>
         <th>PK</th>
         <th>NN</th>
         <th>Unique</th>
         <th>Check</th>
         <th>Default</th>
+        <th>FK TableName</th>
+        <th>FK ColumnName</th>
+        <th>Aktionen</th>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td><input [(ngModel)]="data.name" /></td>
+      <tr *ngFor="let attribute of data.attributes; let i = index" cdkDrag>
+        <td><input type="checkbox" [(ngModel)]="attribute.selected"></td>
+        <td><input type="text" [(ngModel)]="attribute.name" placeholder="Attribut"></td>
         <td>
-          <select [(ngModel)]="data.datatype">
-            <option value="integer">integer</option>
-            <option value="string">string</option>
-            <option value="boolean">boolean</option>
+          <select [(ngModel)]="attribute.datatype">
+            <option value="integer">Integer</option>
+            <option value="string">String</option>
+            <option value="boolean">Boolean</option>
           </select>
         </td>
-        <td><input type="checkbox" [(ngModel)]="data.pk" /></td>
-        <td><input type="checkbox" [(ngModel)]="data.nn" /></td>
-        <td><input type="checkbox" [(ngModel)]="data.unique" /></td>
-        <td><input [(ngModel)]="data.check" /></td>
-        <td><input [(ngModel)]="data.default" /></td>
+        <td><input type="checkbox" [(ngModel)]="attribute.pk"></td>
+        <td><input type="checkbox" [(ngModel)]="attribute.nn"></td>
+        <td><input type="checkbox" [(ngModel)]="attribute.unique"></td>
+        <td><input type="text" [(ngModel)]="attribute.check" placeholder="Check"></td>
+        <td><input type="text" [(ngModel)]="attribute.defaultValue" placeholder="Default"></td>
+        <td><input type="text" [(ngModel)]="attribute.fkTableName" placeholder="FK TableName"></td>
+        <td><input type="text" [(ngModel)]="attribute.fkColumnName" placeholder="FK ColumnName"></td>
+        <td>
+          <button mat-icon-button color="warn" (click)="removeAttribute(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
       </tr>
     </tbody>
   </table>
-</div>
-<div mat-dialog-actions>
-  <button mat-button (click)="onNoClick()">Abbrechen</button>
-  <button mat-button (click)="save()">Speichern</button>
+
+  <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+    <button mat-button (click)="addAttribute()">Spalte hinzufügen</button>
+    <div style="display: flex; gap: 10px;">
+      <button mat-button (click)="onCancel()">Abbrechen</button>
+      <button mat-button color="primary" (click)="onSave()">Speichern</button>
+    </div>
+  </div>
 </div>

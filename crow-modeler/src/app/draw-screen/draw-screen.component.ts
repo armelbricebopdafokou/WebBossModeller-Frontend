@@ -95,10 +95,10 @@ export class DrawScreenComponent {
   //   }
   // ];
 
-  // linkDataArray = [
-  //   { from: 0, to: 1, weak: true, fromArrow: 'BackwardCircleFork', toArrow: 'DoubleLine' }
-  // ];
-
+  linkDataArray = [
+    { from: 'Produkt', to: 'Kategorie', weak: true, fromArrow: 'BackwardLineFork', toArrow: 'LineFork' }
+  ];
+  */
   public model: go.GraphLinksModel = new go.GraphLinksModel({
     copiesArrays: true,
     copiesArrayObjects: true,
