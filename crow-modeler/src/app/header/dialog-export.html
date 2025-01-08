@@ -1,0 +1,38 @@
+
+<mat-dialog-content>
+    <div class="container">
+        <div class="row">
+            <h2>Export</h2>
+        </div>
+        <div class="row">
+           <div class="form-group"> 
+                <label for="">Datenbankname</label>
+                <input class="form-control" type="text" placeholder="Geben Sie den Datenbankname ein" /> 
+            </div> 
+            <p></p>
+            <div class="form-group"> 
+                <label for="">Schemata</label>
+                <input class="form-control" type="text" placeholder="Geben Sie das Schemata ein" /> 
+            </div>
+            <p></p>
+            <div class="form-group"> 
+                <mat-form-field style="width: 100%;">
+                    <mat-label>Datenbanktyp</mat-label>
+                    <mat-select placeholder="Choose an option" >
+                      <mat-option value="MSSQL">MS SQL Server</mat-option>
+                      <mat-option value="POSTGRESSQL">PostgresSql</mat-option>
+                      <mat-option value="MYSQL">Mysql</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+            </div> 
+         </div>  
+         <div class="row">
+            <div class="col-12"> <mat-checkbox >Case sensitive</mat-checkbox> </div> 
+          
+         </div>  
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Close</button>
+  <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Export</button>
+</mat-dialog-actions>

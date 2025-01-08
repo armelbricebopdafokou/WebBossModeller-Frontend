@@ -1,4 +1,4 @@
-<app-header (clicked)="onButtonClick()" (export)="exportToSQL($event)" ></app-header>
+<app-header (clicked)="saveGraphic()" (openExistingProejcts)="openProject()" (export)="openDialogExport()" ></app-header>
 
 <div #drawScreen>
   <app-gojs-diagram [model]="model" (nodeClicked)='setSelectedNode($event)'></app-gojs-diagram>
@@ -54,3 +54,32 @@
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div> -->
+
+  
+  
+<dialog class="openProjectDialog">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <h1>Projekt öffnen...</h1>
+        <p>Bitte wählen Sie ein Diagram zum Öffnen:</p>
+      </div>
+    </div>
+    <div class="row">
+      <mat-list class="col-12">
+        <div mat-subheader>Folders</div>
+        @for (project of projects; track project) {
+          <mat-list-item>
+            <mat-icon matListItemIcon>folder</mat-icon>
+            <button class="btn btn-link" matListItemTitle>{{project.class}}</button>
+          </mat-list-item>
+        }
+      </mat-list>
+    </div>
+    <div class="row">
+      <div class="col">
+        <button id="closeButton" autofocus>Close</button>
+      </div>
+    </div>
+  </div>
+</dialog>

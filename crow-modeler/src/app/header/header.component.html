@@ -17,20 +17,9 @@
       <button class="icon-button" matTooltip="Bild Export" (click)="exportImage()">
         <img src="../assets/img/dateiexport.png" alt="Icon 5">
       </button>
-      <button class="icon-button" matTooltip="SQL Export" [matMenuTriggerFor]="sqlMenu" >
+      <button class="icon-button" matTooltip="SQL Export" (click)="exportToSql()" >
         <img src="../assets/img/datenbank.png" alt="Icon 6">
       </button>
-      <mat-menu #sqlMenu="matMenu">
-        <button mat-menu-item (click)="exportSQLMssql()">
-          <span>MS Sql Server</span>
-        </button>
-        <button mat-menu-item (click)="exportSQLMySql()">
-          <span>MySQL</span>
-        </button>
-        <button mat-menu-item (click)="exportSQLPostgres()">
-          <span>Postgres SQL</span>
-        </button>
-      </mat-menu>
       <button class="icon-button" matTooltip="Neu laden" (click)="reload()">
         <img src="../assets/img/drehe-nach-rechts.png" alt="Icon 7">
       </button>
@@ -63,28 +52,7 @@
     </div>
   </div>
   <!-- Dialog for loading a project -->
-  <dialog class="openProjectDialog">
-    <h1>Projekt öffnen...</h1>
-    <p>Bitte wählen Sie ein Diagram zum Öffnen:</p>
-    <div class="button-container">
-      <button class="diagram-button" data-value="diagram1">
-        <img src="..\assets\img\diagr_1.png" alt="Diagram 1 Thumbnail">
-        Diagram 1
-      </button>
-      <button class="diagram-button" data-value="diagram2">
-        <img src="..\assets\img\diagr_2.png" alt="Diagram 2 Thumbnail">
-        Diagram 2
-      </button>
-      <button class="diagram-button" data-value="diagram3">
-        <img src="..\assets\img\diagr_3.png"
-          alt="Diagram 3 Thumbnail">
-        Diagram 3
-      </button>
-    </div>
-    <div>
-      <button id="closeButton" autofocus>Close</button>
-    </div>
-  </dialog>
+  
 
   <style>
     .button-container {

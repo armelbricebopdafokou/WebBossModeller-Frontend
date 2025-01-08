@@ -7,15 +7,16 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { GojsDiagramComponent } from '../gojs-diagram/gojs-diagram.component';
 import { EditNodeDialogComponent } from '../edit-node-dialog/edit-node-dialog.component';
 import { HeaderComponent } from '../header/header.component';
-import { RouterLink, RouterLinkActive } from '@angular/router';
-import { SideComponent } from '../side/side.component';
+import {MatListModule} from '@angular/material/list';
+import {MatIconModule} from '@angular/material/icon';
+
 //import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { InspectorComponent } from '../inspector/inspector.component';
+
 import * as go from 'gojs';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../services/user.service';
-import {  ToastrService  } from 'ngx-toastr';
-import { SqlService } from '../services/sql.service';
+import { ToastrService } from 'ngx-toastr';
+import { DialogExportComponent } from '../dialog-export/dialog-export.component';
 
 
 @Component({
@@ -28,6 +29,8 @@ import { SqlService } from '../services/sql.service';
     HeaderComponent,
     MatTooltipModule,
     FormsModule,
+    MatListModule,
+    MatIconModule,
     MatDialogModule // Wichtig für die Verwendung von MatDialog
   ],
   templateUrl: './draw-screen.component.html',
@@ -37,7 +40,7 @@ export class DrawScreenComponent {
   title = 'crow-modeler';
   events: string[] = [];
   opened: boolean = true;
- 
+  projects:any = [];
 
   @ViewChild('drawScreen', { static: false }) drawScreen!: ElementRef;
   @ViewChild(GojsDiagramComponent, { static: false }) diagramComponent!: GojsDiagramComponent;
@@ -45,7 +48,7 @@ export class DrawScreenComponent {
   public selectedNode: any = null;
   text: string = 'color here';
  
-  constructor(public dialog: MatDialog, private toastr: ToastrService, private service: SqlService,
+  constructor(public dialog: MatDialog, private toastr: ToastrService,
      private userService: UserService) { }
 
   openDialog(): void {
@@ -172,10 +175,11 @@ ngAfterViewInit(){
       return this.model.toJson()
   }
 
-  onButtonClick() {
+  saveGraphic() {
     let obj = {
       "graphics": this.toJson
     }
+    console.log(this.toJson);
     this.userService.saveGraphics(obj).subscribe({
       next: (data)=> {
          console.log('got value ' + data.message);
@@ -189,54 +193,61 @@ ngAfterViewInit(){
        }
      })
   }
+  openDialogExport() {
+      const dialogRef = this.dialog.open(DialogExportComponent, {
+        data: this.toJson
+      });
 
-  exportToSQL(type: string) {
-    switch(type) {
-        case 'MSSQL':
-            this.service.getSQLCodeMssql(this.toJson).subscribe({
-                next: (data)=> {
-                   console.log('got value ' + data.message);
-                 },
-                 error: (err)=> {
-                  //this.errorMessage = err;
-                  this.toastr.error(err.message, 'Error');
-                 },
-                complete: ()=> {
-                  this.toastr.success('This is a success message!', 'Success');
-                 }
-               })
-        break;
-        case 'MYSQL':
-            this.service.getSQLCodeMysql(this.toJson).subscribe({
-                next: (data)=> {
-                   console.log('got value ' + data.message);
-                 },
-                 error: (err)=> {
-                  //this.errorMessage = err;
-                  this.toastr.error(err.message, 'Error');
-                 },
-                complete: ()=> {
-                  this.toastr.success('This is a success message!', 'Success');
-                 }
-               })
-        break;
-
-        case 'POSTGRESQL':
-            this.service.getSQLCodePostgres(this.toJson).subscribe({
-                next: (data)=> {
-                   console.log('got value ' + data.message);
-                 },
-                 error: (err)=> {
-                  //this.errorMessage = err;
-                  this.toastr.error(err.message, 'Error');
-                 },
-                complete: ()=> {
-                  this.toastr.success('This is a success message!', 'Success');
-                 }
-               })
-        break;
-    }
-    
-    
+      /*dialogRef.afterClosed().subscribe(result => {
+        console.log(`Dialog result: ${result}`);
+      });*/
   }
+
+  openProject()
+  {
+
+    this.userService.FetchGraphics().subscribe({
+      next: (data)=> {
+        this.projects.push(JSON.parse(data.data));
+        
+       },
+       error: (err)=> {
+        //this.errorMessage = err;
+        this.toastr.error(err.message, 'Error');
+       },
+      complete: ()=> {
+        this.toastr.success('This is a success message!', 'Success');
+
+        
+        // Öffnet Dialog
+        const dialog = document.querySelector("dialog");
+        dialog?.showModal();
+        // Schließt Dialog
+        const closeButton = document.getElementById("closeButton");
+        closeButton?.addEventListener("click", () => {
+          dialog?.close();
+        });
+        const diagramButtons = document.querySelectorAll('.diagram-button');
+        // Logik zum Öffnen eines Projekts
+        // Add click event listeners to diagram buttons
+        diagramButtons.forEach(button => {
+          button.addEventListener('click', () => {
+            const selectedDiagram = button.getAttribute('data-value');
+            let openFilename = `${selectedDiagram}.json`;
+            console.log(`Selected: ${selectedDiagram}, filename: ${openFilename}`);
+            // Add your logic to open the selected diagram here
+            // For example, you could close the dialog after selection
+            dialog?.close();
+          });
+        }); 
+
+       }
+     })
+  
+
+
+
+  }
+
+  
 }

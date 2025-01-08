@@ -29,4 +29,7 @@ export class UserService {
   saveGraphics(obj:any):Observable<any>{
     return this.http.post<User>(URL_SAVE_GRAPHIC, obj,httpOptions)
   }
+  FetchGraphics():Observable<any>{
+    return this.http.get<User>(URL_SAVE_GRAPHIC, httpOptions)
+  }
 }

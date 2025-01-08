@@ -13,6 +13,7 @@ import { UserService } from '../services/user.service';
 import { User } from '../interfaces/user';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login-screen',
@@ -68,8 +69,9 @@ ngAfterViewInit(){
             this.router.navigate(['/draw-screen'])
           
         },
-        error: (err)=> {
-          this.toastr.error(err.message, 'Error');
+        error: (err:HttpErrorResponse )=> {
+          
+          this.toastr.error(err.error.message, 'Error');
         },
        complete: ()=> {
        
