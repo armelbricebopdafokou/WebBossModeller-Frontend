@@ -162,6 +162,47 @@ export class GojsDiagramComponent implements OnInit {
           )
         )
       );
+    this.diagram.nodeTemplateMap.add('Kommentar', // Spezielle Vorlage für Kommentarfelder
+      $(go.Node, 'Auto',
+        {
+          resizable: true, // Ermöglicht die Größenanpassung des Kommentarfeldes
+          selectionAdorned: true,
+          fromLinkable: false, // Keine Verbindungen von Kommentarfeldern
+          toLinkable: false,
+          contextMenu: $(go.Adornment, 'Vertical',
+            $('ContextMenuButton',
+              $(go.TextBlock, 'Löschen'),
+              {
+                click: (e, obj) => this.deleteNode(obj) // Verwendet die deleteNode-Methode
+              }
+            )
+          )
+        },
+        // Hintergrundform (Rechteck)
+        $(go.Shape, 'Rectangle',
+          {
+            fill: 'yellow', // Standardfarbe
+            stroke: 'black',
+            strokeWidth: 1
+          },
+          new go.Binding('fill', 'color') // Bindet die Farbe an die Eigenschaft `color`
+        ),
+        // Textfeld für Kommentare
+        $(go.TextBlock,
+          {
+            margin: 10, // Abstand zum Rand
+            font: '14px sans-serif',
+            stroke: 'black',
+            editable: true, // Ermöglicht das Bearbeiten direkt im Diagramm
+            textAlign: 'left', // Textausrichtung
+            wrap: go.TextBlock.WrapFit, // Automatischer Zeilenumbruch
+            width: 200 // Standardbreite des Kommentarfelds
+          },
+          new go.Binding('text', 'commentText').makeTwoWay() // Bindet den Text an `commentText`
+        )
+      )
+    );
+
 
     // Diagram-Link-Template (redundant)
     // this.diagram.linkTemplate = $(go.Link,
@@ -192,15 +233,19 @@ export class GojsDiagramComponent implements OnInit {
 
     // Palette-Initialisierung
     this.palette = new go.Palette('myPaletteDiv', {
-      nodeTemplate: this.diagram.nodeTemplate,
+      nodeTemplateMap: this.diagram.nodeTemplateMap, // Verknüpft mit der Diagramm-TemplateMap
       contentAlignment: go.Spot.Center,
-      layout: $(go.GridLayout, { wrappingColumn: 1, cellSize: new go.Size(2, 2) })
+      layout: $(go.GridLayout, { wrappingColumn: 1, cellSize: new go.Size(50, 50) }) // Layout mit passender Zellengröße
     });
+
+    new go.Binding('width', 'width'),
+      new go.Binding('height', 'height')
 
     this.palette.model.nodeDataArray = [
       {
         className: 'Table',
-        location: new go.Point(0, 0),
+        width: 200, // Breite
+        height: 150, // Höhe
         items: [{ name: "TableID", iskey: true }],
         inheritedItems: [],
         isWeak: false
@@ -213,9 +258,8 @@ export class GojsDiagramComponent implements OnInit {
         isWeak: true
       },
       {
-        className: 'Kommentar',
-        items: [],
-        isWeak: false,
+        category: 'Kommentar', // Verweist auf das spezifische Template
+        commentText: 'Neuer Kommentar',
         color: 'yellow'
       }
     ];
