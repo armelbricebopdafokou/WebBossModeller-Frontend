@@ -24,12 +24,26 @@
                       <mat-option value="MYSQL">Mysql</mat-option>
                     </mat-select>
                 </mat-form-field>
-            </div> 
+            </div>    
          </div>  
          <div class="row">
             <div class="col-12"> <mat-checkbox [(ngModel)]="isChecked" >Case sensitive</mat-checkbox> </div> 
           
-         </div>  
+         </div>
+         <div class="row">
+            <div class="col-12">
+                <div class="form-group">
+                    <label for="">Dateiname (ohne Extension)</label>
+                    <input class="form-control" type="text" [(ngModel)]="filename" placeholder="Geben Sie die Tabellen ein" />
+                </div>
+            </div>
+         </div> 
+        
+         <p>
+            @if (isProgress) {
+                <mat-progress-bar mode="buffer"></mat-progress-bar>
+             }
+         </p> 
     </div>
 </mat-dialog-content>
 <mat-dialog-actions>

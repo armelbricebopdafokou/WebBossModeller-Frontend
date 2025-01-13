@@ -10,7 +10,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import {FormGroup, FormControl} from '@angular/forms';
 import { NgIf } from '@angular/common';
 import { UserService } from '../services/user.service';
-import { User } from '../interfaces/user';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { HttpErrorResponse } from '@angular/common/http';

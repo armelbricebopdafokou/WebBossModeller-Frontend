@@ -74,8 +74,8 @@ ngAfterViewInit(){
       className: 'Produkt',
       location: new go.Point(250, 250),
       items: [
-        { name: 'ProductID', iskey: true, notNull: false },
-        { name: 'ProductName', iskey: false, notNull: false },
+        { name: 'ProductID', iskey: true, notNull: true },
+        { name: 'ProductName', iskey: false, notNull: true },
         { name: 'ItemDescription', iskey: false, notNull: false },
         { name: 'WholesalePrice', iskey: false, notNull: false },
         { name: 'ProductPhoto', iskey: false, notNull: false }
@@ -90,8 +90,8 @@ ngAfterViewInit(){
       className: 'Kategorie',
       location: new go.Point(500, 0),
       items: [
-        { name: 'CategoryID', iskey: true, notNull: false },
-        { name: 'CategoryName', iskey: false, notNull: false },
+        { name: 'CategoryID', iskey: true, notNull: true },
+        { name: 'CategoryName', iskey: false, notNull: true },
         { name: 'Description', iskey: false, notNull: false }
       ],
       inheritedItems: [
@@ -176,22 +176,43 @@ ngAfterViewInit(){
   }
 
   saveGraphic() {
-    let obj = {
-      "graphics": this.toJson
-    }
-    console.log(this.toJson);
-    this.userService.saveGraphics(obj).subscribe({
-      next: (data)=> {
-         console.log('got value ' + data.message);
-       },
-       error: (err)=> {
-        //this.errorMessage = err;
-        this.toastr.error(err.message, 'Error');
-       },
-      complete: ()=> {
-        this.toastr.success('This is a success message!', 'Success');
-       }
-     })
+      
+      // Öffnet Dialog
+      const dialog1 = document.querySelector(".saveProjectDialog") as HTMLDialogElement;
+      dialog1?.showModal();
+      // Schließt Dialog
+      const closeButton = document.getElementById("closeSave");
+      closeButton?.addEventListener("click", () => {
+        dialog1?.close();
+      });
+
+      const savedButton = document.getElementById("saveButton");
+      savedButton?.addEventListener("click", () => {
+
+        let grafik = JSON.parse(this.toJson);
+        grafik.class = (document.getElementById("projectName") as HTMLInputElement)?.value.toString();
+
+        let obj = {
+          "graphics": grafik
+        }
+        console.log(obj);
+        
+        this.userService.saveGraphics(obj).subscribe({
+          next: (data)=> {
+             console.log('got value ' + data.message);
+           },
+           error: (err)=> {
+            //this.errorMessage = err;
+            this.toastr.error(err.message, 'Error');
+           },
+          complete: ()=> {
+            this.toastr.success('This is a success message!', 'Success');
+           }
+         })
+
+        dialog1?.close();
+      });
+     
   }
   openDialogExport() {
       const dialogRef = this.dialog.open(DialogExportComponent, {
@@ -220,7 +241,7 @@ ngAfterViewInit(){
 
         
         // Öffnet Dialog
-        const dialog = document.querySelector("dialog");
+        const dialog = document.querySelector(".openProjectDialog") as HTMLDialogElement;
         dialog?.showModal();
         // Schließt Dialog
         const closeButton = document.getElementById("closeButton");

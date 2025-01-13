@@ -1,0 +1,27 @@
+.container{
+    position: absolute;
+    top:10%;
+    width: 30%;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    padding: 50px;
+    background-color: white;
+    border-radius: 7px;
+    box-shadow: 5px 2px 2px rgba(0, 0, 0, 0.5);
+}
+.myFromGroup{
+    width: 100%;
+
+}
+.myFromGroup mat-form-field, .myFromGroup button{
+    width: 100%;
+   
+}
+@media screen and (max-width: 500px) {
+    .container{
+        width: 80%;
+    }
+    
+}
