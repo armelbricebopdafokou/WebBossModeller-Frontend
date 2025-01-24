@@ -1,0 +1,39 @@
+.image{
+    padding: 20px;
+   background-image: url("/assets/img/CVH_Hochschule_Bochum.jpg");
+   background-size: cover;
+}
+
+.myFromGroup{
+    width: 100%;
+}
+
+
+.myFromGroup>p>*{
+    width: 100%;
+}
+
+#loginButton{
+    background-color: #006a60;
+    color:white;
+}
+.logWith button{
+    width: 100%;
+}
+
+body{
+    background-color: var(--md-sys-color-primary) !important;
+}
+
+.container{
+    position: absolute;
+    top:10%;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+
+    background-color: white;
+    border-radius: 7px;
+    box-shadow: 5px 2px 2px rgba(0, 0, 0, 0.5);
+}

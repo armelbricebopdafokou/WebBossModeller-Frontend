@@ -1,0 +1,63 @@
+<!--Bootstrap wurde integriert und man kann direct bootstrap klasse benutzen-->
+<div class="container">
+    <div class="row">
+      <div class="col-7 image">
+  
+      </div>
+      <div class="col-5" style="padding: 20px;">
+        <div class="row">
+          <div class="col">
+            <h1> Verbindung</h1>
+            <div [formGroup]="loginForm" class="myFromGroup">
+              <p>
+                <mat-form-field class="mat-form-field light">
+                  <mat-label>E-mail</mat-label>
+                  <input matInput formControlName="emailCtrl" required id="email">
+                </mat-form-field>
+              </p>
+              <div *ngIf="email.invalid && (email.dirty || email.touched)" class="alert alert-danger">
+                <div *ngIf="email.hasError('required')">
+                  Email is required.
+                </div>
+                <div *ngIf="email.hasError('pattern')">
+                  Incorrect Email Format
+                </div>
+              </div>
+              <p>
+                <mat-form-field class="mat-form-field light">
+                  <mat-label>Password</mat-label>
+                  <input matInput [type]="hide ? 'password' : 'text'" formControlName="passwordCtrl">
+                  <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                    [attr.aria-pressed]="hide">
+                    <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                  </button>
+                </mat-form-field>
+              </p>
+              <div *ngIf="password.invalid && (password.dirty || password.touched)" class="alert alert-danger">
+                <div *ngIf="password.hasError('required')">
+                  Email is required.
+                </div>
+                <div *ngIf="password.hasError('minlength')">
+                  Password must be at least 8 characters
+                </div>
+              </div>
+              <p><mat-checkbox formControlName="rememberMeCtrl">Remember me!</mat-checkbox></p>
+              <p>
+                <button id="loginButton" (click)="submitForm()" mat-raised-button
+                  [disabled]="!loginForm.valid">Connexion</button>
+              </p>
+              <h2>{{errorMessage}}</h2>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <p> You are not a member of Hochschule BOCHUM <a href="/login">Create one</a> </p>
+          </div>
+        </div>
+        <!--Um CSRF angriff zu vermeiden, benutze ich div anstatt form-->
+  
+      </div>
+    </div>
+  
+  </div>

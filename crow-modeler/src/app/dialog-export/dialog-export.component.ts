@@ -53,7 +53,7 @@ export class DialogExportComponent {
           case 'MSSQL':
               this.service.getSQLCodeMssql(obj).subscribe({
                   next: (data)=> {
-                    console.log('got value ' + data);
+                    //console.log('got value ' + data);
                     this.onSaveFile(data)
                   },
                   error: (err)=> {
@@ -69,7 +69,7 @@ export class DialogExportComponent {
           case 'MYSQL':
               this.service.getSQLCodeMysql(obj).subscribe({
                   next: (data)=> {
-                    console.log('got value ' + data);
+                    //console.log('got value ' + data);
                     this.onSaveFile(data)
                   },
                   error: (err)=> {
@@ -86,7 +86,7 @@ export class DialogExportComponent {
           case 'POSTGRESSQL':
               this.service.getSQLCodePostgres(obj).subscribe({
                   next: (data)=> {
-                    console.log('got value ' + data);
+                    //console.log('got value ' + data);
                     this.onSaveFile(data)
                   },
                   error: (err)=> {
@@ -126,6 +126,7 @@ export class DialogExportComponent {
     }
        
   }
+  
   
 
   

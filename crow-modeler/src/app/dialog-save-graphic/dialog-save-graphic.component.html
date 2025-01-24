@@ -1,0 +1,14 @@
+<h2 mat-dialog-title>Save project</h2>
+<mat-dialog-content>
+    <div class="container">
+        <div class="row form-group">
+            <div class="form-group">
+                <input type="text" class="form-control" [(ngModel)]="projectName" placeholder="Graphic Name">
+            </div>
+        </div>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+<button mat-button mat-dialog-close>Cancel</button>
+<button mat-button [mat-dialog-close]="true" cdkFocusInitial>Save</button>
+</mat-dialog-actions>

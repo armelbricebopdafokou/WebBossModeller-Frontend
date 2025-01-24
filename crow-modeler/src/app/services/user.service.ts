@@ -2,7 +2,9 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User } from '../interfaces/user';
-import { URL_LOGIN, URL_REGISTER, URL_SAVE_GRAPHIC } from '../interfaces/constants';
+import { URL_LOGIN, URL_REGISTER,
+  URL_LOGIN_LDAP,
+  URL_SAVE_GRAPHIC } from '../interfaces/constants';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -22,14 +24,19 @@ export class UserService {
     return this.http.post<User>(URL_LOGIN,obj,httpOptions)
   }
 
+  loginLDAP(obj:any):Observable<User>{
+    return this.http.post<User>(URL_LOGIN_LDAP,obj,httpOptions)
+  }
+
   register(obj:any):Observable<User>{
     return this.http.post<User>(URL_REGISTER,obj,httpOptions)
   }
 
   saveGraphics(obj:any):Observable<any>{
+    
     return this.http.post<User>(URL_SAVE_GRAPHIC, obj,httpOptions)
   }
   FetchGraphics():Observable<any>{
-    return this.http.get<User>(URL_SAVE_GRAPHIC, httpOptions)
+    return this.http.get<User>(URL_SAVE_GRAPHIC)
   }
 }

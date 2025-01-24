@@ -24,7 +24,7 @@ import { HttpErrorResponse } from '@angular/common/http';
      MatCheckboxModule,
      MatFormFieldModule, 
      MatInputModule, 
-     MatIconModule, 
+     MatIconModule
      ],
   templateUrl: './login-screen.component.html',
   styleUrl: './login-screen.component.css'
@@ -39,7 +39,8 @@ export class LoginScreenComponent {
 
   //login$!: Observable<User>;
   errorMessage:any
-  constructor(private service: UserService,private toastr: ToastrService,
+  constructor(private service: UserService,
+    private toastr: ToastrService,
      private router: Router){
 
   }

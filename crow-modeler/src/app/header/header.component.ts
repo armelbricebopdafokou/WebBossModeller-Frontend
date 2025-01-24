@@ -28,6 +28,7 @@ export class HeaderComponent {
   isAdvancedMode!: boolean;
   
   @Output() clicked = new EventEmitter<boolean>()
+  @Output() openImport = new EventEmitter<boolean>()
   @Output() openExistingProejcts = new EventEmitter<boolean>()
   @Output() export = new EventEmitter<string>()
 
@@ -116,6 +117,10 @@ export class HeaderComponent {
     }
   }
 
+  public importDiagram()
+  {
+    this.openImport.emit(true)
+  }
 
 
   

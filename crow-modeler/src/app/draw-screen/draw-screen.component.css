@@ -104,7 +104,12 @@
     background: none;
   }
 
-
+  .radio-group {
+    display: flex;
+    flex-direction: column;
+    margin: 15px 0;
+    align-items: flex-start;
+  }
 
 .container{
   width: 90%;
@@ -116,7 +121,7 @@
 }
 
 .openProjectDialog {
-  background-color: #2196F3;
+  background-color: white;
   opacity: 1;
   width: 500px;
   height: 300px;

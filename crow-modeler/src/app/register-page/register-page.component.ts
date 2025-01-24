@@ -9,6 +9,7 @@ import { RouterLinkActive } from '@angular/router';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { NgIf } from '@angular/common';
 import { UserService } from '../services/user.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-register-page',
@@ -36,7 +37,8 @@ export class RegisterPageComponent implements AfterViewInit {
     })
     hide = true;
   
-    constructor(private userservice:UserService, private router:Router) { }
+    constructor(private userservice:UserService, private toastr: ToastrService,
+      private router:Router) { }
 
     //login$!: Observable<User>;
     errorMessage:any
@@ -70,7 +72,8 @@ export class RegisterPageComponent implements AfterViewInit {
    this.userservice.register(this.registerForm.value).subscribe({
       next: (data: any)=> {
         console.log(data)
-        //this.router.navigate(['/draw-screen'])
+        this.toastr.success('Registration successful!', 'Success');
+        
       },
       error: (err: any)=> {
         console.log(err)

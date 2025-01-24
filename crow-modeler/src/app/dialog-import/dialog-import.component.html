@@ -1,0 +1,57 @@
+
+
+
+<div class="content">
+    <header style=" padding-left: 20px;padding-right: 20px;">
+        <h3>Import von einer Datenbank</h3>
+        <mat-divider></mat-divider>
+    </header>
+    
+
+    <mat-dialog-content [formGroup]="form">
+        <p>
+            <label for="" style="margin-bottom: 2px;">Datenbankstyp</label>
+            <select class="form-select" aria-label="Database engine" formControlName="type">
+                <option selected>Database engine</option>
+                <option value="MSSQL">MSSQL</option>
+                <option value="MYSQL">MYSQL</option>
+                <option value="POSTGRESQL">POSTGRESQL</option>
+            </select>
+        </p>
+        <p>
+            <mat-form-field appearance="outline">
+              <mat-label>Host</mat-label>
+              <input matInput placeholder="Server host" formControlName="host">
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field appearance="outline">
+              <mat-label>Datenbank</mat-label>
+              <input matInput placeholder="Gib den Datenbankname ein" formControlName="database">
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field appearance="outline">
+              <mat-label>Schemata</mat-label>
+              <input matInput placeholder="schema name" formControlName="schema">
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field appearance="outline">
+              <mat-label>Benutzer</mat-label>
+              <input matInput placeholder="Benutzername" formControlName="user">
+            </mat-form-field>
+          </p>
+         
+          <p>
+            <mat-form-field appearance="outline">
+              <mat-label>Passwort</mat-label>
+              <input type="password" matInput placeholder="Datenbankpasswort" formControlName="password">
+            </mat-form-field>
+          </p>
+    </mat-dialog-content>
+    <mat-dialog-actions style="padding-left: 20px; padding-right: 20px;">
+        <button mat-raised-button class="bg-warning text-white"  (click)="close()">Close</button>
+        <button mat-raised-button mat-primary class="bg-success text-white"  (click)="save()">Save</button>
+    </mat-dialog-actions>
+</div>

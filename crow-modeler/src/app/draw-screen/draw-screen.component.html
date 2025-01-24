@@ -1,4 +1,4 @@
-<app-header (clicked)="saveGraphic()" (openExistingProejcts)="openProject()" (export)="openDialogExport()" ></app-header>
+<app-header (clicked)="saveGraphic()" (openExistingProejcts)="openProject()" (export)="openDialogExport()" (openImport)="importFromDatabase()" ></app-header>
 
 <div #drawScreen>
   <app-gojs-diagram [model]="model" (nodeClicked)='setSelectedNode($event)'></app-gojs-diagram>
@@ -58,51 +58,25 @@
   
   
 <dialog class="openProjectDialog">
+  <button class="float-end" id="closeButton">X</button>
   <div class="container">
     <div class="row">
       <div class="col">
-        <h1>Projekt öffnen...</h1>
-        <p>Bitte wählen Sie ein Diagram zum Öffnen:</p>
+        <h2>Liste von Diagramm</h2>
+        <mat-radio-group
+        [(ngModel)]="selectedProject"
+            class="radio-group">
+            @for (project of projects; track project) {
+              <mat-radio-button  [value]="project">{{project.class}}</mat-radio-button>
+            }
+        </mat-radio-group>
       </div>
     </div>
     <div class="row">
-      <mat-list class="col-12">
-        <div mat-subheader>Folders</div>
-        @for (project of projects; track project) {
-          <mat-list-item>
-            <mat-icon matListItemIcon>folder</mat-icon>
-            <button class="btn btn-link" matListItemTitle>{{project.class}}</button>
-          </mat-list-item>
-        }
-      </mat-list>
-    </div>
-    <div class="row">
       <div class="col">
-        <button id="closeButton" autofocus>Close</button>
+        <button mat-stroked-button (click)="openSelectedProject()">Open</button>
       </div>
     </div>
   </div>
 </dialog>
 
-
-<dialog class="saveProjectDialog">
-  <div class="container">
-    <div class="row">
-      <h4>Save project</h4>
-    </div>
-    <div class="row form-group">
-     <div class="form-group">
-      <input type="text" class="form-control" id="projectName" placeholder="Graphic Name">
-     </div>
-    </div>
-    <br>
-    <div class="row">
-      <div class="col-6">
-        <button class="btn btn-danger" id="closeSave" autofocus>Close</button>
-      </div>
-      <div class="col-6">
-        <button class="btn btn-success float-end" id="saveButton" >Save</button>
-      </div>
-    </div>
-  </div>
-</dialog>
